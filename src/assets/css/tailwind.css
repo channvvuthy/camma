@@ -1,0 +1,16 @@
+@tailwind base;
+@tailwind components;
+@font-face {
+    font-family: 'Kantumruy';
+    src: url('./../../../public/font/Kantumruy/Kantumruy-Regular.ttf')
+}
+@font-face {
+    font-family: 'UbuntuRegular';
+    src: url('./../../../public/font/Ubuntu/Ubuntu-Regular.ttf')
+}
+@font-face {
+    font-family: 'Barlow';
+    src: url('./../../../public/font/Barlow/Barlow-Regular.ttf')
+}
+
+@tailwind utilities;
