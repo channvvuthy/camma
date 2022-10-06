@@ -10,7 +10,7 @@
                      :class="`w-${width}`" role="dialog" aria-modal="true" aria-labelledby="modal-headline">
                     <div class="header flex justify-between items-center p-4 border border-gray-200 border-t-0 border-l-0 border-r-0 text-sm font-khmer_os">
 
-                        <div class="text-left w-full font-semibold text-sm text-center">
+                        <div class="w-full font-semibold text-sm text-center">
                             {{title}}
                         </div>
                         <div class="cursor-pointer" @click="closeAnswer">
@@ -85,7 +85,7 @@
                                 </div>
                             </div>
                             <div class="flex px-5 mb-5">
-                                <div class="w-10 h-10 shadow rounded-full bg-center"
+                                <div class="w-10 h-10 shadow rounded-full bg-center​"
                                      :class="stProfile?'bg-gray-300':''"
                                      :style="stProfile?{backgroundImage:`url(${stProfile.photo})`,backgroundSize:`cover`}:''">
                                 </div>

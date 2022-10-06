@@ -57,11 +57,6 @@ const routes = [
         component: () => import('../views/Video/Video'),
     },
     {
-        path: '/course-play-list/:course_id',
-        name: 'course-play-list',
-        component: () => import('../views/Video/CoursePlayList'),
-    },
-    {
         path: '/favorite',
         name: 'favorite',
         component: () => import('../views/Favorite/Favorite'),
