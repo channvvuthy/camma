@@ -386,7 +386,6 @@ import MutedIcon from "./MutedIcon";
 import SoundIcon from "./SoundIcon";
 import SettingIcon from "./SettingIcon";
 import FullScreenIcon from "./FullScreenIcon";
-const { ipcRenderer } = require("electron");
 import { mapActions, mapState } from "vuex";
 export default {
   name: "MediaPlayer",
@@ -444,6 +443,9 @@ export default {
     ...mapState("course", ["videoActive"]),
     style() {
       return "background-color: " + this.hovering ? this.color : "red";
+    },
+    videoActiveChange() {
+      return this.$store.state.course.videoActive;
     },
   },
   methods: {
@@ -686,6 +688,19 @@ export default {
         }
       }, 200);
     },
+    getUrl() {
+      this.url = this.videoActive.links
+        .filter(
+          (item) =>
+            item.rendition ==
+            this.videoActive.links[this.videoActive.links.length - 1][
+              "rendition"
+            ]
+        )
+        .map((item) => item.link)[0];
+      this.defaultQuality =
+        this.videoActive.links[this.videoActive.links.length - 1]["rendition"];
+    },
   },
   mounted() {
     this.getVideo();
@@ -721,34 +736,14 @@ export default {
     } else if (this.window.width <= 1366) {
       this.video.height = 355;
     }
+    this.getUrl();
+  },
+  watch: {
+    videoActiveChange: function () {
+      this.getUrl();
+      this.vid.setAttribute("src", this.url)
 
-    ipcRenderer.on("youtubeVideo", (event, arg) => {
-      this.LoadingWhiteSuccess = false;
-      this.resources = arg;
-      if (arg.length > 1) {
-        this.url = arg
-          .filter((item) => item.itag === 22)
-          .map((item) => item.url)[0];
-      } else {
-        this.url = arg
-          .filter((item) => item.itag === 22 || item.itag === 18)
-          .map((item) => item.url)[0];
-      }
-
-      this.LoadingWhiteSuccess = true;
-      this.gettingNextVideo(true);
-      this.$emit("gettingResource", this.resources);
-    });
-
-    this.url = this.videoActive.links
-      .filter(
-        (item) =>
-          item.rendition ==
-          this.videoActive.links[this.videoActive.links.length - 1]["rendition"]
-      )
-      .map((item) => item.link)[0];
-    this.defaultQuality =
-      this.videoActive.links[this.videoActive.links.length - 1]["rendition"];
+    },
   },
 };
 </script>

@@ -129,10 +129,7 @@
                     :id="course.video_youtube"
                     @click="
                       nextOrder(
-                        course.order,
-                        course.video_youtube,
-                        courseDetail.is_buy == 0 && course.free_watch == 0,
-                        course
+                        course.order
                       )
                     "
                   />
@@ -161,10 +158,7 @@
                   :title="course.title"
                   @click="
                     nextOrder(
-                      course.order,
-                      course.video_youtube,
-                      courseDetail.is_buy == 0 && course.free_watch == 0,
-                      course
+                      course.order
                     )
                   "
                 >
@@ -173,7 +167,7 @@
                       v-html="
                         key +
                         1 +
-                        ',' +
+                        '. ' +
                         cutString(course.title, window.width <= 1366 ? 25 : 55)
                       "
                     ></p>
@@ -479,28 +473,19 @@ export default {
       localStorage.setItem(item, JSON.stringify(value));
     },
 
-    nextOrder(order, video_youtube, noFree, course) {
-      if (noFree) {
-        this.showMessage = true;
-        return;
-      }
-
+    nextOrder(order) {
       this.gettingNextVideo(false);
 
-      if (this.isDownloadedExist(course).length) {
-        this.videoPlay = this.isDownloadedExist(course)[0];
-        ipcRenderer.send("nextDownload", this.videoPlay);
-      } else {
-        this.videoPlay = this.courseDetail.list.filter(
-          (item) => item.video_youtube === video_youtube
-        )[0];
-        ipcRenderer.send("nextVideo", video_youtube);
-      }
+      this.videoPlay = this.courseDetail.list.filter(
+        (item) => item.order == order
+      )[0];
 
+      this.$store.commit("course/getVideo", this.videoPlay)
+      
       this.addLastWatch(this.videoPlay);
 
-      this.lessonView(this.videoPlay._id).then((response) => {
-        this.documents = response;
+      this.lessonView(this.videoPlay['_id']).then((res) => {
+        this.documents = res;
       });
 
       this.order = order;
@@ -553,8 +538,8 @@ export default {
         });
       }
 
-      this.lessonView(videoId).then((response) => {
-        this.documents = response;
+      this.lessonView(videoId).then((res) => {
+        this.documents = res;
       });
     },
     onPlayerEnded() {
@@ -591,8 +576,8 @@ export default {
       this.gettingNextVideo(false);
       ipcRenderer.send("nextVideo", video_youtube);
 
-      this.lessonView(videoId).then((response) => {
-        this.documents = response;
+      this.lessonView(videoId).then((res) => {
+        this.documents = res;
       });
     },
     cutString(text, limit) {
@@ -704,8 +689,8 @@ export default {
           } else {
             this.videoPlay = item;
             this.addLastWatch(this.videoPlay);
-            this.lessonView(this.videoPlay._id).then((response) => {
-              this.documents = response;
+            this.lessonView(this.videoPlay._id).then((res) => {
+              this.documents = res;
             });
           }
         }

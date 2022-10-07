@@ -350,6 +350,11 @@ export default {
         .dispatch("course/getvideoPlay", video.course._id)
         .then((res) => {
           this.$store.commit("course/gettingCourseDetail", res.data);
+          var vd = res.data.list.filter((item) => item.order == video.order);
+
+          this.$store.commit("course/getVideo", vd[0]);
+
+          this.loadingDetail = false;
           this.$router.push({
             name: "course-detail",
             params: {
@@ -358,11 +363,7 @@ export default {
               courseId: video.course._id,
             },
           });
-          var vd = res.data.list.filter((item) => item.order == video.order);
-
-          this.$store.commit("course/getVideo", vd[0]);
-
-          this.loadingDetail = false;
+          
         })
         .catch((err) => {
           helper.error(err.response.data);

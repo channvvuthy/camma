@@ -85,7 +85,8 @@
                 <div
                   class="
                     font-khmer_os
-                    text-sm px-5
+                    text-sm
+                    px-5
                     mt-3
                     font-semibold
                     text-gray-700
@@ -95,14 +96,13 @@
                   "
                   @click="goToPlayList(video)"
                 ></div>
-               
-              </div>
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
+    <LoadingOverlay v-if="loadingDetail" @dismiss="dismiss()" />
   </div>
 </template>
 
@@ -112,15 +112,16 @@ import { mapActions, mapState } from "vuex";
 import helper from "./../../helper/helper";
 import Loading from "./../../components/Loading";
 import moment from "moment";
-import CartIcon from "./../../components/CartIcon";
+import LoadingOverlay from "./../Modal/LoadingOverlay.vue";
 export default {
   name: "Video",
   components: {
     Loading,
-    CartIcon,
+    LoadingOverlay,
   },
   data() {
     return {
+      loadingDetail: false,
       window: {
         width: 0,
         height: 0,
@@ -186,18 +187,30 @@ export default {
       return helper.cutString(text, limit);
     },
     goToPlayList(video) {
-      this.$store.commit("course/getTeacherInfo", video.teacher);
+      var order = video.last_watch.order || 1;
+      this.loadingDetail = true;
+      this.$store
+        .dispatch("course/getvideoPlay", video._id)
+        .then((res) => {
+          this.loadingDetail = false;
+          this.$store.commit("course/gettingCourseDetail", res.data);
+          var vd = res.data.list.filter((item) => item.order == order);
 
-      let order = 1;
+          this.$store.commit("course/getVideo", vd[0]);
 
-      if (video.last_watch && video.last_watch.order) {
-        order = video.last_watch.order;
-      }
-
-      this.$router.push({
-        name: "course-detail",
-        params: { videoId: video._id, order: order, courseId: video._id },
-      });
+          this.$router.push({
+            name: "course-detail",
+            params: {
+              videoId: vd[0]._id,
+              order: order,
+              courseId: res.data.course._id,
+            },
+          });
+        })
+        .catch((err) => {
+          helper.error(err.response.data);
+          this.loadingDetail = false;
+        });
     },
   },
   created() {
