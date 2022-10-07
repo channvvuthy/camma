@@ -19,7 +19,7 @@
         class="h-100 flex justify-center items-center"
         v-if="courses.lesson <= 0"
       >
-      <div class="text-custom text-base font-khmer_os">មិនមានទិន្ន័យ</div>
+        <div class="text-custom text-base font-khmer_os">មិនមានទិន្ន័យ</div>
       </div>
 
       <div class="grid grid-cols-3 gap-4">
@@ -206,7 +206,8 @@
       :videoUrl="videoUrl"
       @closeAds="closeAds"
       :poster="videoPoster"
-    ></VideoADS>
+    />
+    <LoadingOverlay v-if="loadingDetail" @dismiss="dismiss()" />
   </div>
 </template>
 
@@ -216,12 +217,14 @@ import { mapState, mapActions } from "vuex";
 import helper from "./../../helper/helper";
 import Loading from "./../../components/Loading";
 const { ipcRenderer } = require("electron");
+import LoadingOverlay from "./../Modal/LoadingOverlay.vue";
 
 export default {
   name: "VideoList",
   components: {
     Loading,
     VideoADS,
+    LoadingOverlay,
   },
   data() {
     return {
@@ -237,6 +240,7 @@ export default {
       videoUrl: "",
       videoPoster: "",
       noResult: false,
+      loadingDetail: false,
     };
   },
 
@@ -262,7 +266,9 @@ export default {
       "removeActiveFavorite",
     ]),
     ...mapActions("favorite", ["add", "removeFavorite", "getFavorite"]),
-
+    dismiss() {
+      this.loading = false;
+    },
     handleResize() {
       this.window.width = window.innerWidth;
       this.window.height = window.innerHeight;
@@ -339,16 +345,29 @@ export default {
     },
 
     courseDetail(video) {
-      this.$store.commit("course/getTeacherInfo", video.teacher);
-      ipcRenderer.send("youtubeVideo", video.video_youtube);
-      this.$router.push({
-        name: "course-detail",
-        params: {
-          videoId: video._id,
-          order: video.order,
-          courseId: video.course._id,
-        },
-      });
+      this.loadingDetail = true;
+      this.$store
+        .dispatch("course/getvideoPlay", video.course._id)
+        .then((res) => {
+          this.$store.commit("course/gettingCourseDetail", res.data);
+          this.$router.push({
+            name: "course-detail",
+            params: {
+              videoId: video._id,
+              order: video.order,
+              courseId: video.course._id,
+            },
+          });
+          var vd = res.data.list.filter((item) => item.order == video.order);
+
+          this.$store.commit("course/getVideo", vd[0]);
+
+          this.loadingDetail = false;
+        })
+        .catch((err) => {
+          helper.error(err.response.data);
+          this.loadingDetail = false;
+        });
     },
   },
   created() {

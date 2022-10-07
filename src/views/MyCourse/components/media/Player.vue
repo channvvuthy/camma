@@ -18,9 +18,7 @@
           @pause="pause()"
           @click="playPause()"
         >
-          <source
-            src="https://eschool-video.sabay.com/video/Diploma-English/EssentialBook3(Micha)/5f27c1c981768d50365d40d2-2_720.mp4"
-          />
+          <source :src="url" />
         </video>
       </div>
       <div
@@ -144,11 +142,11 @@
                       border-r-0 border-t-0 border-gray-200
                       h-9
                       leading-9
-                      text-blue-500
+                      text-custom
                     "
                     @click="chooseOption(2)"
                   >
-                    ល្បឿន
+                    ល្បឿនវីដេអូ
                   </li>
                   <li
                     class="
@@ -158,11 +156,11 @@
                       border-r-0 border-t-0 border-gray-200
                       h-9
                       leading-9
-                      text-blue-500
+                      text-custom
                     "
                     @click="chooseOption(1)"
                   >
-                    កំរិត
+                    កំរិតវីដេអូ
                   </li>
                   <li
                     class="
@@ -183,7 +181,7 @@
                 class="
                   absolute
                   bg-white
-                  text-black text-14px
+                  text-custom text-sm
                   font-khmer_os
                   w-44
                   text-center
@@ -216,7 +214,7 @@
                       h-9
                       leading-9
                     "
-                    :class="defaultSpeed < 1 ? 'text-red-500' : ''"
+                    :class="defaultSpeed < 1 ? 'text-red-500' : 'text-custom'"
                     @click="playbackRate(0.5)"
                   >
                     0.5x
@@ -230,7 +228,7 @@
                       h-9
                       leading-9
                     "
-                    :class="defaultSpeed === 1 ? 'text-red-500' : ''"
+                    :class="defaultSpeed === 1 ? 'text-red-500' : 'text-custom'"
                     @click="playbackRate(1)"
                   >
                     1.0x
@@ -245,7 +243,9 @@
                       leading-9
                     "
                     :class="
-                      defaultSpeed > 1 && defaultSpeed < 2 ? 'text-red-500' : ''
+                      defaultSpeed > 1 && defaultSpeed < 2
+                        ? 'text-red-500'
+                        : 'text-custom'
                     "
                     @click="playbackRate(1.5)"
                   >
@@ -260,7 +260,7 @@
                       h-9
                       leading-9
                     "
-                    :class="defaultSpeed === 2 ? 'text-red-500' : ''"
+                    :class="defaultSpeed === 2 ? 'text-red-500' : 'text-custom'"
                     @click="playbackRate(2)"
                   >
                     2.0x
@@ -308,23 +308,7 @@
                   >
                     កំរិត
                   </li>
-                  <template v-if="resources.length <= 0">
-                    <li
-                      class="
-                        cursor-pointer
-                        border border-l-0
-                        -l-0
-                        border-r-0 border-t-0 border-gray-200
-                        h-9
-                        leading-9
-                        text-blue-500
-                      "
-                      @click="changeQuality('')"
-                    >
-                      ឯកសារទាញយក
-                    </li>
-                  </template>
-                  <template v-if="resources.length">
+                  <template>
                     <li
                       class="
                         cursor-pointer
@@ -334,28 +318,16 @@
                         h-9
                         leading-9
                       "
+                      v-for="(quality, index) in videoActive.links"
+                      :key="index"
                       :class="
-                        defaultQuality === 22 ? 'text-red-500' : 'text-blue-500'
+                        defaultQuality == quality.rendition
+                          ? 'text-red-500'
+                          : 'text-custom'
                       "
-                      @click="changeQuality(22)"
+                      @click="changeQuality(quality.rendition)"
                     >
-                      720p
-                    </li>
-                    <li
-                      class="
-                        cursor-pointer
-                        border border-l-0
-                        -l-0
-                        border-r-0 border-t-0 border-gray-200
-                        h-9
-                        leading-9
-                      "
-                      :class="
-                        defaultQuality === 18 ? 'text-red-500' : 'text-blue-500'
-                      "
-                      @click="changeQuality(18)"
-                    >
-                      360p
+                      {{ quality.rendition }}
                     </li>
                   </template>
                   <li
@@ -459,7 +431,7 @@ export default {
       showSpeed: false,
       showQuality: false,
       defaultSpeed: 1,
-      defaultQuality: 22,
+      defaultQuality: "",
       resources: [],
       LoadingWhiteSuccess: false,
       loadingVideo: false,
@@ -469,6 +441,7 @@ export default {
   },
   computed: {
     ...mapState("playVideo", ["loadingNextVideo", "stop_watch"]),
+    ...mapState("course", ["videoActive"]),
     style() {
       return "background-color: " + this.hovering ? this.color : "red";
     },
@@ -496,9 +469,9 @@ export default {
       }
       this.defaultQuality = quality;
 
-      this.url = this.resources
-        .filter((item) => item.itag === quality)
-        .map((item) => item.url)[0];
+      this.url = this.videoActive.links
+        .filter((item) => item.rendition === quality)
+        .map((item) => item.link)[0];
       this.vid.setAttribute("src", this.url);
 
       this.vid.load();
@@ -767,34 +740,15 @@ export default {
       this.$emit("gettingResource", this.resources);
     });
 
-    ipcRenderer.on("nextDownload", (event, arg) => {
-      this.LoadingWhiteSuccess = false;
-      setTimeout(() => {
-        this.showPlay = false;
-        this.LoadingWhiteSuccess = true;
-        this.url = "file:///" + arg.url;
-        this.gettingNextVideo(true);
-        this.getVideo();
-        this.resources = [];
-      }, 500);
-    });
-
-    ipcRenderer.on("nextVideo", (event, arg) => {
-      this.resources = arg;
-      if (arg.length > 1) {
-        this.url = arg
-          .filter((item) => item.itag === 22)
-          .map((item) => item.url)[0];
-      } else {
-        this.url = arg
-          .filter((item) => item.itag === 22 || item.itag === 18)
-          .map((item) => item.url)[0];
-      }
-      this.gettingNextVideo(true);
-      this.getVideo();
-      this.showPlay = false;
-      this.$emit("gettingResource", this.resources);
-    });
+    this.url = this.videoActive.links
+      .filter(
+        (item) =>
+          item.rendition ==
+          this.videoActive.links[this.videoActive.links.length - 1]["rendition"]
+      )
+      .map((item) => item.link)[0];
+    this.defaultQuality =
+      this.videoActive.links[this.videoActive.links.length - 1]["rendition"];
   },
 };
 </script>

@@ -116,14 +116,12 @@
 import ViewBook from "./components/View";
 import ReadingBook from "./components/Read";
 import { mapState, mapActions } from "vuex";
-import CartIcon from "./../../components/CartIcon";
 import Cart from "./../MyCourse/components/Cart";
 import Loading from "./../../components/Loading";
 import helper from "./../../helper/helper"
 export default {
   name: "Book",
   components: {
-    CartIcon,
     ViewBook,
     ReadingBook,
     Cart,

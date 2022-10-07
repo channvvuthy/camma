@@ -25,7 +25,8 @@
             <div class="mt-4 font-khmer_os">
               <p class="text-14px font-semibold" v-if="!loadingPlay">
                 <span :title="videoTitle ? videoTitle : videoPlay.title">
-                {{videoTitle ? videoTitle : videoPlay.title}}</span>
+                  {{ videoTitle ? videoTitle : videoPlay.title }}</span
+                >
               </p>
               <h2 class="text-gray-400 text-14px font-khmer_os mt-2">
                 {{ courseDetail.course.teacher.name }}
@@ -67,11 +68,12 @@
                   rounded-full
                   hover:bg-opacity-80
                   cursor-pointer
-                  
                 "
                 @click="QuestionAndAnswer"
               >
-                <span class="pl-1 font-thin whitespace-nowrap">សំនួរចម្លើយ</span>
+                <span class="pl-1 font-thin whitespace-nowrap"
+                  >សំនួរចម្លើយ</span
+                >
               </div>
             </div>
           </div>
@@ -236,7 +238,6 @@ import Message from "./components/Message.vue";
 import MessageConfirm from "./components/MessageConfirm.vue";
 import PaymentMethod from "./components/PaymentMethod";
 import Cart from "./components/Cart";
-import CartIcon from "./../../components/CartIcon.vue";
 import MediaPlayer from "./components/media/Player";
 import Loading from "./../../components/Loading";
 import QuestionAnswer from "./components/QuestionAnswer";
@@ -254,7 +255,6 @@ export default {
     Message,
     PaymentMethod,
     Cart,
-    CartIcon,
     QuestionAnswer,
     Document,
     DownloadQuality,
@@ -684,8 +684,6 @@ export default {
     this.scrollToBottom();
   },
   created() {
-    localStorage.removeItem("downloadingStorage");
-
     window.addEventListener("resize", this.handleResize);
 
     this.downloadSucceed();
@@ -693,56 +691,26 @@ export default {
     this.handleResize();
     this.order = this.$route.params.order ? this.$route.params.order : 1;
     this.loadingPlay = true;
-
-    ipcRenderer.on("downloadFailed", (event, arg) => {
-      this.downloadingVideo = this.downloadingVideo.filter(
-        (item) => item !== arg._id
-      );
-      err.err("កំរិតវីដេអូនេះមិនអាចទាញយកបានទេ សូមធ្វើការជ្រើសរើសម្ដងទៀត", 2);
-    });
-
-    ipcRenderer.on("downloadComplete", (event, arg) => {
-      let downloadingStorage = localStorage.getItem("downloadingStorage");
-      if (downloadingStorage) {
-        downloadingStorage = JSON.parse(
-          localStorage.getItem("downloadingStorage")
-        );
-
-        const index = downloadingStorage.indexOf(arg._id);
-        if (index > -1) {
-          downloadingStorage.splice(index, 1);
-        }
-
-        localStorage.setItem(
-          "downloadingStorage",
-          JSON.stringify(downloadingStorage)
-        );
-      }
-      this.downloadSucceed(arg);
-      this.getDownloading();
-    }),
-      this.getCourseDetail({
-        courseId: this.$route.params.courseId,
-        order: this.order,
-        type: "1",
-      }).then(() => {
-        this.courseDetail.list.filter((item) => {
-          if (item.order === this.order) {
-            if (this.isDownloadedExist(item).length) {
-              this.videoPlay = this.isDownloadedExist(item)[0];
-              this.addLastWatch(this.videoPlay);
-              ipcRenderer.send("nextDownload", this.videoPlay);
-            } else {
-              ipcRenderer.send("youtubeVideo", item.video_youtube);
-              this.videoPlay = item;
-              this.addLastWatch(this.videoPlay);
-              this.lessonView(this.videoPlay._id).then((response) => {
-                this.documents = response;
-              });
-            }
+    this.getCourseDetail({
+      courseId: this.$route.params.courseId,
+      order: this.order,
+      type: "1",
+    }).then(() => {
+      this.courseDetail.list.filter((item) => {
+        if (item.order === this.order) {
+          if (this.isDownloadedExist(item).length) {
+            this.videoPlay = this.isDownloadedExist(item)[0];
+            this.addLastWatch(this.videoPlay);
+          } else {
+            this.videoPlay = item;
+            this.addLastWatch(this.videoPlay);
+            this.lessonView(this.videoPlay._id).then((response) => {
+              this.documents = response;
+            });
           }
-        });
+        }
       });
+    });
     this.loadingPlay = false;
   },
 };

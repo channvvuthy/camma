@@ -297,7 +297,7 @@ export default {
 
 .percentage {
   height: 3px;
-  background: #fffffff;
+  background: #ffffff;
   box-shadow: none;
 }
 
