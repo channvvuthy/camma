@@ -33,9 +33,14 @@ export default {
     teacher: {},
     downloadDetails: [],
     videoActive: {},
+    subject: {},
   },
 
   mutations: {
+    getFilter(state, payload) {
+      state.subject = payload.subject;
+      state.courses.grade = payload.department;
+    },
     getVideo(state, payload) {
       state.videoActive = payload;
     },
@@ -177,11 +182,11 @@ export default {
               "&s=" +
               this.state.course.s
           )
-          .then((response) => {
+          .then((res) => {
             commit("loadingVideo", false);
-            dispatch("getVideo", response.data.data);
-            if (response.data.status && response.data.status === 2) {
-              err.err(response.data.msg);
+            dispatch("getVideo", res.data.data);
+            if (res.data.status && res.data.status === 2) {
+              err.err(res.data.msg);
             }
           })
           .catch((err) => {
@@ -204,16 +209,16 @@ export default {
               "&s=" +
               this.state.course.s
           )
-          .then((response) => {
+          .then((res) => {
             commit("pagesLoading", false);
 
-            if (response.data.status && response.data.status === 2) {
-              err.err(response.data.msg);
+            if (res.data.status && res.data.status === 2) {
+              err.err(res.data.msg);
             }
 
-            resolve(response.data.data.lesson);
+            resolve(res.data.data.lesson);
 
-            dispatch("loadMoreVideo", response.data.data.lesson);
+            dispatch("loadMoreVideo", res.data.data.lesson);
           })
           .catch((err) => {
             commit("pagesLoading", false);
@@ -237,14 +242,14 @@ export default {
             "&grade_id=" +
             this.state.course.gradeID
         )
-        .then((response) => {
+        .then((res) => {
           commit("loadingMyCourse", false);
 
-          if (response.data.status && response.data.status === 2) {
-            err.err(response.data.msg);
+          if (res.data.status && res.data.status === 2) {
+            err.err(res.data.msg);
           }
 
-          dispatch("getMyCourse", response.data.data);
+          dispatch("getMyCourse", res.data.data);
         })
         .catch(() => {
           commit("loadingMyCourse", false);
@@ -268,14 +273,14 @@ export default {
               "&order=" +
               params.order
           )
-          .then((response) => {
+          .then((res) => {
             commit("getLoadingCourseDetail", false);
 
-            if (response.data.status && response.data.status === 2) {
-              err.err(response.data.msg);
+            if (res.data.status && res.data.status === 2) {
+              err.err(res.data.msg);
             }
 
-            dispatch("gettingCourseDetail", response.data.data);
+            dispatch("gettingCourseDetail", res.data.data);
             resolve();
           })
           .catch(() => {
@@ -295,12 +300,12 @@ export default {
               "&order=" +
               params.order
           )
-          .then((response) => {
+          .then((res) => {
             commit("getLoadingCourseByScroll", false);
-            commit("gettingCourseByScroll", response.data.data);
+            commit("gettingCourseByScroll", res.data.data);
 
-            if (response.data.status && response.data.status === 2) {
-              err.err(response.data.msg);
+            if (res.data.status && res.data.status === 2) {
+              err.err(res.data.msg);
             }
 
             resolve();
@@ -316,11 +321,11 @@ export default {
       return new Promise((resolve, reject) => {
         axios
           .get(config.apiUrl + "lesson/video/view?video_id=" + video_id)
-          .then((response) => {
-            if (response.data.status && response.data.status === 2) {
-              err.err(response.data.msg);
+          .then((res) => {
+            if (res.data.status && res.data.status === 2) {
+              err.err(res.data.msg);
             }
-            resolve(response.data.data.pdf);
+            resolve(res.data.data.pdf);
           })
           .catch((err) => {
             reject(err);
@@ -354,14 +359,14 @@ export default {
               "&grade_id=" +
               this.state.course.gradeID
           )
-          .then((response) => {
-            if (response.data.status && response.data.status === 2) {
-              err.err(response.data.msg);
+          .then((res) => {
+            if (res.data.status && res.data.status === 2) {
+              err.err(res.data.msg);
             }
 
             commit("gettingVideoCourse", false);
-            commit("videoCourseList", response.data.data);
-            resolve(response.data.data);
+            commit("videoCourseList", res.data.data);
+            resolve(res.data.data);
           })
           .catch((err) => {
             commit("gettingVideoCourse", false);
@@ -383,14 +388,14 @@ export default {
               "&p=" +
               page
           )
-          .then((response) => {
-            if (response.data.status && response.data.status === 2) {
-              err.err(response.data.msg);
+          .then((res) => {
+            if (res.data.status && res.data.status === 2) {
+              err.err(res.data.msg);
             }
 
             commit("gettingVideoCoursePagination", false);
-            commit("videoCourseListPagination", response.data.data);
-            resolve(response.data.data);
+            commit("videoCourseListPagination", res.data.data);
+            resolve(res.data.data);
           })
           .catch((err) => {
             commit("gettingVideoCoursePagination", false);
@@ -399,7 +404,7 @@ export default {
       });
     },
 
-    getEbook({ commit }, page = 1) {
+    getEbook({ commit }, payload) {
       commit("gettingEbook", true);
       return new Promise((resolve, reject) => {
         if (localStorage.getItem("book")) {
@@ -408,22 +413,25 @@ export default {
           resolve(JSON.parse(localStorage.getItem("book")));
         } else {
           axios
-            .get(
-              config.apiUrl +
-                "course/member?s=" +
+            .get(config.apiUrl +
+                "course/e-book?s=" +
                 this.state.course.s +
+                "&grade_id=" +
+                payload.grade_id +
                 "&p=" +
-                page
+                payload.p +
+                "&subject_id=" +
+                payload.subject_id
             )
-            .then((response) => {
-              if (response.data.status && response.data.status === 2) {
-                err.err(response.data.msg);
+            .then((res) => {
+              if (res.data.status && res.data.status === 2) {
+                err.err(res.data.msg);
               }
 
               commit("gettingEbook", false);
-              commit("getBook", response.data.data);
-              localStorage.setItem("books", JSON.stringify(response.data.data));
-              resolve(response.data.data);
+              commit("getBook", res.data.data);
+              localStorage.setItem("books", JSON.stringify(res.data.data));
+              resolve(res.data.data);
             })
             .catch((err) => {
               commit("gettingEbook", false);
@@ -435,29 +443,30 @@ export default {
     afterAddToCart({ commit }, course_id) {
       commit("afterAddToCart", course_id);
     },
-    getCourseEbook({ commit }, params) {
+    getCourseEbook({ commit }, payload) {
       commit("gettingCourseEbook", true);
       return new Promise((resolve, reject) => {
         axios
           .get(
             config.apiUrl +
               "course/e-book?s=" +
-              this.state.course.s +
+              payload.s +
               "&grade_id=" +
-              this.state.course.gradeID +
+              payload.grade_id +
               "&p=" +
-              params.page +
-              "&member_id=" +
-              params.member_id
+              payload.p +
+              "&subject_id=" +
+              payload.subject_id
+              
           )
-          .then((response) => {
-            if (response.data.status && response.data.status === 2) {
-              err.err(response.data.msg);
+          .then((res) => {
+            if (res.data.status && res.data.status === 2) {
+              err.err(res.data.msg);
             }
 
             commit("gettingCourseEbook", false);
-            commit("courseEbook", response.data.data);
-            resolve(response.data.data);
+            commit("courseEbook", res.data.data);
+            resolve(res.data.data);
           })
           .catch((err) => {
             commit("gettingCourseEbook", false);
@@ -466,29 +475,29 @@ export default {
       });
     },
 
-    getCourseEbookPagination({ commit }, params) {
+    getCourseEbookPagination({ commit }, payload) {
       commit("gettingCourseEbookPagination", true);
       return new Promise((resolve, reject) => {
         axios
           .get(
             config.apiUrl +
               "course/e-book?s=" +
-              this.state.course.s +
+              payload.s +
               "&grade_id=" +
-              this.state.course.gradeID +
+              payload.grade_id +
               "&p=" +
-              params.page +
-              "&member_id=" +
-              params.member_id
+              payload.p +
+              "&subject_id=" +
+              payload.subject_id
           )
-          .then((response) => {
-            if (response.data.status && response.data.status === 2) {
-              err.err(response.data.msg);
+          .then((res) => {
+            if (res.data.status && res.data.status === 2) {
+              err.err(res.data.msg);
             }
 
             commit("gettingCourseEbookPagination", false);
-            commit("courseEbookPagination", response.data.data);
-            resolve(response.data.data);
+            commit("courseEbookPagination", res.data.data);
+            resolve(res.data.data);
           })
           .catch((err) => {
             commit("gettingCourseEbookPagination", false);
@@ -507,14 +516,14 @@ export default {
               "&order=" +
               params.order
           )
-          .then((response) => {
-            if (response.data.status && response.data.status === 2) {
-              err.err(response.data.msg);
+          .then((res) => {
+            if (res.data.status && res.data.status === 2) {
+              err.err(res.data.msg);
             }
 
             commit("getReadingBook", false);
-            commit("readingBook", response.data.data);
-            resolve(response.data.data);
+            commit("readingBook", res.data.data);
+            resolve(res.data.data);
           })
           .catch((err) => {
             commit("getReadingBook", false);
@@ -533,6 +542,20 @@ export default {
         axios
           .get(config.apiUrl + `lesson/video?course_id=${payload}`)
           .then((res) => {
+            resolve(res.data);
+          })
+          .catch((err) => {
+            reject(err);
+          });
+      });
+    },
+
+    getFilter({ commit }) {
+      return new Promise((resolve, reject) => {
+        axios
+          .get(config.apiUrl + "book/filter")
+          .then((res) => {
+            commit("getFilter", res.data.data);
             resolve(res.data);
           })
           .catch((err) => {

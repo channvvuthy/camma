@@ -1,95 +1,54 @@
 <template>
-  <div class="px-5 pt-5">
-    <div class="flex font-khmer_os text-14px mb-4" v-if="!loadingEbook">
-      <div
-        class="
-          cursor-pointer
-          bg-gray-200
-          rounded-full
-          px-2
-          py-1
-          mr-3
-          border border-gray-300
-          hover:bg-gray-300
-        "
-        :class="member_id === '' ? 'bg-gray-300' : ''"
-        @click="filterBook('')"
-      >
-        សៀវភៅ
-      </div>
-      <div
-        class="
-          cursor-pointer
-          bg-gray-200
-          rounded-full
-          px-2
-          py-1
-          mr-3
-          border border-gray-300
-          hover:bg-gray-300
-        "
-        :class="member_id === book._id ? 'bg-gray-300' : ''"
-        v-for="(book, key) in bookNav"
-        :key="key"
-        @click="filterBook(book._id)"
-      >
-        {{ book.title }}
+  <div class="px-5 pt-5 font-khmer_os text-sm">
+    <div class="flex w-3/4">
+      <div class="flex border-b h-10 w-full mb-5">
+        <input
+          type="text"
+          class="h-10 rounded w-full outline-none bg-transparent"
+          placeholder="ស្វែងរកនៅទីនេះ"
+          v-model="payload.s"
+          v-on:keyup.enter="filterBook"
+        />
+        <FilterInput :title="department" @filterInput="departmentFilter()" />
+        <div class="w-10"></div>
+        <FilterInput :title="subject" @filterInput="subjectFilter()" />
       </div>
     </div>
-    <div
-      v-if="loadingEbookCourse"
-      class="flex justify-center items-center h-screen relative -top-5"
-    >
-      <h1 class="text-sm font-semibold font-khmer_os relative -top-28">
-        <loading></loading>
-      </h1>
-    </div>
-
-    <div class="h-screen pb-36" v-else>
+    <div class="h-screen pb-36">
       <div
-        class="h-screen flex justify-center items-center"
-        v-if="ebookCourses.length <= 0"
-      >
-        <img src="/icon/Empty/Empty.svg" class="w-64 mb-5 relative -top-28" />
-      </div>
-      <div
-        class="
-          grid grid-cols-4
-          gap-4
-          font-khmer_os
-          pt-2
-          overflow-y-scroll
-          h-full
-        "
+        class="font-khmer_os pt-2 overflow-y-scroll h-full"
         @scroll="onScroll"
         id="feed"
       >
-        <div v-for="(ebook, key) in ebookCourses" :key="key">
+        <div class="grid grid-cols-4 gap-4">
           <div
-            class="cursor-pointer relative"
-            :class="key === ebookCourses.length - 1 ? 'pb-16' : ''"
+            v-for="(ebook, key) in ebookCourses"
+            :key="key"
+            class="bg-white shadow pb-4"
           >
-            <div class="absolute right-0 top-0" v-if="ebook.is_new">
+            <div class="cursor-pointer relative">
+              <div class="absolute right-0 top-0" v-if="ebook.is_new">
+                <img
+                  src="/icon/New/New.png"
+                  class="w-10"
+                  style="margin-top: -8px; margin-right: -8px"
+                />
+              </div>
               <img
-                src="/icon/New/New.png"
-                class="w-10"
-                style="margin-top: -8px; margin-right: -8px"
+                :src="ebook.thumbnail"
+                @click="openView(ebook)"
+                class="cursor-pointer"
               />
-            </div>
-            <img
-              :src="ebook.thumbnail"
-              @click="openView(ebook)"
-              class="cursor-pointer"
-            />
-            <div
-              class="flex justify-between items-center mt-4 w-full px-2"
-              v-if="member_id === ''"
-            >
-              <div class="text-14px" @click="openView(ebook)">
-                {{ cutString(ebook.des,50) }}
+              <div class="flex justify-between items-center mt-4 w-full px-4">
+                <div class="text-14px" @click="openView(ebook)">
+                  {{ cutString(ebook.title, 50) }}
+                </div>
               </div>
             </div>
           </div>
+        </div>
+        <div v-if="ebookCourses.length == 0" class="text-custom text-base flex items-center justify-center h-full">
+            មិនមានទិន្ន័យ
         </div>
       </div>
     </div>
@@ -109,6 +68,19 @@
       @buyingRead="buyingRead($event)"
     />
     <Cart v-if="showingCart" @closeCart="closeCart" />
+    <GradeModal
+      :moalTitle="department"
+      v-if="isDepartmentFilter"
+      @closeModal="departmentFilter()"
+      @gradeSelected="gradeSelected($event)"
+    />
+    <SubjectModal
+      :moalTitle="subject"
+      v-if="isSubjectFilter"
+      @subjectSelected="subjectSelected($event)"
+      @closeModal="subjectFilter()"
+    />
+    <LoadingOverlay v-if="loading"/>
   </div>
 </template>
 
@@ -117,15 +89,21 @@ import ViewBook from "./components/View";
 import ReadingBook from "./components/Read";
 import { mapState, mapActions } from "vuex";
 import Cart from "./../MyCourse/components/Cart";
-import Loading from "./../../components/Loading";
-import helper from "./../../helper/helper"
+import helper from "./../../helper/helper";
+import FilterInput from "./components/FilterInput.vue";
+import GradeModal from "./components/GradeModal.vue";
+import SubjectModal from "./components/SubjectModal.vue";
+import LoadingOverlay from "../Modal/LoadingOverlay.vue";
 export default {
   name: "Book",
   components: {
     ViewBook,
     ReadingBook,
     Cart,
-    Loading,
+    FilterInput,
+    GradeModal,
+    SubjectModal,
+    LoadingOverlay
   },
   data() {
     return {
@@ -133,6 +111,8 @@ export default {
         width: 0,
         height: 0,
       },
+      isDepartmentFilter: false,
+      isSubjectFilter: false,
       showView: false,
       showReading: false,
       showingCart: false,
@@ -144,6 +124,14 @@ export default {
       title: "",
       cartId: "",
       noResult: false,
+      department: "នាយកដ្ឋាន",
+      subject: "រើសប្រភេទ",
+      payload: {
+        subject_id: "",
+        grade_id: "",
+        p: 1,
+        s: "",
+      },
     };
   },
   computed: {
@@ -179,10 +167,38 @@ export default {
       "getCourseEbookPagination",
       "readBook",
       "setLessonTitle",
+      "getFilter",
     ]),
     ...mapActions("cart", ["addCart", "cartAlert"]),
-    cutString(string, limit){
-        return helper.cutString(string,limit)
+    getEbookFilter(){
+        this.loading = true
+        this.getCourseEbook(this.payload).then(()=>{
+            this.loading = false
+        })
+    },
+    gradeSelected(department) {
+      this.payload.p = 1;
+      this.departmentFilter();
+      this.department = department.name || "នាយកដ្ឋាន";
+      this.payload.grade_id = department._id || "";
+      this.getEbookFilter();
+    },
+    subjectSelected(subject) {
+      this.payload.p = 1;
+      this.subjectFilter();
+      this.subject = subject.name || "រើសប្រភេទ";
+      this.payload.subject_id = subject._id || "";
+
+      this.getEbookFilter();
+    },
+    departmentFilter() {
+      this.isDepartmentFilter = !this.isDepartmentFilter;
+    },
+    subjectFilter() {
+      this.isSubjectFilter = !this.isSubjectFilter;
+    },
+    cutString(string, limit) {
+      return helper.cutString(string, limit);
     },
     handleResize() {
       this.window.width = window.innerWidth;
@@ -192,13 +208,8 @@ export default {
       this.showReading = false;
     },
 
-    filterBook(member_id) {
-      this.page = 1;
-      this.member_id = member_id;
-      this.getCourseEbook({
-        page: this.page,
-        member_id,
-      });
+    filterBook() {
+      this.getCourseEbook(this.payload);
     },
 
     addToCart(course_id) {
@@ -247,12 +258,9 @@ export default {
     },
     onScroll({ target: { scrollTop, clientHeight, scrollHeight } }) {
       if (scrollTop + clientHeight >= scrollHeight) {
-        this.page++;
+        this.payload.p++;
         if (!this.noResult) {
-          this.getCourseEbookPagination({
-            page: this.page,
-            member_id: this.member_id,
-          }).then((response) => {
+          this.getCourseEbookPagination(this.payload).then((response) => {
             if (response.length <= 0) {
               this.noResult = true;
             }
@@ -269,11 +277,9 @@ export default {
     this.handleResize();
 
     this.getEbook(this.page).then(() => {
-      this.getCourseEbook({
-        page: this.page,
-        member_id: "",
-      });
+      this.getCourseEbook(this.payload);
     });
+    this.getFilter();
   },
 
   watch: {
@@ -284,10 +290,7 @@ export default {
       });
     },
     gradeID: function () {
-      this.getCourseEbook({
-        page: this.page,
-        member_id: this.member_id,
-      });
+      this.getCourseEbook(this.payload);
     },
   },
 };
