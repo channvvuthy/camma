@@ -41,7 +41,7 @@
                     ? icons.video.hover
                     : icons.video.original
                 "
-              ></VideoIcon>
+              />
             </div>
             <p class="mt-2">វីដេអូ</p>
           </li>
@@ -57,7 +57,7 @@
                 :fill="
                   $route.name == 'book' ? icons.book.hover : icons.book.original
                 "
-              ></BookIcon>
+              />
             </div>
             <p class="mt-2">សៀវភៅ</p>
           </li>
@@ -74,7 +74,7 @@
                 :fill="
                   $route.name == 'test' ? icons.test.hover : icons.test.original
                 "
-              ></TestIcon>
+              />
             </div>
             <p class="mt-2">តេស្ត</p>
           </li>
@@ -206,7 +206,7 @@ export default {
   methods: {
     ...mapActions("cart", ["getCart"]),
     showCartForm() {
-      this.showCart = true;
+      this.$router.push("discuss");
     },
     closeNotification() {
       this.showNotification = false;
