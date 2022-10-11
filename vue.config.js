@@ -34,7 +34,6 @@ module.exports = {
                 },
                 "mac":{
                     "target": [
-                        "dmg",
                         "zip",
                         "pkg"
                     ],

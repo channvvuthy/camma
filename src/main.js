@@ -2,7 +2,7 @@ import Vue from "vue";
 import App from "./App.vue";
 import router from "./router";
 import store from "./store";
-import "./assets/css/tailwind.css";
+// import "./assets/css/tailwind.css";
 import axios from "axios";
 import config from "./config";
 import helper from "./helper/helper";
