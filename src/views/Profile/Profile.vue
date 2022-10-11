@@ -71,6 +71,7 @@
           <EditUserIcon />
         </div>
         <input
+          disabled
           type="text"
           v-model="stProfile.first_name"
           class="
@@ -90,6 +91,7 @@
           <EditUserIcon />
         </div>
         <input
+          disabled
           type="text"
           v-model="stProfile.last_name"
           class="
@@ -135,7 +137,7 @@
           <CalendarIcon />
         </div>
         <input
-          type="date"
+          disabled
           class="
             border-b border-gray-200
             py-2
@@ -165,7 +167,7 @@
           "
           @click="showAllProvince"
         >
-          {{ stProfile.province.name || "ខេត្ត"}}
+          {{ stProfile.province.name || "ខេត្ត" }}
         </button>
         <img
           src="/ajax-loader.gif"
