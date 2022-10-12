@@ -75,7 +75,7 @@
           type="text"
           v-model="stProfile.first_name"
           class="
-            border-b border-gray-200
+            border-b border-gray-200 bg-transparent
             py-2
             focus:outline-none
             w-full
@@ -95,7 +95,7 @@
           type="text"
           v-model="stProfile.last_name"
           class="
-            border-b border-gray-200
+            border-b border-gray-200 bg-transparent
             py-2
             focus:outline-none
             w-full
@@ -139,7 +139,7 @@
         <input
           disabled
           class="
-            border-b border-gray-200
+            border-b border-gray-200 bg-transparent
             py-2
             focus:outline-none
             w-full
