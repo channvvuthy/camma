@@ -9,7 +9,7 @@
       </h1>
     </div>
     <div
-      class="overflow-y-scroll pt-3 -mt-3"
+      class="overflow-y-scroll pt-3 -mt-3 pb-56"
       style="max-height: 100vh"
       @scroll="onScroll"
       id="videoList"
@@ -17,11 +17,10 @@
     >
       <div
         class="h-screen flex justify-center items-center"
-        v-if="videoCourses.length <= 0"
-      >
+        v-if="videoCourses.length <= 0">
         <img src="/icon/Empty/Empty.svg" class="w-64 mb-5 relative -top-28" />
       </div>
-      <div class="grid grid-cols-3 gap-4 mb-40">
+      <div class="grid grid-cols-3 gap-4">
         <div
           class="flex-col relative cursor-pointer bg-white shadow pb-4"
           v-for="(video, key) in videoCourses"
@@ -58,44 +57,31 @@
               </div>
               <div
                 class="
-                  absolute
+                  mt-10
                   flex
                   justify-start
                   items-center
                   font-khmer_os
-                  -bottom-1
-                  mb-17
                   left-0
                   bg-white
                   w-full
                   bg-opacity-60
-                  h-8
                 "
               >
-                <img
-                  :src="video.teacher.photo"
-                  alt="teacher"
-                  class="rounded-full h-10 shadow ml-3"
-                />
-                <span class="text-14px ml-2">{{ video.teacher.name }}</span>
-              </div>
-            </div>
-            <div class="flex justify-between">
-              <div class="flex-cols">
-                <div
-                  class="
-                    font-khmer_os
-                    text-sm
-                    px-5
-                    mt-3
-                    font-semibold
-                    text-gray-700
-                  "
-                  v-html="
-                    cutString(video.title, window.width <= 1366 ? 30 : 45)
-                  "
-                  @click="goToPlayList(video)"
-                ></div>
+                <div class="flex"  @click="goToPlayList(video)">
+                  <div>
+                    <div
+                      class="h-14 w-14 rounded-full ml-3 bg-gray-200 bg-center border-custom border"
+                      :style="{
+                        backgroundImage: `url(${video.teacher.photo})`,
+                      }"
+                    ></div>
+                  </div>
+                  <div class="text-sm ml-3">
+                    <div>{{ cutString(video.title, 40) }}</div>
+                    <div class="text-nav mt-1">{{ video.teacher.name }}</div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

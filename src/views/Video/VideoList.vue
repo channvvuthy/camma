@@ -89,10 +89,11 @@
                       class="
                         w-12
                         h-12
-                        border border-gray-50
+                        border border-custom
                         rounded-full
                         mt-4
                         bg-center
+                        bg-gray-200
                       "
                       :style="{
                         backgroundImage: `url(${video.video.teacher.photo})`,

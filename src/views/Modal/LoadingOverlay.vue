@@ -34,6 +34,13 @@
 </template>
 <script>
 export default {
+  props: {
+    isSlot: {
+      default: function () {
+        return false;
+      },
+    },
+  },
   methods: {
     dismiss(event) {
       if (event.target.id == "dismiss") {
