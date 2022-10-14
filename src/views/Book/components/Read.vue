@@ -1,317 +1,195 @@
 <template>
-  <div class="fixed z-50 inset-0 overflow-y-auto">
-    <div
-      class="
-        flex
-        items-end
-        justify-center
-        min-h-screen
-        text-center
-        sm:block sm:p-0
-      "
-    >
-      <div class="fixed inset-0 transition-opacity" aria-hidden="true">
-        <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
-      </div>
-      <span
-        class="hidden sm:inline-block sm:align-middle sm:h-screen"
-        aria-hidden="true"
-        >&#8203;</span
-      >
+  <div
+    class="
+      fixed
+      flex flex-col
+      items-center
+      justify-center
+      w-full
+      h-full
+      left-0
+      top-0
+      z-50
+      bg-black bg-opacity-80
+    "
+    id="dismiss"
+    @click="dismiss"
+  >
+    <div class="bg-white relative" style="width: 595px; z-index: 3000">
       <div
         class="
-          inline-block
-          align-bottom
-          text-left
-          transform
-          transition-all
-          sm:align-middle
+          cursor-pointer
+          absolute
+          w-8
+          h-8
+          bg-custom
+          rounded-full
+          flex
+          items-center
+          justify-center
+          -right-5
+          -top-5
+          z-50
         "
-        :class="`w-${size}`"
+        @click="
+          () => {
+            this.$emit('closeReading', true);
+          }
+        "
       >
-        <div class="bg-white font-khmer_os rounded-xl">
-          <!--Header-->
-          <div class="flex justify-between items-center p-3">
-            <div class="flex-1 text-center">
-              {{ LessonTitle }}
-            </div>
-            <div class="flex">
-              <div
-                class="cursor-pointer mr-5 opacity-60"
-                @click="openFullscreen()"
-                title="Full Screen Or Press Esc to Exit"
-              >
-                <FullScreenIcon :size="15" />
-              </div>
-              <div class="cursor-pointer opacity-60 mr-3" @click="showListData">
-                <ListIcon :width="15" :height="15" />
-              </div>
-              <div
-                class="cursor-pointer -top-5 -right-5 bg-custom absolute h-8 w-8 flex items-center justify-center rounded-full"
-                @click="closeReading"
-              >
-                <CloseIcon fill="#FFF" :size="22" />
-              </div>
-            </div>
+        <CloseIcon :size="20" fill="#FFF" />
+      </div>
+    </div>
+    <div
+      class="bg-white rounded-xl h-3/4 overflow-y-scroll relative"
+      style="width: 595px"
+      id="pdf"
+    >
+      <div
+        class="
+          h-12
+          border-b
+          rounded-t-xl
+          flex
+          items-center
+          px-5
+          justify-between
+          sticky
+          top-0
+          z-50
+          bg-white
+        "
+      >
+        <div :title="title">{{ cutString(title, 65) }}</div>
+        <div class="flex items-center">
+          <div class="cursor-pointer" @click="toggleFullScreen">
+            <FullScreenIcon :size="18" />
           </div>
-          <hr />
-          <!--Body-->
-          <div style="overflow-y: scroll" class="h-85" id="fullScreen">
-            <div v-if="!showList">
-              <div
-                v-if="loading"
-                class="flex justify-center items-center"
-                :style="
-                  window.width <= '1366' ? 'height:600px;' : 'height:800px;'
-                "
-              >
-                <Loading />
-              </div>
-              <div v-else>
-                <div v-if="pdfFile && !loading">
-                  <pdf
-                    v-for="i in numPages"
-                    :key="i"
-                    :src="pdfFile"
-                    @error="log"
-                    :page="i"
-                  ></pdf>
-                </div>
-                <div
-                  class="flex justify-center items-center h-85"
-                  v-if="!books.is_buy && !books.book.price.year"
-                >
-                  <div class="focus:outline-none">
-                    <div>សូមធ្វើការទិញថ្នាក់នេះជាមុនសិន</div>
-                    <button
-                      class="
-                        flex
-                        justify-center
-                        text-center
-                        hover:opacity-80
-                        focus:outline-none
-                        m-auto
-                        items-center
-                        bg-custom
-                        px-3
-                        py-2
-                        mt-3
-                        text-white
-                        rounded-full
-                      "
-                      @click="buy(books.book._id)"
-                    >
-                      <CartIcon />
-                      <span class="ml-1">ទិញថ្នាក់នេះ</span>
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div v-else>
-              <ul>
-                <li
-                  class="
-                    flex
-                    cursor-pointer
-                    text-13px
-                    border border-gray-200 border-t-0 border-l-0 border-r-0
-                    py-3
-                    px-3
-                  "
-                  v-for="(book, key) in books.list"
-                  :key="key"
-                  @click="readingCourse(book, books.is_buy)"
-                >
-                  <div class="mr-3">
-                    <template v-if="books.is_buy === 1">
-                      <CheckIcon fill="#009e03" :width="20" :height="20" />
-                    </template>
-                    <template v-else>
-                      <XIcon
-                        fill="#ee3d3c"
-                        :width="20"
-                        :height="20"
-                        v-if="!book.free_watch"
-                      />
-                      <CheckIcon
-                        fill="#009e03"
-                        :width="20"
-                        :height="20"
-                        v-else
-                      />
-                    </template>
-                  </div>
-                  <div>{{ book.title }}</div>
-                </li>
-              </ul>
-            </div>
+          <div class="w-5"></div>
+          <div class="cursor-pointer" @click="showListBook()">
+            <ListIcon :width="20" :height="20" />
           </div>
         </div>
       </div>
+      <div class="w-full z-50 sticky top-12 bg-white" v-if="isList">
+        <ul class="px-5">
+          <li
+            v-for="(book, index) in books.list"
+            :key="index"
+            class="py-3 border-b cursor-pointer"
+            @click="readNewBook(book)"
+          >
+            {{ book.title }}
+          </li>
+        </ul>
+      </div>
+      <div
+        class="
+          absolute
+          top-0
+          left-0
+          w-full
+          h-full
+          flex
+          items-center
+          justify-center
+          z-50
+        "
+        v-if="loading"
+      >
+        <Loading />
+      </div>
+      <vue-pdf-embed
+        :source="pdfUrl"
+        @loaded="loaded"
+        @rendered="rendered"
+        @rendering-failed="renderingFailed"
+      />
     </div>
   </div>
 </template>
 
 <script>
+// import VuePdfEmbed from "vue-pdf-embed";
+
+// OR THE FOLLOWING IMPORT FOR VUE 2
+import VuePdfEmbed from "vue-pdf-embed/dist/vue2-pdf-embed";
 import CloseIcon from "./../../../components/CloseIcon.vue";
-import FullScreenIcon from "./../../../components/FullScreenIcon";
+import FullScreenIcon from "./../../../components/FullScreenIcon.vue";
 import ListIcon from "./../../../components/ListIcon.vue";
-import CheckIcon from "./../../../components/CheckIcon.vue";
-import XIcon from "./../../../components/XIcon.vue";
-import { mapActions, mapState } from "vuex";
-import pdf from "vue-pdf";
-import CartIcon from "./../../MyCourse/components/CartIcon";
-import Loading from "./../../../components/Loading";
+import Loading from "./../../../components/Loading.vue";
+import helper from "./../../../helper/helper";
+
 export default {
-  name: "ReadingBook",
   components: {
-    CartIcon,
+    VuePdfEmbed,
     CloseIcon,
-    ListIcon,
-    CheckIcon,
-    XIcon,
-    pdf,
-    Loading,
     FullScreenIcon,
-  },
-  data() {
-    return {
-      window: {
-        width: 0,
-        height: 0,
-      },
-      numPages: undefined,
-      loading: false,
-      showList: false,
-      pdfFile: "",
-      currentPage: 0,
-      pageCount: 0,
-      watchedPdfFile: null,
-    };
+    ListIcon,
+    Loading,
   },
   props: {
-    size: {
-      type: String,
-      default: () => {
-        return "2/5";
-      },
-    },
     books: {
-      type: Object,
       default: function () {
         return {};
       },
     },
   },
-  computed: {
-    ...mapState("course", ["LessonTitle"]),
-  },
-  destroyed() {
-    window.removeEventListener("resize", this.handleResize);
+  data() {
+    return {
+      pdfUrl: "",
+      title: "",
+      isList: false,
+      loading: false,
+    };
   },
   methods: {
-    ...mapActions("course", ["setLessonTitle"]),
-    ...mapActions("cart", ["addCart"]),
-
-    handleResize() {
-      this.window.width = window.innerWidth;
-      this.window.height = window.innerHeight;
+    renderingFailed() {
+      console.log("renderingFailed");
     },
-    openFullscreen() {
-      var elem = document.getElementById("fullScreen");
-      if (elem.requestFullscreen) {
-        elem.requestFullscreen();
-      } else if (elem.webkitRequestFullscreen) {
-        /* Safari */
-        elem.webkitRequestFullscreen();
-      } else if (elem.msRequestFullscreen) {
-        /* IE11 */
-        elem.msRequestFullscreen();
+    loaded() {
+      this.loading = false;
+    },
+    rendered() {
+      this.loading = false;
+    },
+    showListBook() {
+      this.isList = !this.isList;
+    },
+    readNewBook(book) {
+      this.isList = false;
+      this.pdfUrl = book.pdf_url;
+      this.title = book.title;
+    },
+    toggleFullScreen() {
+      var el = document.getElementById("pdf");
+      if (document.webkitIsFullScreen) {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        } else if (document.mozCancelFullScreen) {
+          document.mozCancelFullScreen();
+        } else if (document.webkitExitFullscreen) {
+          document.webkitExitFullscreen();
+        }
+      } else {
+        el.webkitRequestFullScreen();
       }
     },
-    readingCourse(book, is_buy) {
-      this.loading = true;
-      if (!is_buy && !book.free_watch) {
-        return false;
-      }
-      this.setLessonTitle(book.title);
-      this.watchedPdfFile = book.pdf_url;
-
-      this.pdfFile = pdf.createLoadingTask(book.pdf_url);
-      this.pdfFile.promise.then((pdf) => {
-        this.numPages = pdf.numPages;
-        this.loading = false;
-      });
-      this.showList = false;
-    },
-    closeReading() {
-      this.$emit("closeReading");
-    },
-    showListData() {
-      this.showList = !this.showList;
-      if (!this.showList) {
-        this.loading = true;
-
-        this.pdfFile = pdf.createLoadingTask(this.watchedPdfFile);
-        this.pdfFile.promise.then((pdf) => {
-          this.numPages = pdf.numPages;
-          this.loading = false;
-        });
+    cutString(text, limit) {
+      if (text) {
+        return helper.cutString(text, limit);
       }
     },
-    closeMessage($event) {
-      this.$emit("closeMessage", $event);
-    },
-
-    showCart($event) {
-      this.$emit("showCart", $event);
-    },
-    buy(book_id) {
-      this.addCart(book_id).then(() => {
-        this.$emit("buyingRead", book_id);
-      });
-    },
-    log() {
-      console.log(this.title);
+    dismiss(event) {
+      if (event.target.id == "dismiss") {
+        this.$emit("closeReading", true);
+      }
     },
   },
-  beforeDestroy() {},
-
   created() {
     this.loading = true;
-    window.addEventListener("resize", this.handleResize);
-    this.handleResize();
-
-    let pdfFile;
-    if (this.books.is_buy === 1) {
-      pdfFile = this.books.list
-        .filter((item) => item)
-        .map((item) => item.pdf_url)[0];
-      this.title = this.books.list
-        .filter((item) => item)
-        .map((item) => item.title)[0];
-    } else {
-      pdfFile = this.books.list
-        .filter((item) => item.free_watch === 1)
-        .map((item) => item.pdf_url)[0];
-      this.title = this.books.list
-        .filter((item) => item.free_watch === 1)
-        .map((item) => item.title)[0];
-    }
-
-    if (pdfFile === undefined) {
-      this.loading = false;
-      return false;
-    }
-    this.watchedPdfFile = pdfFile;
-
-    this.pdfFile = pdf.createLoadingTask(pdfFile);
-    this.pdfFile.promise.then((pdf) => {
-      this.numPages = pdf.numPages;
-      this.loading = false;
-    });
+    this.pdfUrl = this.books.list.map((item) => item.pdf_url)[0];
+    this.title = this.books.list.map((item) => item.title)[0];
   },
-  destroy() {},
 };
 </script>

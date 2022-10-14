@@ -26,7 +26,6 @@
           text-sm
         "
       >
-        
         <li
           class="flex items-center hover:text-custom pointer cursor-pointer"
           :class="$route.name == 'favorite' ? 'text-custom' : ''"
@@ -72,8 +71,7 @@
                 ? icons.change_profile.hover
                 : icons.change_profile.original
             "
-          />
-          <span class="ml-2">ព័ត៌មាន​ផ្ទាល់​ខ្លួន</span>
+          /><span class="ml-2">ព័ត៌មាន​ផ្ទាល់​ខ្លួន</span>
         </li>
         <li
           class="flex items-center hover:text-custom pointer cursor-pointer"
@@ -181,7 +179,7 @@
           justify-center
         "
       >
-        <LogoutIcon></LogoutIcon>
+        <LogoutIcon/>
         <button class="focus:outline-none ml-2">ចាកចេញ</button>
       </div>
     </div>
@@ -210,7 +208,6 @@ export default {
     HelpIcon,
     LogoutIcon,
     TermAndConditionIcon,
-    
   },
   props: {
     stProfile: {
