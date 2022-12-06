@@ -55,7 +55,7 @@
                 "
                 @click="closeView"
               >
-                <CloseIcon :size="20" fill="#FFF"/>
+                <CloseIcon :size="20" fill="#FFF" />
               </div>
             </div>
             <div
@@ -68,26 +68,6 @@
                   class="m-auto"
                   style="max-width: 50%"
                 />
-                <template v-if="!alreadyInCart(view._id) && !view.is_in_cart">
-                  <div
-                    class="
-                      absolute
-                      bottom-5
-                      right-5
-                      bg-white
-                      rounded
-                      py-1
-                      px-2
-                      cursor-pointer
-                      opacity-80
-                      hover:opacity-100
-                    "
-                    v-if="view.is_buy !== 0"
-                    @click="addToCart(view._id)"
-                  >
-                    <CartIcon :width="20" :height="20" />
-                  </div>
-                </template>
               </div>
               <div
                 class="
@@ -129,7 +109,6 @@
               focus:outline-none
             "
             :disabled="loadingCart"
-            @click="addToCart(view._id)"
             v-if="view.price.year"
           >
             <span v-text="view.is_buy ? 'បន្តសុពលភាព' : 'ទិញ'"></span>
@@ -184,39 +163,13 @@ export default {
     },
   },
 
-  computed: {
-    ...mapState("cart", ["loadingCart", "cart"]),
-  },
   methods: {
-    ...mapActions("cart", ["addCart", "getCart"]),
-
-    addToCart(course_id) {
-      this.addCart(course_id).then(() => {
-        this.$emit("buyingRead", course_id);
-        this.getCart();
-      });
-    },
     closeView($event) {
       this.$emit("closeView", $event);
     },
     read(id, title) {
       this.$emit("read", { id, title });
     },
-
-    showCart($event) {
-      this.$emit("showCart", $event);
-    },
-    alreadyInCart(course_id) {
-      for (let i = 0; i < this.cart.list.length; i++) {
-        if (this.cart.list[i]._id === course_id) {
-          return true;
-        }
-      }
-      return false;
-    },
-  },
-  created() {
-    this.getCart();
   },
 };
 </script>

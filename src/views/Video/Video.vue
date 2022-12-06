@@ -17,7 +17,8 @@
     >
       <div
         class="h-screen flex justify-center items-center"
-        v-if="videoCourses.length <= 0">
+        v-if="videoCourses.length <= 0"
+      >
         <img src="/icon/Empty/Empty.svg" class="w-64 mb-5 relative -top-28" />
       </div>
       <div class="grid grid-cols-3 gap-4">
@@ -68,10 +69,17 @@
                   bg-opacity-60
                 "
               >
-                <div class="flex"  @click="goToPlayList(video)">
+                <div class="flex" @click="goToPlayList(video)">
                   <div>
                     <div
-                      class="h-14 w-14 rounded-full ml-3 bg-gray-200 bg-center border-custom border"
+                      class="
+                        h-14
+                        w-14
+                        rounded-full
+                        ml-3
+                        bg-gray-200 bg-center
+                        border-custom border
+                      "
                       :style="{
                         backgroundImage: `url(${video.teacher.photo})`,
                       }"
@@ -173,7 +181,7 @@ export default {
       return helper.cutString(text, limit);
     },
     goToPlayList(video) {
-      var order = video.last_watch.order || 1;
+      var order = video.last_watch ? video.last_watch.order : 1;
       this.loadingDetail = true;
       this.$store
         .dispatch("course/getvideoPlay", video._id)
