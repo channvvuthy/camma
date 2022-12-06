@@ -201,6 +201,7 @@
           </div>
         </template>
       </div>
+      <div class="h-72"></div>
     </div>
     <VideoADS
       v-if="showVideoAds"

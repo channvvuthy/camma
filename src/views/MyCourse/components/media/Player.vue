@@ -10,7 +10,7 @@
           class="m-auto w-full"
           ref="my_video"
           :style="{ height: video.height + 'px', width: '100%' }"
-          :poster="!url.includes('file:///') ? '/poster.png' : ''"
+          poster="/poster.png"
           autoplay="autoplay"
           controlsList="nodownload"
           @timeupdate="timeUpdate()"
@@ -361,7 +361,7 @@
         <video
           id="my_video"
           class="m-auto w-full bg-black"
-          :poster="!url.includes('file:///') ? '/poster.png' : ''"
+          poster="/poster.png"
           autoplay="autoplay"
           controlsList="nodownload"
           @timeupdate="timeUpdate()"
@@ -741,8 +741,7 @@ export default {
   watch: {
     videoActiveChange: function () {
       this.getUrl();
-      this.vid.setAttribute("src", this.url)
-
+      this.vid.setAttribute("src", this.url);
     },
   },
 };
