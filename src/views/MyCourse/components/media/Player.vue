@@ -78,9 +78,11 @@
             <MutedIcon v-else></MutedIcon>
           </button>
           <div class="text-white mr-3 flex">
-            <span id="currentTime">{{ currentTime }}</span>
-            <span>&nbsp;/&nbsp;</span>
-            <span id="currentDuration">{{ currentDuration }}</span>
+            <span id="currentTime" v-if="currentTime">{{ currentTime }}</span>
+            <span v-if="currentDuration && currentTime">&nbsp;/&nbsp;</span>
+            <span id="currentDuration" v-if="currentDuration">{{
+              currentDuration
+            }}</span>
           </div>
           <div class="w-20">
             <input
