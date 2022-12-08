@@ -127,11 +127,7 @@
                     alt=""
                     class="w-40 ml-2"
                     :id="course.video_youtube"
-                    @click="
-                      nextOrder(
-                        course.order
-                      )
-                    "
+                    @click="nextOrder(course.order)"
                   />
                   <input
                     type="range"
@@ -156,11 +152,7 @@
                 <div
                   class="flex-1 font-khmer_os text-sm pl-3"
                   :title="course.title"
-                  @click="
-                    nextOrder(
-                      course.order
-                    )
-                  "
+                  @click="nextOrder(course.order)"
                 >
                   <div class="flex-cols">
                     <p
@@ -480,11 +472,11 @@ export default {
         (item) => item.order == order
       )[0];
 
-      this.$store.commit("course/getVideo", this.videoPlay)
-      
+      this.$store.commit("course/getVideo", this.videoPlay);
+
       this.addLastWatch(this.videoPlay);
 
-      this.lessonView(this.videoPlay['_id']).then((res) => {
+      this.lessonView(this.videoPlay["_id"]).then((res) => {
         this.documents = res;
       });
 
@@ -543,42 +535,44 @@ export default {
       });
     },
     onPlayerEnded() {
-      let videoOrder = this.courseDetail.list.map((item) => item.order);
-      let lastOrder = Math.max(...videoOrder);
-      if (this.order === lastOrder) {
-        this.$nextTick(() => {
-          this.$refs.courseDetail.scrollTop = 0;
+      if (this.courseDetail.list.length > 1) {
+        let videoOrder = this.courseDetail.list.map((item) => item.order);
+        let lastOrder = Math.max(...videoOrder);
+        if (this.order === lastOrder) {
+          this.$nextTick(() => {
+            this.$refs.courseDetail.scrollTop = 0;
+          });
+          this.order = 1;
+          return;
+        }
+
+        let nextVideo = this.order + 1;
+
+        let videoFilter = this.courseDetail.list.filter(
+          (item) => item.order === nextVideo
+        );
+        let isFree = videoFilter.map((item) => item.free_watch)[0];
+        let videoId = videoFilter.map((item) => item._id)[0];
+
+        if (isFree === 0 && this.courseDetail.is_buy === 0) {
+          return;
+        }
+
+        this.videoPlay = videoFilter[0];
+        this.addLastWatch(this.videoPlay);
+
+        let video_youtube = this.courseDetail.list
+          .filter((item) => item.order == nextVideo)
+          .map((ytId) => ytId.video_youtube);
+
+        this.order = nextVideo;
+        this.gettingNextVideo(false);
+        ipcRenderer.send("nextVideo", video_youtube);
+
+        this.lessonView(videoId).then((res) => {
+          this.documents = res;
         });
-        this.order = 1;
-        return;
       }
-
-      let nextVideo = this.order + 1;
-
-      let videoFilter = this.courseDetail.list.filter(
-        (item) => item.order === nextVideo
-      );
-      let isFree = videoFilter.map((item) => item.free_watch)[0];
-      let videoId = videoFilter.map((item) => item._id)[0];
-
-      if (isFree === 0 && this.courseDetail.is_buy === 0) {
-        return;
-      }
-
-      this.videoPlay = videoFilter[0];
-      this.addLastWatch(this.videoPlay);
-
-      let video_youtube = this.courseDetail.list
-        .filter((item) => item.order == nextVideo)
-        .map((ytId) => ytId.video_youtube);
-
-      this.order = nextVideo;
-      this.gettingNextVideo(false);
-      ipcRenderer.send("nextVideo", video_youtube);
-
-      this.lessonView(videoId).then((res) => {
-        this.documents = res;
-      });
     },
     cutString(text, limit) {
       if (!text) {
@@ -633,10 +627,6 @@ export default {
     addLastWatch(videoPlay) {
       if (videoPlay.last_watch) {
         this.last_watch = videoPlay.last_watch.mark;
-
-        if (videoPlay.last_watch.percentage >= 100) {
-          this.last_watch = 0;
-        }
       } else {
         this.last_watch = 0;
       }

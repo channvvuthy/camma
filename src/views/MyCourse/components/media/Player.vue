@@ -12,6 +12,7 @@
           :style="{ height: video.height + 'px', width: '100%' }"
           poster="/poster.png"
           autoplay="autoplay"
+          loop="true"
           controlsList="nodownload"
           @timeupdate="timeUpdate()"
           @ended="onEnded()"
@@ -639,7 +640,6 @@ export default {
         if (document.getElementById("my_video") !== null) {
           clearInterval(interval);
           this.vid = document.getElementById("my_video");
-          this.vid.currentTime = this.last_watch;
           this.vid.addEventListener("loadstart", () => {
             this.loadingVideo = true;
           });
