@@ -231,16 +231,7 @@ export default {
         this.$router.push({ name: `${route}` });
       }
     },
-  },
-
-  created() {
-    this.getCart();
-  },
-  watch: {
-    cartAdded: function () {
-      this.getCart();
-    },
-  },
+  }
 };
 </script>
 

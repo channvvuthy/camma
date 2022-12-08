@@ -413,7 +413,8 @@ export default {
           resolve(JSON.parse(localStorage.getItem("book")));
         } else {
           axios
-            .get(config.apiUrl +
+            .get(
+              config.apiUrl +
                 "course/e-book?s=" +
                 this.state.course.s +
                 "&grade_id=" +
@@ -457,7 +458,6 @@ export default {
               payload.p +
               "&subject_id=" +
               payload.subject_id
-              
           )
           .then((res) => {
             if (res.data.status && res.data.status === 2) {

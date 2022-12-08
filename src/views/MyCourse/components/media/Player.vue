@@ -3,138 +3,306 @@
     id="video_player_box"
     class="flex-cols start items-center w-full relative"
   >
-    <template v-if="true">
-      <div class="bg-black">
-        <video
-          id="my_video"
-          class="m-auto w-full"
-          ref="my_video"
-          :style="{ height: video.height + 'px', width: '100%' }"
-          poster="/poster.png"
-          autoplay="autoplay"
-          loop="true"
-          controlsList="nodownload"
-          @timeupdate="timeUpdate()"
-          @ended="onEnded()"
-          @pause="pause()"
-          @click="playPause()"
-        >
-          <source :src="url" />
-        </video>
-      </div>
-      <div
-        class="
-          absolute
-          w-full
-          left-0
-          bottom-0
-          py-5
-          control
-          bg-gradient-to-t
-          from-gray-900
-          z-50
-        "
-        :class="loadingVideo ? 'opacity-0' : ''"
+    <div class="bg-black">
+      <video
+        id="my_video"
+        class="m-auto w-full"
+        ref="my_video"
+        :style="{ height: video.height + 'px', width: '100%' }"
+        poster="/poster.png"
+        autoplay="autoplay"
+        controlsList="nodownload"
+        @timeupdate="timeUpdate()"
+        @ended="onEnded()"
+        @pause="pause()"
+        @click="playPause()"
       >
-        <div class="px-5">
-          <input
-            type="range"
-            min="0"
-            max="100"
-            id="seekSlider"
-            value="0"
-            step="1"
-            ref="seekSlider"
-            class="w-full seekSlider"
-          />
-        </div>
-        <div class="flex justify-between items-center">
-          <div class="flex justify-start px-5 pt-2">
-            <button
-              class="
-                bg-transparent
-                focus:outline-none
-                mr-5
-                transform
-                rotate-180
-              "
-              @click="previousVideo()"
-            >
-              <NextIcon></NextIcon>
-            </button>
-            <button
-              id="playPauseBtn"
-              class="bg-transparent focus:outline-none mr-5"
-              @click="playPause()"
-            >
-              <PlayIcon v-if="showPlay"></PlayIcon>
-              <PauseIcon v-else></PauseIcon>
-            </button>
-            <button
-              class="bg-transparent focus:outline-none mr-5"
-              @click="nextVideo()"
-            >
-              <NextIcon></NextIcon>
-            </button>
+        <source :src="url" />
+      </video>
+    </div>
+    <div
+      class="
+        absolute
+        w-full
+        left-0
+        bottom-0
+        py-5
+        control
+        bg-gradient-to-t
+        from-gray-900
+        z-50
+      "
+      :class="loadingVideo ? 'opacity-0' : ''"
+    >
+      <div class="px-5">
+        <input
+          type="range"
+          min="0"
+          max="100"
+          id="seekSlider"
+          value="0"
+          step="1"
+          ref="seekSlider"
+          class="w-full seekSlider"
+        />
+      </div>
+      <div class="flex justify-between items-center">
+        <div class="flex justify-start px-5 pt-2">
+          <button
+            class="bg-transparent focus:outline-none mr-5 transform rotate-180"
+            @click="previousVideo()"
+          >
+            <NextIcon></NextIcon>
+          </button>
+          <button
+            id="playPauseBtn"
+            class="bg-transparent focus:outline-none mr-5"
+            @click="playPause()"
+          >
+            <PlayIcon v-if="showPlay"></PlayIcon>
+            <PauseIcon v-else></PauseIcon>
+          </button>
+          <button
+            class="bg-transparent focus:outline-none mr-5"
+            @click="nextVideo()"
+          >
+            <NextIcon></NextIcon>
+          </button>
 
-            <button
-              id="muteBtn"
-              class="mr-3 bg-transparent focus:outline-none"
-              @click="vidMute()"
-            >
-              <SoundIcon v-if="!muted"></SoundIcon>
-              <MutedIcon v-else></MutedIcon>
-            </button>
-            <div class="text-white mr-3 flex">
-              <span id="currentTime"></span>
-              <span id="currentDuration"></span>
-            </div>
-            <div class="w-20">
-              <input
-                id="volumeSlider"
-                type="range"
-                min="0"
-                max="100"
-                value="100"
-                step="1"
-                @change="setVolume($event)"
-              />
-            </div>
+          <button
+            id="muteBtn"
+            class="mr-3 bg-transparent focus:outline-none"
+            @click="vidMute()"
+          >
+            <SoundIcon v-if="!muted"></SoundIcon>
+            <MutedIcon v-else></MutedIcon>
+          </button>
+          <div class="text-white mr-3 flex">
+            <span id="currentTime">{{ currentTime }}</span>
+            <span>&nbsp;/&nbsp;</span>
+            <span id="currentDuration">{{ currentDuration }}</span>
           </div>
-          <div class="flex justify-start items-center px-5 relative">
-            <div class="mr-5">
-              <div class="cursor-pointer mt-2" @click="showOptionTool()">
-                <SettingIcon></SettingIcon>
-              </div>
-              <!--Show option-->
-              <div
-                class="
-                  absolute
-                  bg-white
-                  text-black text-14px
-                  font-khmer_os
-                  w-44
-                  text-center
-                  right-5
-                  -top-46
-                  rounded
-                  shadow
-                "
-              >
-                <ul v-if="showOption">
-                  <li
-                    class="
-                      border border-l-0
-                      -l-0
-                      border-r-0 border-t-0 border-gray-200
-                      h-10
-                      leading-10
-                      font-13px
-                      text-gray-500
-                    "
-                  >
-                    ការកំណត់
-                  </li>
+          <div class="w-20">
+            <input
+              id="volumeSlider"
+              type="range"
+              min="0"
+              max="100"
+              value="100"
+              step="1"
+              @change="setVolume($event)"
+            />
+          </div>
+        </div>
+        <div class="flex justify-start items-center px-5 relative">
+          <div class="mr-5">
+            <div class="cursor-pointer mt-2" @click="showOptionTool()">
+              <SettingIcon></SettingIcon>
+            </div>
+            <!--Show option-->
+            <div
+              class="
+                absolute
+                bg-white
+                text-black text-14px
+                font-khmer_os
+                w-44
+                text-center
+                right-5
+                -top-46
+                rounded
+                shadow
+              "
+            >
+              <ul v-if="showOption">
+                <li
+                  class="
+                    border border-l-0
+                    -l-0
+                    border-r-0 border-t-0 border-gray-200
+                    h-10
+                    leading-10
+                    font-13px
+                    text-gray-500
+                  "
+                >
+                  ការកំណត់
+                </li>
+                <li
+                  class="
+                    cursor-pointer
+                    border border-l-0
+                    -l-0
+                    border-r-0 border-t-0 border-gray-200
+                    h-9
+                    leading-9
+                    text-custom
+                  "
+                  @click="chooseOption(2)"
+                >
+                  ល្បឿនវីដេអូ
+                </li>
+                <li
+                  class="
+                    cursor-pointer
+                    border border-l-0
+                    -l-0
+                    border-r-0 border-t-0 border-gray-200
+                    h-9
+                    leading-9
+                    text-custom
+                  "
+                  @click="chooseOption(1)"
+                >
+                  កំរិតវីដេអូ
+                </li>
+                <li
+                  class="
+                    cursor-pointer
+                    h-10
+                    leading-10
+                    text-red-500
+                    font-semibold
+                  "
+                  @click="cancel()"
+                >
+                  បោះបង់
+                </li>
+              </ul>
+            </div>
+            <!--Show speed-->
+            <div
+              class="
+                absolute
+                bg-white
+                text-custom text-sm
+                font-khmer_os
+                w-44
+                text-center
+                right-5
+                -top-64
+                rounded
+                shadow
+              "
+            >
+              <ul v-if="showSpeed">
+                <li
+                  class="
+                    border border-l-0
+                    -l-0
+                    border-r-0 border-t-0 border-gray-200
+                    h-10
+                    leading-10
+                    font-13px
+                    text-gray-500
+                  "
+                >
+                  ល្បឿន
+                </li>
+                <li
+                  class="
+                    cursor-pointer
+                    border border-l-0
+                    -l-0
+                    border-r-0 border-t-0 border-gray-200
+                    h-9
+                    leading-9
+                  "
+                  :class="defaultSpeed < 1 ? 'text-red-500' : 'text-custom'"
+                  @click="playbackRate(0.5)"
+                >
+                  0.5x
+                </li>
+                <li
+                  class="
+                    cursor-pointer
+                    border border-l-0
+                    -l-0
+                    border-r-0 border-t-0 border-gray-200
+                    h-9
+                    leading-9
+                  "
+                  :class="defaultSpeed === 1 ? 'text-red-500' : 'text-custom'"
+                  @click="playbackRate(1)"
+                >
+                  1.0x
+                </li>
+                <li
+                  class="
+                    cursor-pointer
+                    border border-l-0
+                    -l-0
+                    border-r-0 border-t-0 border-gray-200
+                    h-9
+                    leading-9
+                  "
+                  :class="
+                    defaultSpeed > 1 && defaultSpeed < 2
+                      ? 'text-red-500'
+                      : 'text-custom'
+                  "
+                  @click="playbackRate(1.5)"
+                >
+                  1.5x
+                </li>
+                <li
+                  class="
+                    cursor-pointer
+                    border border-l-0
+                    -l-0
+                    border-r-0 border-t-0 border-gray-200
+                    h-9
+                    leading-9
+                  "
+                  :class="defaultSpeed === 2 ? 'text-red-500' : 'text-custom'"
+                  @click="playbackRate(2)"
+                >
+                  2.0x
+                </li>
+                <li
+                  class="
+                    cursor-pointer
+                    h-10
+                    leading-10
+                    text-red-500
+                    font-semibold
+                  "
+                  @click="cancelOption()"
+                >
+                  បោះបង់
+                </li>
+              </ul>
+            </div>
+            <!--Show quality-->
+            <div
+              class="
+                absolute
+                bg-white
+                text-black text-14px
+                font-khmer_os
+                w-44
+                text-center
+                right-5
+                -top-46
+                rounded
+                shadow
+              "
+            >
+              <ul v-if="showQuality">
+                <li
+                  class="
+                    border border-l-0
+                    -l-0
+                    border-r-0 border-t-0 border-gray-200
+                    h-10
+                    leading-10
+                    font-13px
+                    text-gray-500
+                  "
+                >
+                  កំរិត
+                </li>
+                <template>
                   <li
                     class="
                       cursor-pointer
@@ -143,240 +311,44 @@
                       border-r-0 border-t-0 border-gray-200
                       h-9
                       leading-9
-                      text-custom
                     "
-                    @click="chooseOption(2)"
-                  >
-                    ល្បឿនវីដេអូ
-                  </li>
-                  <li
-                    class="
-                      cursor-pointer
-                      border border-l-0
-                      -l-0
-                      border-r-0 border-t-0 border-gray-200
-                      h-9
-                      leading-9
-                      text-custom
-                    "
-                    @click="chooseOption(1)"
-                  >
-                    កំរិតវីដេអូ
-                  </li>
-                  <li
-                    class="
-                      cursor-pointer
-                      h-10
-                      leading-10
-                      text-red-500
-                      font-semibold
-                    "
-                    @click="cancel()"
-                  >
-                    បោះបង់
-                  </li>
-                </ul>
-              </div>
-              <!--Show speed-->
-              <div
-                class="
-                  absolute
-                  bg-white
-                  text-custom text-sm
-                  font-khmer_os
-                  w-44
-                  text-center
-                  right-5
-                  -top-64
-                  rounded
-                  shadow
-                "
-              >
-                <ul v-if="showSpeed">
-                  <li
-                    class="
-                      border border-l-0
-                      -l-0
-                      border-r-0 border-t-0 border-gray-200
-                      h-10
-                      leading-10
-                      font-13px
-                      text-gray-500
-                    "
-                  >
-                    ល្បឿន
-                  </li>
-                  <li
-                    class="
-                      cursor-pointer
-                      border border-l-0
-                      -l-0
-                      border-r-0 border-t-0 border-gray-200
-                      h-9
-                      leading-9
-                    "
-                    :class="defaultSpeed < 1 ? 'text-red-500' : 'text-custom'"
-                    @click="playbackRate(0.5)"
-                  >
-                    0.5x
-                  </li>
-                  <li
-                    class="
-                      cursor-pointer
-                      border border-l-0
-                      -l-0
-                      border-r-0 border-t-0 border-gray-200
-                      h-9
-                      leading-9
-                    "
-                    :class="defaultSpeed === 1 ? 'text-red-500' : 'text-custom'"
-                    @click="playbackRate(1)"
-                  >
-                    1.0x
-                  </li>
-                  <li
-                    class="
-                      cursor-pointer
-                      border border-l-0
-                      -l-0
-                      border-r-0 border-t-0 border-gray-200
-                      h-9
-                      leading-9
-                    "
+                    v-for="(quality, index) in videoActive.links"
+                    :key="index"
                     :class="
-                      defaultSpeed > 1 && defaultSpeed < 2
+                      defaultQuality == quality.rendition
                         ? 'text-red-500'
                         : 'text-custom'
                     "
-                    @click="playbackRate(1.5)"
+                    @click="changeQuality(quality.rendition)"
                   >
-                    1.5x
+                    {{ quality.rendition }}
                   </li>
-                  <li
-                    class="
-                      cursor-pointer
-                      border border-l-0
-                      -l-0
-                      border-r-0 border-t-0 border-gray-200
-                      h-9
-                      leading-9
-                    "
-                    :class="defaultSpeed === 2 ? 'text-red-500' : 'text-custom'"
-                    @click="playbackRate(2)"
-                  >
-                    2.0x
-                  </li>
-                  <li
-                    class="
-                      cursor-pointer
-                      h-10
-                      leading-10
-                      text-red-500
-                      font-semibold
-                    "
-                    @click="cancelOption()"
-                  >
-                    បោះបង់
-                  </li>
-                </ul>
-              </div>
-              <!--Show quality-->
-              <div
-                class="
-                  absolute
-                  bg-white
-                  text-black text-14px
-                  font-khmer_os
-                  w-44
-                  text-center
-                  right-5
-                  -top-46
-                  rounded
-                  shadow
-                "
-              >
-                <ul v-if="showQuality">
-                  <li
-                    class="
-                      border border-l-0
-                      -l-0
-                      border-r-0 border-t-0 border-gray-200
-                      h-10
-                      leading-10
-                      font-13px
-                      text-gray-500
-                    "
-                  >
-                    កំរិត
-                  </li>
-                  <template>
-                    <li
-                      class="
-                        cursor-pointer
-                        border border-l-0
-                        -l-0
-                        border-r-0 border-t-0 border-gray-200
-                        h-9
-                        leading-9
-                      "
-                      v-for="(quality, index) in videoActive.links"
-                      :key="index"
-                      :class="
-                        defaultQuality == quality.rendition
-                          ? 'text-red-500'
-                          : 'text-custom'
-                      "
-                      @click="changeQuality(quality.rendition)"
-                    >
-                      {{ quality.rendition }}
-                    </li>
-                  </template>
-                  <li
-                    class="
-                      cursor-pointer
-                      h-10
-                      leading-10
-                      text-red-500
-                      font-semibold
-                    "
-                    @click="cancelOption()"
-                  >
-                    បោះបង់
-                  </li>
-                </ul>
-              </div>
+                </template>
+                <li
+                  class="
+                    cursor-pointer
+                    h-10
+                    leading-10
+                    text-red-500
+                    font-semibold
+                  "
+                  @click="cancelOption()"
+                >
+                  បោះបង់
+                </li>
+              </ul>
             </div>
-            <div
-              class="cursor-pointer mt-2"
-              id="fullScreenBtn"
-              @click="toggleFullScreen()"
-            >
-              <FullScreenIcon></FullScreenIcon>
-            </div>
+          </div>
+          <div
+            class="cursor-pointer mt-2"
+            id="fullScreenBtn"
+            @click="toggleFullScreen()"
+          >
+            <FullScreenIcon></FullScreenIcon>
           </div>
         </div>
       </div>
-    </template>
-    <template v-else>
-      <div class="w-full flex-cols justify-center items-center">
-        <video
-          id="my_video"
-          class="m-auto w-full bg-black"
-          poster="/poster.png"
-          autoplay="autoplay"
-          controlsList="nodownload"
-          @timeupdate="timeUpdate()"
-          @ended="onEnded()"
-          @pause="pause()"
-          @click="playPause()"
-          :style="{ height: video.height + 'px' }"
-        >
-          <source
-            src="https://eschool-video.sabay.com/video/Diploma-English/EssentialBook3(Micha)/5f27c1c981768d50365d40d2-2_720.mp4"
-          />
-        </video>
-      </div>
-    </template>
+    </div>
   </div>
 </template>
 <script>
@@ -437,6 +409,7 @@ export default {
       loadingVideo: false,
       oldVolume: 0,
       oldVolumeRange: 0,
+      loading: false,
     };
   },
   computed: {
@@ -518,7 +491,6 @@ export default {
       this.showQuality = false;
     },
     pause() {
-      //                this.lastWatchVideo()
       this.showPlay = true;
     },
     lastWatchVideo() {
@@ -557,7 +529,6 @@ export default {
       this.lastWatchVideo();
       this.$emit("onPlayerEnded");
 
-      this.vid = "";
       this.currentDuration = "";
       this.currentWatch = "";
     },
@@ -629,10 +600,10 @@ export default {
         durmins = "0" + durmins;
       }
       if (curmins && cursecs) {
-        this.currentTime.innerHTML = curmins + ":" + cursecs + "&nbsp;";
+        this.currentTime = curmins + ":" + cursecs;
       }
       if (durmins && dursecs) {
-        this.currentDuration.innerHTML = "/&nbsp;" + durmins + ":" + dursecs;
+        this.currentDuration = durmins + ":" + dursecs;
       }
     },
     getVideo() {
@@ -669,8 +640,6 @@ export default {
             true
           );
 
-          this.currentTime = document.getElementById("currentTime");
-          this.currentDuration = document.getElementById("currentDuration");
           this.muteBtn = document.getElementById("muteBtn");
           this.volumeSlider = document.getElementById("volumeSlider");
           this.fullScreenBtn = document.getElementById("fullScreenBtn");
@@ -742,6 +711,7 @@ export default {
     videoActiveChange: function () {
       this.getUrl();
       this.vid.setAttribute("src", this.url);
+      this.showPlay = false;
     },
   },
 };

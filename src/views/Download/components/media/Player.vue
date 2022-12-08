@@ -516,7 +516,7 @@ export default {
       this.showQuality = false;
     },
     pause() {
-      //                this.lastWatchVideo()
+      // this.lastWatchVideo();
       this.showPlay = true;
     },
     lastWatchVideo() {

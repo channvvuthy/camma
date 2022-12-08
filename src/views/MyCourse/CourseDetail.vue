@@ -538,40 +538,23 @@ export default {
       if (this.courseDetail.list.length > 1) {
         let videoOrder = this.courseDetail.list.map((item) => item.order);
         let lastOrder = Math.max(...videoOrder);
-        if (this.order === lastOrder) {
+        if (this.order == lastOrder) {
           this.$nextTick(() => {
             this.$refs.courseDetail.scrollTop = 0;
           });
           this.order = 1;
           return;
         }
-
         let nextVideo = this.order + 1;
-
         let videoFilter = this.courseDetail.list.filter(
           (item) => item.order === nextVideo
         );
-        let isFree = videoFilter.map((item) => item.free_watch)[0];
-        let videoId = videoFilter.map((item) => item._id)[0];
-
-        if (isFree === 0 && this.courseDetail.is_buy === 0) {
-          return;
-        }
 
         this.videoPlay = videoFilter[0];
         this.addLastWatch(this.videoPlay);
-
-        let video_youtube = this.courseDetail.list
-          .filter((item) => item.order == nextVideo)
-          .map((ytId) => ytId.video_youtube);
-
         this.order = nextVideo;
         this.gettingNextVideo(false);
-        ipcRenderer.send("nextVideo", video_youtube);
-
-        this.lessonView(videoId).then((res) => {
-          this.documents = res;
-        });
+        this.$store.commit("course/getVideo", this.videoPlay);
       }
     },
     cutString(text, limit) {
