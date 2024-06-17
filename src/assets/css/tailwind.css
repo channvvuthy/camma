@@ -1,8 +1,10 @@
 @tailwind base;
 @tailwind components;
+@tailwind utilities;
+
 @font-face {
-    font-family: 'Kantumruy';
-    src: url('./../../../public/font/Kantumruy/Kantumruy-Regular.ttf')
+    font-family: 'NotoSans';
+    src: url('./../../../public/font/NotoSans.ttf')
 }
 @font-face {
     font-family: 'UbuntuRegular';
@@ -12,5 +14,3 @@
     font-family: 'Barlow';
     src: url('./../../../public/font/Barlow/Barlow-Regular.ttf')
 }
-
-@tailwind utilities;

@@ -193,7 +193,7 @@ module.exports = {
             ],
             khmer_os: [
                 'UbuntuRegular',
-                'Kantumruy',
+                'NotoSans',
             ],
 
         },

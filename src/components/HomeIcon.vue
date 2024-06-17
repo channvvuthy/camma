@@ -1,21 +1,13 @@
 <template>
-  <svg
-    :width="size"
-    :height="size"
-    viewBox="0 0 512 512"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <svg :fill="fill" :width="size" :height="size" viewBox="0 0 24 24" version="1.2" baseProfile="tiny"
+    xmlns="http://www.w3.org/2000/svg">
     <path
-      fill="var(--ci-primary-color, currentColor)"
-      d="M469.666,216.45,271.078,33.749a34,34,0,0,0-47.062.98L41.373,217.373,32,226.745V496H208V328h96V496H480V225.958ZM248.038,56.771c.282,0,.108.061-.013.18C247.9,56.832,247.756,56.771,248.038,56.771ZM448,464H336V328a32,32,0,0,0-32-32H208a32,32,0,0,0-32,32V464H64V240L248.038,57.356c.013-.012.014-.023.024-.035L448,240Z"
-      class="ci-primary"
-    />
+      d="M12 3s-6.186 5.34-9.643 8.232c-.203.184-.357.452-.357.768 0 .553.447 1 1 1h2v7c0 .553.447 1 1 1h3c.553 0 1-.448 1-1v-4h4v4c0 .552.447 1 1 1h3c.553 0 1-.447 1-1v-7h2c.553 0 1-.447 1-1 0-.316-.154-.584-.383-.768-3.433-2.892-9.617-8.232-9.617-8.232z" />
   </svg>
 </template>
 
 <script>
 export default {
-  name: "HomeIcon",
   props: {
     fill: {
       type: String,
