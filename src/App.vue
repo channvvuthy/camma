@@ -10,23 +10,15 @@
       <div class="flex w-full">
         <div class="border border-b-0 border-l-0 border-gray-200 w-full">
           <Menu />
-          <FilterClass
-            v-if="isSearch()"
-            @search="getQueryString($event)"
-            @gradeFilter="gradeFilter()"
-          />
+          <FilterClass v-if="isSearch()" @search="getQueryString($event)" @gradeFilter="gradeFilter()" />
           <div>
             <router-view />
           </div>
         </div>
       </div>
     </div>
-    <GradeModal
-      v-if="isModal"
-      @closeModal="closeModal()"
-      :moalTitle="moalTitle"
-      @gradeSelected="gradeSelected($event)"
-    />
+    <GradeModal v-if="isModal" @closeModal="closeModal()" :moalTitle="moalTitle"
+      @gradeSelected="gradeSelected($event)" />
   </div>
 </template>
 <script>
@@ -98,4 +90,3 @@ export default {
 };
 </script>
 <style src="./assets/css/tailwind.css" />
-

@@ -23,7 +23,7 @@
           mt-5
           leading-10
           font-khmer_os
-          text-sm
+          text-base
         "
       >
         <li
@@ -53,7 +53,7 @@
           text-left
           leading-10
           font-khmer_os
-          text-sm
+          text-base
         "
       >
         <li
@@ -115,7 +115,7 @@
           mt-5
           leading-10
           font-khmer_os
-          text-sm
+          text-base
         "
       >
         <li
@@ -174,7 +174,7 @@
           p-3
           bg-custom
           hover:bg-opacity-90
-          text-sm text-white text-center
+          text-base text-white text-center
           flex
           justify-center
         "

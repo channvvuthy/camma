@@ -1,25 +1,24 @@
 <template>
-    <svg  :width="size" :height="size"  role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="svg-inline--fa fa-lock-alt fa-w-14 fa-3x">
-        <g :fill="fill">
-            <path :fill="fill" d="M224 412c-15.5 0-28-12.5-28-28v-64c0-15.5 12.5-28 28-28s28 12.5 28 28v64c0 15.5-12.5 28-28 28zm224-172v224c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V240c0-26.5 21.5-48 48-48h32v-48C80 64.5 144.8-.2 224.4 0 304 .2 368 65.8 368 145.4V192h32c26.5 0 48 21.5 48 48zm-320-48h192v-48c0-52.9-43.1-96-96-96s-96 43.1-96 96v48zm272 48H48v224h352V240z" class=""/>
-        </g>
+    <svg :width="size" :height="size" viewBox="0 0 1024 1024" class="icon" xmlns="http://www.w3.org/2000/svg">
+        <path :fill="fill"
+            d="M224 448a32 32 0 00-32 32v384a32 32 0 0032 32h576a32 32 0 0032-32V480a32 32 0 00-32-32H224zm0-64h576a96 96 0 0196 96v384a96 96 0 01-96 96H224a96 96 0 01-96-96V480a96 96 0 0196-96z" />
+        <path :fill="fill"
+            d="M512 544a32 32 0 0132 32v192a32 32 0 11-64 0V576a32 32 0 0132-32zM704 384v-64a192 192 0 10-384 0v64h384zM512 64a256 256 0 01256 256v128H256V320A256 256 0 01512 64z" />
     </svg>
-
-
 </template>
 <script>
-    export default{
-        props: {
-            size: {
-                default: function () {
-                    return 24
-                }
-            },
-            fill: {
-                default: function () {
-                    return "#00000"
-                }
+export default {
+    props: {
+        size: {
+            default: function () {
+                return 24
+            }
+        },
+        fill: {
+            default: function () {
+                return "#00000"
             }
         }
     }
+}
 </script>

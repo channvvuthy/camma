@@ -430,6 +430,7 @@ export default {
               }
 
               commit("gettingEbook", false);
+            
               commit("getBook", res.data.data);
               localStorage.setItem("books", JSON.stringify(res.data.data));
               resolve(res.data.data);

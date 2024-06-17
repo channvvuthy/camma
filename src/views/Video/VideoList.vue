@@ -1,37 +1,20 @@
 <template>
   <div class="home p-5 text-left">
-    <div
-      v-if="loadingVideo"
-      class="flex justify-center items-center h-screen relative -top-5"
-    >
+    <div v-if="loadingVideo" class="flex justify-center items-center h-screen relative -top-5">
       <h1 class="text-sm font-semibold font-khmer_os relative -top-20">
         <loading></loading>
       </h1>
     </div>
-    <div
-      class="overflow-y-scroll pt-3 -mt-3"
-      style="max-height: 100vh"
-      @scroll="onScroll"
-      id="videoList"
-      v-else
-    >
-      <div
-        class="h-100 flex justify-center items-center"
-        v-if="courses.lesson <= 0"
-      >
+    <div class="overflow-y-scroll pt-3 -mt-3" style="max-height: 100vh" @scroll="onScroll" id="videoList" v-else>
+      <div class="h-100 flex justify-center items-center" v-if="courses.lesson <= 0">
         <div class="text-custom text-base font-khmer_os">មិនមានទិន្ន័យ</div>
       </div>
 
       <div class="grid grid-cols-3 gap-4">
         <template v-for="(video, key) in courses.lesson">
-          <div
-            class="flex-col bg-white pb-5 shadow"
-            :key="key"
-            v-if="video.type == 1"
-          >
+          <div class="flex-col bg-white pb-5 shadow" :key="key" v-if="video.type == 1">
             <div class="relative">
-              <div
-                class="
+              <div class="
                   absolute
                   right-0
                   top-0
@@ -41,52 +24,28 @@
                   bg-gray-50
                   cursor-pointer
                   bg-opacity-75
-                "
-                style="border-radius: 2px; z-index: 50"
-              >
-                <img
-                  src="/icon/MenuSidebar/FavouriteFull.png"
-                  class="max-w-full"
-                  @click="removeFav(video.video._id)"
-                  v-if="video.video.is_favorite || isActiveFav(video.video._id)"
-                />
+                " style="border-radius: 2px; z-index: 50">
+                <img src="/icon/MenuSidebar/FavouriteFull.png" class="max-w-full" @click="removeFav(video.video._id)"
+                  v-if="video.video.is_favorite || isActiveFav(video.video._id)" />
 
-                <img
-                  src="/icon/MenuSidebar/Favorite.png"
-                  class="max-w-full"
-                  @click="addFav(video.video._id)"
-                  v-else
-                />
+                <img src="/icon/MenuSidebar/Favorite.png" class="max-w-full" @click="addFav(video.video._id)" v-else />
               </div>
-              <div
-                @click="courseDetail(video.video)"
-                class="cursor-pointer"
-                :title="video.video.title"
-              >
+              <div @click="courseDetail(video.video)" class="cursor-pointer" :title="video.video.title">
                 <div :id="video.video._id" class="relative">
                   <img :src="video.video.thumbnail" alt="" />
-                  <input
-                    type="range"
-                    min="0"
-                    max="100"
-                    value="100"
-                    step="1"
-                    class="
+                  <input type="range" min="0" max="100" value="100" step="1" class="
                       w-full
                       percentage
                       cursor-default
                       absolute
                       bottom-0
                       left-0
-                    "
-                    v-if="video.video && video.video.last_watch"
-                    :style="lastWatchMark(video.video.last_watch.percentage)"
-                  />
+                    " v-if="video.video && video.video.last_watch"
+                    :style="lastWatchMark(video.video.last_watch.percentage)" />
                 </div>
                 <div class="flex justify-start items-start relative px-4">
                   <div class="w-12 h-12 mr-2">
-                    <div
-                      class="
+                    <div class="
                         w-12
                         h-12
                         border border-custom
@@ -94,45 +53,35 @@
                         mt-4
                         bg-center
                         bg-gray-200
-                      "
-                      :style="{
+                      " :style="{
                         backgroundImage: `url(${video.video.teacher.photo})`,
                         backgroundSize: 'cover',
-                      }"
-                    ></div>
+                      }"></div>
                   </div>
                   <div class="flex-cols w-full">
-                    <div
-                      class="
+                    <div class="
                         font-khmer_os
                         text-14px
                         mt-4
                         font-semibold
                         text-gray-700
-                      "
-                      v-html="
-                        cutString(
-                          video.video.title,
-                          window.width <= 1366 ? 20 : 45
-                        )
-                      "
-                    ></div>
+                      " v-html="cutString(
+                        video.video.title,
+                        window.width <= 1366 ? 20 : 45
+                      )
+                        "></div>
                     <div class="flex justify-between">
                       <h2 class="text-nav text-xs font-khmer_os mt-2 w-full">
                         {{ video.video.teacher.name }}
                       </h2>
                       <div class="flex justify-end">
-                        <div
-                          class="
+                        <div class="
                             text-14px text-nav
                             flex
                             items-end
                             whitespace-nowrap
-                          "
-                        >
-                          <span class="pl-1"
-                            >{{ kFormatter(video.video.view) }} Views</span
-                          >
+                          ">
+                          <span class="pl-1">{{ kFormatter(video.video.view) }} Views</span>
                         </div>
                       </div>
                     </div>
@@ -144,8 +93,7 @@
           <div v-if="video.type == 3" @click="showAds(video)" :key="key">
             <div class="relative cursor-pointer">
               <img :src="video.ads.banner.thumbnail" alt="" />
-              <div
-                class="
+              <div class="
                   ads
                   absolute
                   text-custom
@@ -159,14 +107,12 @@
                   justify-center
                   items-center
                   bg-opacity-60
-                "
-              >
+                ">
                 <span>Ads</span>
               </div>
             </div>
             <div class="flex justify-start items-start relative cursor-pointer">
-              <div
-                class="
+              <div class="
                   w-10
                   h-10
                   border border-gray-50
@@ -174,25 +120,19 @@
                   mt-4
                   mr-2
                   bg-center
-                "
-                :style="{
+                " :style="{
                   backgroundImage: `url(${video.ads.logo})`,
                   backgroundSize: 'cover',
-                }"
-              ></div>
+                }"></div>
               <div class="flex-cols">
-                <div
-                  class="
+                <div class="
                     font-khmer_os
                     text-14px
                     mt-4
                     font-semibold
                     text-gray-700
-                  "
-                  v-html="
-                    cutString(video.ads.company, window.width <= 1366 ? 20 : 45)
-                  "
-                ></div>
+                  " v-html="cutString(video.ads.company, window.width <= 1366 ? 20 : 45)
+                    "></div>
                 <h2 class="text-gray-400 text-14px font-khmer_os mt-1">
                   {{ video.ads.title }}
                 </h2>
@@ -203,12 +143,7 @@
       </div>
       <div class="h-72"></div>
     </div>
-    <VideoADS
-      v-if="showVideoAds"
-      :videoUrl="videoUrl"
-      @closeAds="closeAds"
-      :poster="videoPoster"
-    />
+    <VideoADS v-if="showVideoAds" :videoUrl="videoUrl" @closeAds="closeAds" :poster="videoPoster" />
     <LoadingOverlay v-if="loadingDetail" @dismiss="dismiss()" />
   </div>
 </template>
@@ -365,7 +300,7 @@ export default {
               courseId: video.course._id,
             },
           });
-          
+
         })
         .catch((err) => {
           helper.error(err.response.data);
@@ -400,6 +335,7 @@ export default {
 #videoList::-webkit-scrollbar {
   width: 5px !important;
 }
+
 #videoList::-webkit-scrollbar-track {
   box-shadow: inset 0 0 0px rgba(0, 0, 0, 0.3) !important;
 }
@@ -407,6 +343,7 @@ export default {
 #videoList::-webkit-scrollbar-thumb {
   box-shadow: inset 0 0 0px rgba(0, 0, 0, 0.5) !important;
 }
+
 button.swal2-confirm.swal2-styled {
   font-family: "khmer os";
   outline: none;
