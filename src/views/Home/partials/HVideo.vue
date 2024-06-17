@@ -2,7 +2,8 @@
     <div class="mb-5">
         <div class="flex items-center justify-between mb-5">
             <div class="font-black text-lg">វីដេអូ</div>
-            <div class="text-sm text-custom cursor-pointer">មើលទាំងអស់</div>
+            <div class="text-sm text-custom cursor-pointer" v-if="courses && courses.lesson && courses.lesson.length">
+                មើលទាំងអស់</div>
         </div>
         <div :style="{ maxWidth: `${windowWidth - 300}px` }">
             <vue-horizontal responsive v-if="loadingVideo">
@@ -18,7 +19,9 @@
                         :style="{ backgroundImage: `url(${course.video.thumbnail})` }"></div>
                 </section>
             </vue-horizontal>
-
+        </div>
+        <div v-if="courses && courses.lesson && courses.lesson.length <= 0">
+            <p class="text-sm text-gray-500">មិនមានវីដេអូសម្រាប់បង្ហាញនៅលើតម្រងរបស់អ្នកទេ!</p>
         </div>
     </div>
 </template>

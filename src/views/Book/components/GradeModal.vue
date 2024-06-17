@@ -2,31 +2,17 @@
   <Modal width="w-100">
     <div class="font-khmer_os text-sm text-nav">
       <!-- Header -->
-      <div class="h-10 flex items-center px-5 justify-between border-b">
+      <div class="h-12 flex items-center px-5 justify-between border-b">
         <div class="text-base text-gray-700">{{ moalTitle }}</div>
         <div class="cursor-pointer" @click="closeModal()"><CloseIcon /></div>
       </div>
       <!-- Body -->
       <ul class="h-100 overflow-y-scroll overflow-x-hidden">
         <li class="cursor-pointer" @click="gradeSelected('all')">
-          <div class="border-b">
-            <div class="flex px-5 py-2">
-              <div
-                class="
-                  w-7
-                  h-7
-                  rounded-full
-                  border border-custom
-                  flex
-                  items-center
-                  justify-center
-                "
-              >
-                <CheckIcon />
-              </div>
-              <div class="w-2"></div>
-              <div>ទាំងអស់</div>
-            </div>
+          <div class="border-b flex px-5 py-4">
+            <div class="w-4 h-4 rounded-full border border-custom flex items-center justify-center"></div>
+            <div class="w-2"></div>
+            <div>ទាំងអស់</div>
           </div>
         </li>
         <li
@@ -35,48 +21,34 @@
           class="cursor-pointer"
           @click="gradeSelected(grade)"
         >
-          <div :class="index < courses.grade.length - 1 ? `border-b` : ``">
-            <div class="flex px-5 py-2 items-center">
-              <div
-                class="
-                  w-7
-                  h-7
-                  rounded-full
-                  border border-custom
-                  flex
-                  items-center
-                  justify-center
-                "
-              >
-                <CheckIcon />
-              </div>
-              <div class="w-2"></div>
-              <div>{{ grade.name }}</div>
+          <div :class="{ 'border-b': index < courses.grade.length - 1 }" class="flex px-5 py-4 items-center">
+            <div class="w-4 h-4 rounded-full border border-custom flex items-center justify-center">
+              <CheckIcon />
             </div>
+            <div class="w-2"></div>
+            <div>{{ grade.name }}</div>
           </div>
         </li>
       </ul>
     </div>
   </Modal>
 </template>
+
 <script>
 import Modal from "../../Modal/Modal.vue";
 import CloseIcon from "../../../components/CloseIcon.vue";
-import CheckIcon from "../../../components/CheckIcon.vue";
 import { mapState } from "vuex";
+
 export default {
   components: {
     Modal,
     CloseIcon,
-    CheckIcon,
   },
   props: {
     moalTitle: {
-      default: function () {
-        return "";
-      },
+      type: String,
+      default: "",
     },
-    
   },
   computed: {
     ...mapState("course", ["courses"]),

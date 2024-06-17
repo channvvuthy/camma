@@ -2,7 +2,7 @@
     <div class="my-10">
         <div class="flex items-center justify-between mb-5">
             <div class="font-black text-lg">សៀវភៅ</div>
-            <div class="text-sm text-custom cursor-pointer">មើលទាំងអស់</div>
+            <div class="text-sm text-custom cursor-pointer" v-if="ebookCourses && ebookCourses.length">មើលទាំងអស់</div>
         </div>
         <div :style="{ maxWidth: `${windowWidth - 300}px` }">
             <vue-horizontal responsive v-if="loadingEbookCourse">
@@ -20,6 +20,10 @@
                     </div>
                 </section>
             </vue-horizontal>
+        </div>
+
+        <div v-if="ebookCourses && ebookCourses.length <= 0">
+            <p class="text-sm text-gray-500">មិនមានសៀវភៅសម្រាប់បង្ហាញនៅលើតម្រងរបស់អ្នកទេ!</p>
         </div>
     </div>
 </template>
@@ -51,6 +55,22 @@ export default {
             "loadingEbookCourse",
             "ebookCourses",
         ]),
+        query: {
+            get() {
+                return this.$store.state.course.s;
+            },
+            set(newQuery) {
+                return newQuery;
+            },
+        },
+        gradeID: {
+            get() {
+                return this.$store.state.course.gradeID;
+            },
+            set(gradeID) {
+                return gradeID;
+            },
+        },
     },
     methods: {
         ...mapActions("course", [
@@ -65,7 +85,15 @@ export default {
 
     mounted() {
         this.getCourseEbook(this.payload);
-    }
+    },
+    watch: {
+        query: function (oldQuery, newQuery) {
+            this.getCourseEbook({ ...this.payload, s: newQuery });
+        },
+        gradeID: function (oldGrade, newGrade) {
+            this.getCourseEbook({ ...this.payload, grade_id: newGrade });
+        },
+    },
 }
 </script>
 
