@@ -1,9 +1,6 @@
 <template>
   <div class="px-5 py-5">
-    <div
-      v-if="loadingCourseDetail"
-      class="flex justify-center items-center h-screen relative -top-2"
-    >
+    <div v-if="loadingCourseDetail" class="flex justify-center items-center h-screen relative -top-2">
       <h1 class="text-sm font-semibold font-khmer_os relative -top-20">
         <loading></loading>
       </h1>
@@ -12,21 +9,15 @@
       <div class="flex">
         <div class="w-3/5 pr-5">
           <div>
-            <MediaPlayer
-              @onPlayerEnded="onPlayerEnded"
-              @previousVideo="previousVideo"
-              @lastWatchVideo="lastWatchVideo($event)"
-              :last_watch="last_watch"
-              @updateLastWatch="updateLastWatch($event)"
-              @gettingResource="gettingResource($event)"
-            ></MediaPlayer>
+            <MediaPlayer @onPlayerEnded="onPlayerEnded" @previousVideo="previousVideo"
+              @lastWatchVideo="lastWatchVideo($event)" :last_watch="last_watch"
+              @updateLastWatch="updateLastWatch($event)" @gettingResource="gettingResource($event)"></MediaPlayer>
           </div>
           <div class="flex justify-between">
             <div class="mt-4 font-khmer_os">
               <p class="text-14px font-semibold" v-if="!loadingPlay">
                 <span :title="videoTitle ? videoTitle : videoPlay.title">
-                  {{ videoTitle ? videoTitle : videoPlay.title }}</span
-                >
+                  {{ videoTitle ? videoTitle : videoPlay.title }}</span>
               </p>
               <h2 class="text-gray-400 text-14px font-khmer_os mt-2">
                 {{ courseDetail.course.teacher.name }}
@@ -34,135 +25,48 @@
             </div>
             <div class="mt-4 flex" v-if="courseDetail.is_buy">
               <div
-                class="
-                  flex
-                  bg-custom
-                  font-khmer_os
-                  text-13px
-                  focus:outline-none
-                  text-white
-                  leading-8
-                  h-8
-                  px-3
-                  rounded-full
-                  mr-3
-                  hover:bg-opacity-80
-                  cursor-pointer
-                "
-                @click="showMyDocument"
-                v-if="documents && documents.length"
-              >
+                class="flex bg-custom font-khmer_os text-13px focus:outline-none text-white leading-8 h-8 px-3 rounded-full mr-3 hover:bg-opacity-80 cursor-pointer"
+                @click="showMyDocument" v-if="documents && documents.length">
                 ឯកសារ
               </div>
               <div
-                class="
-                  flex
-                  bg-custom
-                  font-khmer_os
-                  text-sm
-                  focus:outline-none
-                  text-white
-                  leading-8
-                  h-8
-                  px-3
-                  rounded-full
-                  hover:bg-opacity-80
-                  cursor-pointer
-                "
-                @click="QuestionAndAnswer"
-              >
-                <span class="pl-1 font-thin whitespace-nowrap"
-                  >សំនួរចម្លើយ</span
-                >
+                class="flex bg-custom font-khmer_os text-sm focus:outline-none text-white leading-8 h-8 px-3 rounded-full hover:bg-opacity-80 cursor-pointer"
+                @click="QuestionAndAnswer">
+                <span class="pl-1 font-thin whitespace-nowrap">សំនួរចម្លើយ</span>
               </div>
             </div>
           </div>
         </div>
-        <div
-          class="w-2/5 bg-white h-screen border border-gray-200 pb-5"
-          id="courseList"
-          ref="courseDetail"
-        >
-          <div
-            class="overflow-y-scroll pt-5"
-            @scroll="onScroll"
-            ref="feed"
-            id="feed"
-            style="max-height: 91vh"
-          >
-            <div
-              class="flex-col relative"
-              :class="order == course.order ? 'my-2' : 'mb-1'"
-              v-for="(course, key) in courseDetail.list"
-              :key="key"
-            >
-              <div
-                id="vdActive"
-                class="
-                  absolute
-                  left-0
-                  h-full
-                  flex
-                  justify-center
-                  items-center
-                  pl-3
-                "
-                v-if="order == course.order"
-              >
+        <div class="w-2/5 bg-white h-screen border border-gray-200 pb-5 rounded-2xl" id="courseList" ref="courseDetail">
+          <div class="overflow-y-scroll pt-5" @scroll="onScroll" ref="feed" id="feed" style="max-height: 91vh">
+            <div class="flex px-5 mb-3 justify-between items-center">
+              <div class="font-black">បញ្ជីវីដេអូ</div>
+              <div v-if="courseDetail && courseDetail.list && courseDetail.list.length" class="text-gray-300 text-sm">
+                {{ order }}/{{ courseDetail.list.length }} 
+              </div>
+            </div>
+            <div class="flex-col relative" :class="order == course.order ? 'my-2' : 'mb-1'"
+              v-for="(course, key) in courseDetail.list" :key="key">
+              <div id="vdActive" class="absolute left-0 h-full flex justify-center items-center pl-3"
+                v-if="order == course.order">
                 <IconPlayActive />
               </div>
-              <div
-                class="flex justify-center items-center cursor-pointer pl-5"
-                :class="
-                  order == course.order
-                    ? 'bg-gray-300 py-2'
-                    : courseDetail.is_buy == 0 && course.free_watch == 0
-                    ? 'opacity-50'
-                    : ' py-1'
-                "
-              >
+              <div class="flex justify-center items-center cursor-pointer pl-5" :class="order == course.order
+                ? 'bg-gray-300 py-2'
+                : courseDetail.is_buy == 0 && course.free_watch == 0
+                  ? 'opacity-50'
+                  : ' py-1'
+                ">
                 <div class="relative">
-                  <img
-                    :src="getPathFromUrl(course.thumbnail)"
-                    alt=""
-                    class="w-40 ml-2"
-                    :id="course.video_youtube"
-                    @click="nextOrder(course.order)"
-                  />
-                  <input
-                    type="range"
-                    min="0"
-                    max="100"
-                    value="100"
-                    step="1"
-                    class="
-                      w-40
-                      ml-2
-                      percentage
-                      cursor-default
-                      absolute
-                      bottom-0
-                      left-0
-                    "
-                    v-if="course.last_watch"
-                    :id="course._id"
-                    :style="lastWatchMark(course.last_watch.percentage)"
-                  />
+                  <img :src="getPathFromUrl(course.thumbnail)" alt="" class="w-40 ml-2 rounded-lg" :id="course.video_youtube"
+                    @click="nextOrder(course.order)" />
+                  <input type="range" min="0" max="100" value="100" step="1"
+                    class="w-40 ml-2 percentage cursor-default absolute bottom-0 left-0" v-if="course.last_watch"
+                    :id="course._id" :style="lastWatchMark(course.last_watch.percentage)" />
                 </div>
-                <div
-                  class="flex-1 font-khmer_os text-sm pl-3"
-                  :title="course.title"
-                  @click="nextOrder(course.order)"
-                >
+                <div class="flex-1 font-khmer_os text-sm pl-3" :title="course.title" @click="nextOrder(course.order)">
                   <div class="flex-cols">
-                    <p
-                      v-html="
-                        key +
-                        1 +
-                        '. ' +
-                        cutString(course.title, window.width <= 1366 ? 25 : 55)
-                      "
-                    ></p>
+                    <p v-html="key + 1 + '. ' + cutString(course.title, window.width <= 1366 ? 25 : 55)"></p>
                     <div class="mt-3 text-14px text-gray-500 flex">
                       <div class="opacity-60">
                         <ViewIcon />
@@ -178,39 +82,15 @@
         </div>
       </div>
     </div>
-    <Message
-      v-if="showMessage"
-      @closeMessage="closeMessage"
-      @showCart="showCart"
-    />
-    <MessageConfirm
-      v-if="showConfim"
-      @closeConfirm="closeConfirm"
-      @confirmDelete="confirmDelete"
-    />
-    <PaymentMethod
-      v-if="showPaymentForm"
-      @closePaymentMethod="closePaymentMethod"
-    />
+    <Message v-if="showMessage" @closeMessage="closeMessage" @showCart="showCart" />
+    <MessageConfirm v-if="showConfim" @closeConfirm="closeConfirm" @confirmDelete="confirmDelete" />
+    <PaymentMethod v-if="showPaymentForm" @closePaymentMethod="closePaymentMethod" />
     <Cart v-if="showCartForm" @closeCart="closeCart" />
-    <QuestionAnswer
-      v-if="showQAndA"
-      :title="videoTitle ? videoTitle : videoPlay.title"
-      @closeQuestionAndAnswer="closeQuestionAndAnswer"
-      :lesson_id="lesson_id"
-    />
-    <Document
-      v-if="showDocument"
-      :lessonTitle="lessonTitle"
-      @closeReading="closeReading"
-      :documents="documents"
-      @setLessonTile="setLessonTile($event)"
-    />
-    <DownloadQuality
-      v-if="showQualityForm"
-      @closeQuality="closeQuality"
-      @downloadQuality="downloadQuality($event)"
-    />
+    <QuestionAnswer v-if="showQAndA" :title="videoTitle ? videoTitle : videoPlay.title"
+      @closeQuestionAndAnswer="closeQuestionAndAnswer" :lesson_id="lesson_id" />
+    <Document v-if="showDocument" :lessonTitle="lessonTitle" @closeReading="closeReading" :documents="documents"
+      @setLessonTile="setLessonTile($event)" />
+    <DownloadQuality v-if="showQualityForm" @closeQuality="closeQuality" @downloadQuality="downloadQuality($event)" />
   </div>
 </template>
 
@@ -230,7 +110,6 @@ import QuestionAnswer from "./components/QuestionAnswer";
 import Document from "./components/Document";
 import DownloadQuality from "./components/DownloadQuality";
 const { ipcRenderer } = require("electron");
-import err from "./../../helper/err";
 export default {
   name: "CourseDetail",
   components: {

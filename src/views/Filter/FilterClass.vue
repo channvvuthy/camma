@@ -1,11 +1,14 @@
 <template>
-  <div class="font-khmer_os text-base flex items-center bg-gray-100 m-5 rounded-lg px-3 py-2">
+  <div class="font-khmer_os text-base flex items-center bg-gray-100 m-5 rounded-lg px-5 py-2">
     <div class="w-1/2 flex-1">
-      <Greeting v-if="isGreeting()" />
+      <Greeting v-if="isTextMenu('home')" />
+      <div v-if="isTextMenu('video')" class="font-black text-xl">
+        វីដេអូ
+      </div>
     </div>
     <div class="relative flex w-1/2 bg-white h-full rounded-md px-3">
       <div class="absolute top-2 opacity-60">
-        <SearchIcon :size="22"/>
+        <SearchIcon :size="22" />
       </div>
       <input v-model="s" v-on:keyup.enter="search" type="text"
         class="h-9 rounded w-full outline-none pl-10 bg-transparent" placeholder="ស្វែងរក" />
@@ -45,10 +48,9 @@ export default {
     search() {
       this.$emit("search", this.s);
     },
-    isGreeting() {
-      return this.$route.name == "home";
+    isTextMenu(routeName) {
+      return this.$route.name == routeName;
     },
-
     gradeFilter() {
       this.$emit("gradeFilter", true);
     },

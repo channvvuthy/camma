@@ -5,7 +5,6 @@
       flex
       items-center
       cursor-pointer
-      border-b
       whitespace-nowrap
       text-gray-500
     "

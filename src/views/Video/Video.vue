@@ -1,89 +1,41 @@
 <template>
   <div class="home p-5 bg-gray-50 text-left">
-    <div
-      v-if="loadingVideoCourse"
-      class="flex justify-center items-center h-screen relative -top-5"
-    >
+    <div v-if="loadingVideoCourse" class="flex justify-center items-center h-screen relative -top-5">
       <h1 class="text-sm font-semibold font-khmer_os relative -top-20">
         <loading></loading>
       </h1>
     </div>
-    <div
-      class="overflow-y-scroll pt-3 -mt-3 pb-56"
-      style="max-height: 100vh"
-      @scroll="onScroll"
-      id="videoList"
-      v-else
-    >
-      <div
-        class="h-screen flex justify-center items-center"
-        v-if="videoCourses.length <= 0"
-      >
+    <div class="overflow-y-scroll pt-3 -mt-3 pb-56" style="max-height: 100vh" @scroll="onScroll" id="videoList" v-else>
+      <div class="h-screen flex justify-center items-center" v-if="videoCourses.length <= 0">
         <img src="/icon/Empty/Empty.svg" class="w-64 mb-5 relative -top-28" />
       </div>
       <div class="grid grid-cols-3 gap-4">
-        <div
-          class="flex-col relative cursor-pointer bg-white shadow pb-4"
-          v-for="(video, key) in videoCourses"
-          :key="key"
-        >
+        <div class="flex-col relative cursor-pointer pb-4" v-for="(video, key) in videoCourses" :key="key">
           <div>
-            <div
-              v-if="video.is_new"
-              class="absolute right-0 top-0 z-50"
-              style="margin-top: -8px; margin-right: -8px"
-            >
+            <div v-if="video.is_new" class="absolute right-0 top-0 z-50" style="margin-top: -8px; margin-right: -8px">
               <img src="/icon/New/New.png" class="w-10" />
             </div>
             <div :id="video._id" class="clear-both">
               <div @click="goToPlayList(video)" class="relative">
-                <img :src="video.thumbnail" class="w-full" />
-                <input
-                  type="range"
-                  min="0"
-                  max="100"
-                  value="100"
-                  step="1"
-                  class="
-                    w-full
-                    percentage
-                    cursor-default
-                    absolute
-                    bottom-0
-                    left-0
-                  "
-                  v-if="video.last_watch"
-                  :style="lastWatchMark(video.last_watch.percentage)"
-                />
+                <img :src="video.thumbnail" class="w-full rounded-2xl" />
+                <input type="range" min="0" max="100" value="100" step="1"
+                  class=" w-full percentage cursor-default absolute bottom-0 left-0" v-if="video.last_watch"
+                  :style="lastWatchMark(video.last_watch.percentage)" />
               </div>
-              <div
-                class="
+              <div class="
                   mt-10
                   flex
                   justify-start
                   items-center
                   font-khmer_os
                   left-0
-                  bg-white
                   w-full
                   bg-opacity-60
-                "
-              >
-                <div class="flex" @click="goToPlayList(video)">
+                ">
+                <div class="flex items-center" @click="goToPlayList(video)">
                   <div>
-                    <div
-                      class="
-                        h-14
-                        w-14
-                        rounded-full
-                        ml-3
-                        bg-gray-200 bg-center
-                        border-custom border
-                      "
-                      :style="{
-                        backgroundImage: `url(${video.teacher.photo})`,
-                      }"
-                    ></div>
+                    <div class="h-12 w-12 rounded-full ml-3 bg-center bg-cover"
+                      :style="{ backgroundImage: `url(${video.teacher.photo})`, }"></div>
                   </div>
                   <div class="text-sm ml-3">
                     <div>{{ cutString(video.title, 40) }}</div>

@@ -1,27 +1,31 @@
 <template>
   <div class="px-5 pt-5 font-khmer_os text-sm">
-    <div class="flex w-3/4">
-      <div class="flex border-b h-10 w-full mb-5">
-        <input type="text" class="h-10 rounded w-full outline-none bg-transparent" placeholder="ស្វែងរកនៅទីនេះ"
-          v-model="payload.s" v-on:keyup.enter="filterBook" />
-        <FilterInput :title="department" @filterInput="departmentFilter()" />
-        <div class="w-10"></div>
-        <FilterInput :title="subject" @filterInput="subjectFilter()" />
+    <div class="flex w-full">
+      <div class="flex py-2 w-full mb-5 px-5 items-center bg-gray-100 rounded-lg">
+        <div class="font-black text-xl w-5/12">
+          សៀវភៅ
+        </div>
+        <div class="flex items-center bg-white w-full px-5 rounded-md">
+          <div class="mr-3">
+            <SearchIcon :size="22" />
+          </div>
+          <input type="text" class="h-10 rounded w-full outline-none bg-transparent" placeholder="ស្វែងរក..."
+            v-model="payload.s" v-on:keyup.enter="filterBook" />
+          <FilterInput :title="department" @filterInput="departmentFilter()" />
+          <div class="w-10"></div>
+          <FilterInput :title="subject" @filterInput="subjectFilter()" />
+        </div>
       </div>
     </div>
     <div class="h-screen pb-36">
       <div class="font-khmer_os pt-2 overflow-y-scroll h-full" @scroll="onScroll" id="feed">
-        <div class="grid grid-cols-4 gap-4">
-          <div v-for="(ebook, key) in ebookCourses" :key="key" class="bg-white shadow pb-4">
-            <div class="cursor-pointer relative">
-              <div class="absolute right-0 top-0" v-if="ebook.is_new">
-                <img src="/icon/New/New.png" class="w-10" style="margin-top: -8px; margin-right: -8px" />
-              </div>
-              <img :src="ebook.thumbnail" @click="openView(ebook)" class="cursor-pointer" />
-              <div class="flex justify-between items-center mt-4 w-full px-4">
-                <div class="text-14px" @click="openView(ebook)">
-                  {{ cutString(ebook.title, 50) }}
-                </div>
+        <div class="grid grid-cols-3 gap-4">
+          <div v-for="(ebook, key) in ebookCourses" :key="key" class="bg-white rounded-lg shadow p-4">
+            <div class="cursor-pointer flex">
+              <img :src="ebook.thumbnail" @click="openView(ebook)" class="cursor-pointer w-20" />
+              <div class="ml-5" @click="openView(ebook)">
+                <div class="text-base">{{ cutString(ebook.title, 60) }}</div>
+                <div class="text-sm mt-2 text-gray-400">រៀបរៀងដោយ៖ {{ ebook.teacher.name }}</div>
               </div>
             </div>
           </div>
@@ -54,8 +58,9 @@ import FilterInput from "./components/FilterInput.vue";
 import GradeModal from "./components/GradeModal.vue";
 import SubjectModal from "./components/SubjectModal.vue";
 import LoadingOverlay from "../Modal/LoadingOverlay.vue";
+import SearchIcon from "../../components/SearchIcon.vue";
+
 export default {
-  name: "Book",
   components: {
     ViewBook,
     ReadingBook,
@@ -63,7 +68,8 @@ export default {
     FilterInput,
     GradeModal,
     SubjectModal,
-    LoadingOverlay
+    LoadingOverlay,
+    SearchIcon
   },
   data() {
     return {
