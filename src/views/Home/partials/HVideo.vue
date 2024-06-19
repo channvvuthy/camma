@@ -14,14 +14,16 @@
             </vue-horizontal>
             <vue-horizontal responsive v-else>
                 <section v-for="(course, index) in courses.lesson" :key="index" style="width:auto !important;">
-                    <div class="rounded-lg bg-center bg-cover shadow cursor-pointer"
+                    <div class="group-hover rounded-lg bg-center bg-cover shadow cursor-pointer relative"
                         style="width:300px !important; height:170px;"
-                        :style="{ backgroundImage: `url(${course.video.thumbnail})` }"></div>
+                        :style="{ backgroundImage: `url(${course.video.thumbnail})` }">
+                        <button class="hidden group-hover:block">Child</button>
+                    </div>
                 </section>
             </vue-horizontal>
         </div>
         <div v-if="courses && courses.lesson && courses.lesson.length <= 0">
-            <p class="text-sm text-gray-500">មិនមានវីដេអូសម្រាប់បង្ហាញនៅលើតម្រងរបស់អ្នកទេ!</p>
+            <p class="text-sm text-gray-500">មិនវីដេអូត្រូវបង្ហាញទៅតាមអ្វីដែលអ្នកកំពុងស្វែងរកនោះទេ!</p>
         </div>
     </div>
 </template>

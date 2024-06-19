@@ -2,43 +2,22 @@
   <div class="px-5 pt-5 font-khmer_os text-sm">
     <div class="flex w-3/4">
       <div class="flex border-b h-10 w-full mb-5">
-        <input
-          type="text"
-          class="h-10 rounded w-full outline-none bg-transparent"
-          placeholder="ស្វែងរកនៅទីនេះ"
-          v-model="payload.s"
-          v-on:keyup.enter="filterBook"
-        />
+        <input type="text" class="h-10 rounded w-full outline-none bg-transparent" placeholder="ស្វែងរកនៅទីនេះ"
+          v-model="payload.s" v-on:keyup.enter="filterBook" />
         <FilterInput :title="department" @filterInput="departmentFilter()" />
         <div class="w-10"></div>
         <FilterInput :title="subject" @filterInput="subjectFilter()" />
       </div>
     </div>
     <div class="h-screen pb-36">
-      <div
-        class="font-khmer_os pt-2 overflow-y-scroll h-full"
-        @scroll="onScroll"
-        id="feed"
-      >
+      <div class="font-khmer_os pt-2 overflow-y-scroll h-full" @scroll="onScroll" id="feed">
         <div class="grid grid-cols-4 gap-4">
-          <div
-            v-for="(ebook, key) in ebookCourses"
-            :key="key"
-            class="bg-white shadow pb-4"
-          >
+          <div v-for="(ebook, key) in ebookCourses" :key="key" class="bg-white shadow pb-4">
             <div class="cursor-pointer relative">
               <div class="absolute right-0 top-0" v-if="ebook.is_new">
-                <img
-                  src="/icon/New/New.png"
-                  class="w-10"
-                  style="margin-top: -8px; margin-right: -8px"
-                />
+                <img src="/icon/New/New.png" class="w-10" style="margin-top: -8px; margin-right: -8px" />
               </div>
-              <img
-                :src="ebook.thumbnail"
-                @click="openView(ebook)"
-                class="cursor-pointer"
-              />
+              <img :src="ebook.thumbnail" @click="openView(ebook)" class="cursor-pointer" />
               <div class="flex justify-between items-center mt-4 w-full px-4">
                 <div class="text-14px" @click="openView(ebook)">
                   {{ cutString(ebook.title, 50) }}
@@ -48,39 +27,20 @@
           </div>
         </div>
         <div v-if="ebookCourses.length == 0" class="text-custom text-base flex items-center justify-center h-full">
-            មិនមានទិន្ន័យ
+          មិនមានទិន្ន័យ
         </div>
       </div>
     </div>
-    <ViewBook
-      v-if="showView"
-      :view="bookView"
-      @closeView="closeView"
-      @read="read($event)"
-      :loading="loading"
-      :cartId="cartId"
-      @buyingRead="buyingRead($event)"
-    />
-    <ReadingBook
-      v-if="showReading"
-      :books="bookReading"
-      @closeReading="closeReading"
-      @buyingRead="buyingRead($event)"
-    />
+    <ViewBook v-if="showView" :view="bookView" @closeView="closeView" @read="read($event)" :loading="loading"
+      :cartId="cartId" @buyingRead="buyingRead($event)" />
+    <ReadingBook v-if="showReading" :books="bookReading" @closeReading="closeReading"
+      @buyingRead="buyingRead($event)" />
     <Cart v-if="showingCart" @closeCart="closeCart" />
-    <GradeModal
-      :moalTitle="department"
-      v-if="isDepartmentFilter"
-      @closeModal="departmentFilter()"
-      @gradeSelected="gradeSelected($event)"
-    />
-    <SubjectModal
-      :moalTitle="subject"
-      v-if="isSubjectFilter"
-      @subjectSelected="subjectSelected($event)"
-      @closeModal="subjectFilter()"
-    />
-    <LoadingOverlay v-if="loading"/>
+    <GradeModal :moalTitle="department" v-if="isDepartmentFilter" @closeModal="departmentFilter()"
+      @gradeSelected="gradeSelected($event)" />
+    <SubjectModal :moalTitle="subject" v-if="isSubjectFilter" @subjectSelected="subjectSelected($event)"
+      @closeModal="subjectFilter()" />
+    <LoadingOverlay v-if="loading" />
   </div>
 </template>
 
@@ -170,11 +130,11 @@ export default {
       "getFilter",
     ]),
     ...mapActions("cart", ["addCart", "cartAlert"]),
-    getEbookFilter(){
-        this.loading = true
-        this.getCourseEbook(this.payload).then(()=>{
-            this.loading = false
-        })
+    getEbookFilter() {
+      this.loading = true
+      this.getCourseEbook(this.payload).then(() => {
+        this.loading = false
+      })
     },
     gradeSelected(department) {
       this.payload.p = 1;
@@ -300,6 +260,7 @@ export default {
 #feed::-webkit-scrollbar {
   width: 5px !important;
 }
+
 #feed::-webkit-scrollbar-track {
   box-shadow: inset 0 0 0px rgba(0, 0, 0, 0.3) !important;
 }

@@ -63,12 +63,14 @@ export default {
     gradeSelected(grade) {
       this.isModal = false;
       var filterElement = document.getElementById("filter");
+
       if (grade == "all") {
         this.$store.commit("course/getFilterByGradeID", "");
         filterElement.innerHTML = "ទាំងអស់";
         this.videoList();
         return;
       }
+
       this.$store.commit("course/getFilterByGradeID", grade._id);
       filterElement.innerHTML = grade.name;
       this.videoList();

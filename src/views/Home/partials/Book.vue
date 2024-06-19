@@ -23,7 +23,7 @@
         </div>
 
         <div v-if="ebookCourses && ebookCourses.length <= 0">
-            <p class="text-sm text-gray-500">មិនមានសៀវភៅសម្រាប់បង្ហាញនៅលើតម្រងរបស់អ្នកទេ!</p>
+            <p class="text-sm text-gray-500">មិនមានសៀវភៅត្រូវបង្ហាញទៅតាមអ្វីដែលអ្នកកំពុងស្វែងរកនោះទេ!</p>
         </div>
     </div>
 </template>
@@ -87,11 +87,11 @@ export default {
         this.getCourseEbook(this.payload);
     },
     watch: {
-        query: function (oldQuery, newQuery) {
+        query: function (newQuery) {
             this.getCourseEbook({ ...this.payload, s: newQuery });
         },
-        gradeID: function (oldGrade, newGrade) {
-            this.getCourseEbook({ ...this.payload, grade_id: newGrade });
+        gradeID: function (newGrade) {
+            this.getCourseEbook({ ...this.payload, grade_id: newGrade, s: this.query });
         },
     },
 }
