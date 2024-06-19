@@ -1,6 +1,5 @@
 <template>
-  <div
-    class="
+  <div class="
       fixed
       flex flex-col
       items-center
@@ -11,13 +10,9 @@
       top-0
       z-50
       bg-black bg-opacity-80
-    "
-    id="dismiss"
-    @click="dismiss"
-  >
+    " id="dismiss" @click="dismiss">
     <div class="bg-white relative" style="width: 595px; z-index: 3000">
-      <div
-        class="
+      <div class="
           cursor-pointer
           absolute
           w-8
@@ -30,23 +25,16 @@
           -right-5
           -top-5
           z-50
-        "
-        @click="
-          () => {
-            this.$emit('closeReading', true);
-          }
-        "
-      >
+        " @click="() => {
+          this.$emit('closeReading', true);
+        }
+          ">
         <CloseIcon :size="20" fill="#FFF" />
       </div>
     </div>
-    <div
-      class="bg-white rounded-xl h-3/4 overflow-y-scroll relative"
-      style="width: 595px"
-      id="pdf"
-    >
-      <div
-        class="
+    <div class="bg-white rounded-xl overflow-y-scroll scroll-pdf relative"
+      style="width: 595px; min-height: 300px; max-height:90%" id="pdf">
+      <div class="
           h-12
           border-b
           rounded-t-xl
@@ -58,8 +46,7 @@
           top-0
           z-50
           bg-white
-        "
-      >
+        ">
         <div :title="title">{{ cutString(title, 65) }}</div>
         <div class="flex items-center">
           <div class="cursor-pointer" @click="toggleFullScreen">
@@ -73,18 +60,13 @@
       </div>
       <div class="w-full z-50 sticky top-12 bg-white" v-if="isList">
         <ul class="px-5">
-          <li
-            v-for="(book, index) in books.list"
-            :key="index"
-            class="py-3 border-b cursor-pointer"
-            @click="readNewBook(book)"
-          >
+          <li v-for="(book, index) in books.list" :key="index" class="py-3 border-b cursor-pointer"
+            @click="readNewBook(book)">
             {{ book.title }}
           </li>
         </ul>
       </div>
-      <div
-        class="
+      <div class="
           absolute
           top-0
           left-0
@@ -94,25 +76,16 @@
           items-center
           justify-center
           z-50
-        "
-        v-if="loading"
-      >
+        " v-if="loading">
         <Loading />
       </div>
-      <vue-pdf-embed
-        :source="pdfUrl"
-        @loaded="loaded"
-        @rendered="rendered"
-        @rendering-failed="renderingFailed"
-      />
+      <vue-pdf-embed :source="pdfUrl" @loaded="loaded" @rendered="rendered" @rendering-failed="renderingFailed" />
     </div>
   </div>
 </template>
 
 <script>
-// import VuePdfEmbed from "vue-pdf-embed";
 
-// OR THE FOLLOWING IMPORT FOR VUE 2
 import VuePdfEmbed from "vue-pdf-embed/dist/vue2-pdf-embed";
 import CloseIcon from "./../../../components/CloseIcon.vue";
 import FullScreenIcon from "./../../../components/FullScreenIcon.vue";
@@ -163,18 +136,16 @@ export default {
     },
     toggleFullScreen() {
       var el = document.getElementById("pdf");
-      if (document.webkitIsFullScreen) {
-        if (document.exitFullscreen) {
-          document.exitFullscreen();
-        } else if (document.mozCancelFullScreen) {
-          document.mozCancelFullScreen();
-        } else if (document.webkitExitFullscreen) {
-          document.webkitExitFullscreen();
-        }
-      } else {
-        el.webkitRequestFullScreen();
+
+      if (el.requestFullscreen) {
+        document.fullscreenElement ? document.exitFullscreen() : el.requestFullscreen();
+      } else if (el.webkitRequestFullscreen) {
+        document.webkitFullscreenElement ? document.webkitExitFullscreen() : el.webkitRequestFullscreen();
+      } else if (el.mozRequestFullScreen) {
+        document.mozFullScreenElement ? document.mozCancelFullScreen() : el.mozRequestFullScreen();
       }
-    },
+    }
+    ,
     cutString(text, limit) {
       if (text) {
         return helper.cutString(text, limit);
@@ -193,3 +164,17 @@ export default {
   },
 };
 </script>
+<style>
+.scroll-pdf::-webkit-scrollbar {
+  width: 10px !important;
+}
+
+.scroll-pdf::-webkit-scrollbar-thumb {
+  background-color: #ddd !important;
+  border-radius: 5px !important;
+}
+
+.scroll-pdf::-webkit-scrollbar-track {
+  background: #f1f1f1 !important;
+}
+</style>

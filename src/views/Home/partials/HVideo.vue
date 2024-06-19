@@ -2,7 +2,8 @@
     <div class="mb-5">
         <div class="flex items-center justify-between mb-5">
             <div class="font-black text-lg">វីដេអូ</div>
-            <div class="text-sm text-custom cursor-pointer" v-if="courses && courses.lesson && courses.lesson.length">
+            <div @click="$router.push({ name: 'video' })" class="text-sm text-custom cursor-pointer"
+                v-if="courses && courses.lesson && courses.lesson.length">
                 មើលទាំងអស់</div>
         </div>
         <div :style="{ maxWidth: `${windowWidth - 300}px` }">
@@ -14,10 +15,11 @@
             </vue-horizontal>
             <vue-horizontal responsive v-else>
                 <section v-for="(course, index) in courses.lesson" :key="index" style="width:auto !important;">
-                    <div class="group-hover rounded-lg bg-center bg-cover shadow cursor-pointer relative"
+                    <div @click="viewCourseDetail(course.video)"
+                        class="group-hover rounded-lg bg-center bg-cover shadow cursor-pointer relative"
                         style="width:300px !important; height:170px;"
                         :style="{ backgroundImage: `url(${course.video.thumbnail})` }">
-                        <button class="hidden group-hover:block">Child</button>
+
                     </div>
                 </section>
             </vue-horizontal>
@@ -25,21 +27,26 @@
         <div v-if="courses && courses.lesson && courses.lesson.length <= 0">
             <p class="text-sm text-gray-500">មិនវីដេអូត្រូវបង្ហាញទៅតាមអ្វីដែលអ្នកកំពុងស្វែងរកនោះទេ!</p>
         </div>
+        <LoadingOverlay v-if="isDetail" @dismiss="dismiss()" />
     </div>
 </template>
 <script>
 import VueHorizontal from "vue-horizontal";
 import Loading from '../../../components/Loading.vue';
 import { mapState, mapActions } from "vuex";
+import helper from "./../../../helper/helper";
+import LoadingOverlay from "./../../Modal/LoadingOverlay.vue";
+
 
 export default {
-    components: { VueHorizontal, Loading },
+    components: { VueHorizontal, Loading, LoadingOverlay },
     data() {
         return {
             windowWidth: window.innerWidth,
             items: [...Array(5).keys()].map((i) => {
                 return { title: `Item ${i}`, content: `🚀 Content ${i}` };
             }),
+            isDetail: false,
         }
     },
 
@@ -53,6 +60,31 @@ export default {
             "videoPagination",
             "removeActiveFavorite",
         ]),
+
+        viewCourseDetail(video) {
+            this.isDetail = true;
+            this.$store.dispatch("course/getvideoPlay", video.course._id)
+                .then(({ data }) => {
+                    this.$store.commit("course/gettingCourseDetail", data);
+                    const [vd] = data.list.filter(item => item.order === video.order);
+                    this.$store.commit("course/getVideo", vd);
+
+                    this.isDetail = false;
+                    this.$router.push({
+                        name: "course-detail",
+                        params: {
+                            videoId: video._id,
+                            order: video.order,
+                            courseId: video.course._id,
+                        },
+                    });
+                })
+                .catch(({ response }) => {
+                    helper.error(response.data);
+                    this.isDetail = false;
+                });
+        },
+
     },
 
     mounted() {
