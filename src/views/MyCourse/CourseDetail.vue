@@ -6,8 +6,16 @@
       </h1>
     </div>
     <div v-else>
+      <div class="flex items-center mb-3 cursor-pointer" @click="$router.go(-1)">
+        <div class="mr-3">
+          <BackIcon :size="20" />
+        </div>
+        <div class="font-black text-lg w-5/12">
+          វីដេអូ
+        </div>
+      </div>
       <div class="flex">
-        <div class="w-3/5 pr-5">
+        <div class="w-3/5 pr-5 overflow-y-scroll h-screen pb-40">
           <div>
             <MediaPlayer @onPlayerEnded="onPlayerEnded" @previousVideo="previousVideo"
               @lastWatchVideo="lastWatchVideo($event)" :last_watch="last_watch"
@@ -17,9 +25,10 @@
             <div class="mt-4 font-khmer_os">
               <p class="text-14px font-semibold" v-if="!loadingPlay">
                 <span :title="videoTitle ? videoTitle : videoPlay.title">
-                  {{ videoTitle ? videoTitle : videoPlay.title }}</span>
+                  {{ videoTitle ? videoTitle : videoPlay.title }}
+                </span>
               </p>
-              <h2 class="text-gray-400 text-14px font-khmer_os mt-2">
+              <h2 class="text-gray-400 text-14px font-khmer_os mt-2 mb-5">
                 {{ courseDetail.course.teacher.name }}
               </h2>
             </div>
@@ -29,20 +38,21 @@
                 @click="showMyDocument" v-if="documents && documents.length">
                 ឯកសារ
               </div>
-              <div
+              <!-- <div
                 class="flex bg-custom font-khmer_os text-sm focus:outline-none text-white leading-8 h-8 px-3 rounded-full hover:bg-opacity-80 cursor-pointer"
                 @click="QuestionAndAnswer">
                 <span class="pl-1 font-thin whitespace-nowrap">សំនួរចម្លើយ</span>
-              </div>
+              </div> -->
             </div>
           </div>
+          <Comment :lesson_id="lesson_id" v-if="lesson_id" />
         </div>
         <div class="w-2/5 bg-white h-screen border border-gray-200 pb-5 rounded-2xl" id="courseList" ref="courseDetail">
           <div class="overflow-y-scroll pt-5" @scroll="onScroll" ref="feed" id="feed" style="max-height: 91vh">
             <div class="flex px-5 mb-3 justify-between items-center">
               <div class="font-black">បញ្ជីវីដេអូ</div>
               <div v-if="courseDetail && courseDetail.list && courseDetail.list.length" class="text-gray-300 text-sm">
-                {{ order }}/{{ courseDetail.list.length }} 
+                {{ order }}/{{ courseDetail.list.length }}
               </div>
             </div>
             <div class="flex-col relative" :class="order == course.order ? 'my-2' : 'mb-1'"
@@ -58,8 +68,8 @@
                   : ' py-1'
                 ">
                 <div class="relative">
-                  <img :src="getPathFromUrl(course.thumbnail)" alt="" class="w-40 ml-2 rounded-lg" :id="course.video_youtube"
-                    @click="nextOrder(course.order)" />
+                  <img :src="getPathFromUrl(course.thumbnail)" alt="" class="w-40 ml-2 rounded-lg"
+                    :id="course.video_youtube" @click="nextOrder(course.order)" />
                   <input type="range" min="0" max="100" value="100" step="1"
                     class="w-40 ml-2 percentage cursor-default absolute bottom-0 left-0" v-if="course.last_watch"
                     :id="course._id" :style="lastWatchMark(course.last_watch.percentage)" />
@@ -68,10 +78,11 @@
                   <div class="flex-cols">
                     <p v-html="key + 1 + '. ' + cutString(course.title, window.width <= 1366 ? 25 : 55)"></p>
                     <div class="mt-3 text-14px text-gray-500 flex">
-                      <div class="opacity-60">
+                      <div class="opacity-60 flex iems-center">
                         <ViewIcon />
                       </div>
                       <span class="pl-1">{{ kFormatter(course.view) }}</span>
+                      <span class="pl-1 text-sm">Views</span>
                     </div>
                   </div>
                 </div>
@@ -83,13 +94,19 @@
       </div>
     </div>
     <Message v-if="showMessage" @closeMessage="closeMessage" @showCart="showCart" />
+
     <MessageConfirm v-if="showConfim" @closeConfirm="closeConfirm" @confirmDelete="confirmDelete" />
+
     <PaymentMethod v-if="showPaymentForm" @closePaymentMethod="closePaymentMethod" />
+
     <Cart v-if="showCartForm" @closeCart="closeCart" />
+
     <QuestionAnswer v-if="showQAndA" :title="videoTitle ? videoTitle : videoPlay.title"
       @closeQuestionAndAnswer="closeQuestionAndAnswer" :lesson_id="lesson_id" />
+
     <Document v-if="showDocument" :lessonTitle="lessonTitle" @closeReading="closeReading" :documents="documents"
       @setLessonTile="setLessonTile($event)" />
+
     <DownloadQuality v-if="showQualityForm" @closeQuality="closeQuality" @downloadQuality="downloadQuality($event)" />
   </div>
 </template>
@@ -101,17 +118,18 @@ import helper from "./../../helper/helper";
 import { mapActions, mapState } from "vuex";
 import IconPlayActive from "./../../components/IconPlayActive";
 import Message from "./components/Message.vue";
+import Comment from "./components/Comment.vue";
 import MessageConfirm from "./components/MessageConfirm.vue";
 import PaymentMethod from "./components/PaymentMethod";
 import Cart from "./components/Cart";
 import MediaPlayer from "./components/media/Player";
 import Loading from "./../../components/Loading";
+import BackIcon from "./../../components/BackIcon";
 import QuestionAnswer from "./components/QuestionAnswer";
 import Document from "./components/Document";
 import DownloadQuality from "./components/DownloadQuality";
 const { ipcRenderer } = require("electron");
 export default {
-  name: "CourseDetail",
   components: {
     MediaPlayer,
     Loading,
@@ -124,6 +142,8 @@ export default {
     Document,
     DownloadQuality,
     MessageConfirm,
+    BackIcon,
+    Comment
   },
   data() {
     return {
@@ -430,6 +450,7 @@ export default {
         );
 
         this.videoPlay = videoFilter[0];
+
         this.addLastWatch(this.videoPlay);
         this.order = nextVideo;
         this.gettingNextVideo(false);
@@ -519,6 +540,7 @@ export default {
         this.courseDetail.list[this.courseDetail.list.length - 1].order;
     }
     this.scrollToBottom();
+
   },
   created() {
     window.addEventListener("resize", this.handleResize);
@@ -542,9 +564,11 @@ export default {
             this.videoPlay = item;
             this.addLastWatch(this.videoPlay);
             this.lessonView(this.videoPlay._id).then((res) => {
+
               this.documents = res;
             });
           }
+          this.lesson_id = item._id;
         }
       });
     });

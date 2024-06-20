@@ -3,10 +3,10 @@
     id="video_player_box"
     class="flex-cols start items-center w-full relative"
   >
-    <div class="bg-black">
+    <div>
       <video
         id="my_video"
-        class="m-auto w-full"
+        class="m-auto w-full rounded-lg shadow overflow-hidden"
         ref="my_video"
         :style="{ height: video.height + 'px', width: '100%' }"
         poster="/poster.png"

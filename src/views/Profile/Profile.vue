@@ -23,7 +23,6 @@
           items-center
           m-auto
           cursor-pointer
-          border border-custom
           mb-2
           relative
           photo
@@ -133,25 +132,6 @@
       </div>
 
       <div class="flex justify-stat items-center relative">
-        <div class="absolute left-0 top-0 mt-2 opacity-30">
-          <CalendarIcon />
-        </div>
-        <input
-          disabled
-          class="
-            border-b border-gray-200 bg-transparent
-            py-2
-            focus:outline-none
-            w-full
-            pl-12
-            mb-5
-          "
-          placeholder="ថ្ងៃខែឆ្នាំកំណើត"
-          v-model="stProfile.date_of_birth"
-        />
-      </div>
-
-      <div class="flex justify-stat items-center relative">
         <div class="absolute left-0 top-0 mt-1 opacity-30">
           <MapIcon />
         </div>
@@ -167,7 +147,7 @@
           "
           @click="showAllProvince"
         >
-          {{ stProfile.province.name || "ខេត្ត" }}
+          {{ stProfile.province.name || "សាខា" }}
         </button>
         <img
           src="/ajax-loader.gif"
@@ -201,6 +181,8 @@
           v-if="loadingSchool"
         />
       </div>
+
+
     </div>
   </div>
 </template>
