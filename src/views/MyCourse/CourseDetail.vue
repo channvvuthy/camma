@@ -38,11 +38,7 @@
                 @click="showMyDocument" v-if="documents && documents.length">
                 ឯកសារ
               </div>
-              <!-- <div
-                class="flex bg-custom font-khmer_os text-sm focus:outline-none text-white leading-8 h-8 px-3 rounded-full hover:bg-opacity-80 cursor-pointer"
-                @click="QuestionAndAnswer">
-                <span class="pl-1 font-thin whitespace-nowrap">សំនួរចម្លើយ</span>
-              </div> -->
+
             </div>
           </div>
           <Comment :lesson_id="lesson_id" v-if="lesson_id" />
@@ -74,15 +70,22 @@
                     class="w-40 ml-2 percentage cursor-default absolute bottom-0 left-0" v-if="course.last_watch"
                     :id="course._id" :style="lastWatchMark(course.last_watch.percentage)" />
                 </div>
-                <div class="flex-1 font-khmer_os text-sm pl-3" :title="course.title" @click="nextOrder(course.order)">
+                <div class="flex-1 font-khmer_os text-sm pl-3" :title="course.title">
                   <div class="flex-cols">
-                    <p v-html="key + 1 + '. ' + cutString(course.title, window.width <= 1366 ? 25 : 55)"></p>
-                    <div class="mt-3 text-14px text-gray-500 flex">
-                      <div class="opacity-60 flex iems-center">
-                        <ViewIcon />
+                    <p v-html="key + 1 + '. ' + cutString(course.title, window.width <= 1366 ? 25 : 55)"
+                      @click="nextOrder(course.order)"></p>
+                    <div class="flex justify-between items-center">
+                      <div class="mt-3 text-14px text-gray-500 flex" @click="nextOrder(course.order)">
+                        <div class="opacity-60 flex iems-center">
+                          <ViewIcon />
+                        </div>
+                        <span class="pl-1">{{ kFormatter(course.view) }}</span>
+                        <span class="pl-1 text-sm">Views</span>
                       </div>
-                      <span class="pl-1">{{ kFormatter(course.view) }}</span>
-                      <span class="pl-1 text-sm">Views</span>
+                      <div class="mt-3 pr-5 cursor-pointer" @click="toggleFavorite(course)">
+                        <FavoriteIcon fill="transparent" stroke="#a3a3a3" v-if="!course.is_favorite" />
+                        <FavoriteIcon fill="#ef4444" stroke="#ef4444" v-else />
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -128,9 +131,12 @@ import BackIcon from "./../../components/BackIcon";
 import QuestionAnswer from "./components/QuestionAnswer";
 import Document from "./components/Document";
 import DownloadQuality from "./components/DownloadQuality";
+import FavoriteIcon from './components/FavoriteIcon.vue';
 const { ipcRenderer } = require("electron");
+
 export default {
   components: {
+    FavoriteIcon,
     MediaPlayer,
     Loading,
     ViewIcon,
@@ -186,10 +192,12 @@ export default {
   },
 
   methods: {
+    ...mapActions('favorite', ["add", "removeFavorite"]),
     ...mapActions("course", [
       "getCourseDetail",
       "lessonView",
       "getCourseByScroll",
+      "removeActiveFavorite",
     ]),
     ...mapActions("playVideo", [
       "getVideoLink",
@@ -197,6 +205,11 @@ export default {
       "stopWatch",
     ]),
     ...mapActions("cart", ["addCart"]),
+
+    async toggleFavorite({ _id, is_favorite }) {
+      (is_favorite == undefined || is_favorite == 0) ? await this.add(_id) : await this.removeFavorite(_id);
+      this.$store.commit("course/toggleMyFavorite", { _id, is_favorite })
+    },
 
     gettingResource($event) {
       this.resources = $event;

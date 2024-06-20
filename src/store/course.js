@@ -37,6 +37,14 @@ export default {
   },
 
   mutations: {
+    toggleMyFavorite(state, { _id, is_favorite }) {
+      state.courseDetail.list.forEach(item => {
+          if (item._id === _id) {
+              item.is_favorite = is_favorite === undefined || is_favorite === 0 ? 1 : 0;
+          }
+      });
+  }
+,  
     getFilter(state, payload) {
       state.subject = payload.subject;
       state.courses.grade = payload.department;
