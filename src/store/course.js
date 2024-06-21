@@ -28,6 +28,7 @@ export default {
     LessonTitle: "",
     videoCourses: [],
     gradeID: "",
+    selectedSubjectId: "",
     s: "",
     gettingCourseScroll: false,
     teacher: {},
@@ -47,6 +48,9 @@ export default {
     getFilter(state, payload) {
       state.subject = payload.subject;
       state.courses.grade = payload.department;
+    },
+    setSubjectId(state, payload) {
+      state.selectedSubjectId = payload;
     },
     getVideo(state, payload) {
       state.videoActive = payload;

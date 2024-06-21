@@ -143,6 +143,7 @@ export default {
       })
     },
     gradeSelected(department) {
+      this.$store.commit("course/getFilterByGradeID", department._id);
       this.payload.p = 1;
       this.departmentFilter();
       this.department = department.name || "នាយកដ្ឋាន";
