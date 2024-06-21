@@ -43,8 +43,7 @@ export default {
               item.is_favorite = is_favorite === undefined || is_favorite === 0 ? 1 : 0;
           }
       });
-  }
-,  
+    },  
     getFilter(state, payload) {
       state.subject = payload.subject;
       state.courses.grade = payload.department;
@@ -115,14 +114,21 @@ export default {
       state.courses = videos;
     },
     removeActiveFavorite(state, lesson_id) {
-      state.courses.lesson = state.courses.lesson.filter((item) => {
-        if (item.video._id === lesson_id) {
+      state.courses.lesson.forEach((item) => {
+        if (item.video._id == lesson_id) {
           item.video.is_favorite = 0;
         }
-        return item;
       });
     },
 
+    addFavorite(state, lesson_id) {
+      state.courses.lesson.forEach((item) => {
+        if (item.video._id == lesson_id) {
+          item.video.is_favorite = 1;
+        }
+      });
+    },
+    
     getMyCourse(state, courses) {
       state.myCourses = courses;
     },

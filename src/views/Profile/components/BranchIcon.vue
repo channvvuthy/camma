@@ -1,0 +1,26 @@
+<template>
+    <svg :fill="fill" :width="size" :height="size" viewBox="-4 -2 24 24" xmlns="http://www.w3.org/2000/svg"
+        preserveAspectRatio="xMinYMin" class="jam jam-branch">
+        <path
+            d="M3 18a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm1-7.002v3.173a3.001 3.001 0 1 1-2 0V5.829a3.001 3.001 0 1 1 2 0v2.34c.312-.11.647-.17.997-.171l6.037-.006a1 1 0 0 0 .999-1V5.84A3.001 3.001 0 0 1 13 0a3 3 0 0 1 1.033 5.817v1.175a3 3 0 0 1-2.997 3l-6.037.006a1 1 0 0 0-.999 1zM3 4a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm10 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2z" />
+    </svg>
+</template>
+
+<script>
+export default {
+    props: {
+        size: {
+            type: Number,
+            default: function () {
+                return 24
+            }
+        },
+        fill: {
+            type: String,
+            default: function () {
+                return "#000000"
+            }
+        },
+    }
+}
+</script>

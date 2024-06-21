@@ -1,7 +1,6 @@
 <template>
   <div class="bg-white h-screen py-5">
-    <div
-      class="
+    <div class="
         px-5
         font-khmer_os
         text-14px
@@ -10,10 +9,8 @@
         items-center
         text-center
         w-full
-      "
-    >
-      <div
-        class="
+      ">
+      <div class="
           bg-cover bg-center
           w-24
           h-24
@@ -26,15 +23,11 @@
           mb-2
           relative
           photo
-        "
-        :style="{
+        " :style="{
           backgroundSize: 'cover',
-          backgroundImage: `url(${stProfile.photo})`,
-        }"
-        @click="changePhoto"
-      >
-        <div
-          class="
+          backgroundImage: `url(${user.photo})`,
+        }" @click="changePhoto">
+        <div class="
             camera
             absolute
             bg-gray-100
@@ -46,167 +39,90 @@
             flex
             bottom-0
             right-0
-          "
-        >
+          ">
           <CameraIcon />
         </div>
         <div class="loader" v-if="updatingPhoto">
           <Loader />
         </div>
       </div>
-      <p class="mb-5">{{ "0" + stProfile.phone }}</p>
+      <p class="mb-5">{{ "0" + user.phone }}</p>
       <form>
-        <input
-          type="file"
-          style="display: none"
-          ref="image"
-          name="image"
-          @change="onFileChange"
-          accept="image/x-png,image/gif,image/jpeg"
-        />
+        <input type="file" style="display: none" ref="image" name="image" @change="onFileChange"
+          accept="image/x-png,image/gif,image/jpeg" />
       </form>
-      <div class="flex justify-stat items-center relative">
-        <div class="absolute left-0 top-0 mt-2 opacity-40">
-          <EditUserIcon />
-        </div>
-        <input
-          disabled
-          type="text"
-          v-model="stProfile.first_name"
-          class="
-            border-b border-gray-200 bg-transparent
-            py-2
-            focus:outline-none
-            w-full
-            pl-10
-            mb-5
-          "
-          placeholder="នាមត្រកូល"
-        />
+      <div class="flex items-center border-b h-12 mb-3">
+        <EditUserIcon />
+        <input type="text" v-bind:value="user.first_name" class="ml-3 h-full w-full border-none outline-none"
+          placeholder="នាមត្រកូល" />
       </div>
 
-      <div class="flex justify-stat items-center relative">
-        <div class="absolute left-0 top-0 mt-2 opacity-40">
-          <EditUserIcon />
-        </div>
-        <input
-          disabled
-          type="text"
-          v-model="stProfile.last_name"
-          class="
-            border-b border-gray-200 bg-transparent
-            py-2
-            focus:outline-none
-            w-full
-            pl-10
-            mb-5
-          "
-          placeholder="នាមខ្លួន"
-        />
+      <div class="flex items-center border-b h-12 mb-3">
+        <EditUserIcon />
+        <input type="text" v-bind:value="user.last_name" class="ml-3 h-full w-full border-none outline-none"
+          placeholder="នាមខ្លួន" />
       </div>
 
-      <div class="flex justify-start items-center relative text-14px mb-5">
-        <div class="absolute left-0 opacity-40">
-          <GenderIcon />
+      <div class="flex items-center border-b h-12 mb-3">
+        <div class="flex items-center cursor-pointer">
+          <div class="flex items-center">
+            <div class="h-4 w-4 rounded-full border border-custom mr-4 flex items-center justify-center">
+              <div v-if="user.gender == 'M'" class="h-3 w-3 rounded-full border bg-custom"></div>
+            </div>
+            <div>Male</div>
+          </div>
         </div>
-        <label class="mr-5 ml-10">
-          <input
-            type="radio"
-            name="gender"
-            value="M"
-            class="mr-2 ml-4"
-            :checked="stProfile.gender == 'M'"
-            @click="changeGender('M')"
-          />ប្រុស
-        </label>
-        <label>
-          <input
-            type="radio"
-            name="gender"
-            value="F"
-            class="mr-2"
-            :checked="stProfile.gender == 'F'"
-            @click="changeGender('F')"
-          />ស្រី
-        </label>
+
+        <div class="ml-5 flex items-center cursor-pointer">
+          <div class="flex items-center">
+            <div class="h-4 w-4 rounded-full border border-custom mr-4">
+              <div v-if="user.gender == 'F'" class="h-3 w-3 rounded-full border bg-custom"></div>
+            </div>
+            <div>Female</div>
+
+          </div>
+        </div>
       </div>
 
-      <div class="flex justify-stat items-center relative">
-        <div class="absolute left-0 top-0 mt-1 opacity-30">
-          <MapIcon />
-        </div>
-        <button
-          class="
-            border-b border-gray-200
-            py-2
-            focus:outline-none
-            w-full
-            pl-12
-            mb-5
-            text-left
-          "
-          @click="showAllProvince"
-        >
-          {{ stProfile.province.name || "សាខា" }}
-        </button>
-        <img
-          src="/ajax-loader.gif"
-          class="absolute left-96 top-0 mt-2"
-          v-if="loadingProvince"
-        />
-      </div>
-      <div class="flex justify-stat items-center relative">
-        <div class="absolute left-0 top-0 mt-1 opacity-30">
-          <UniversityIcon />
-        </div>
-        <button
-          class="
-            border-b border-gray-200
-            py-2
-            focus:outline-none
-            w-full
-            pl-12
-            mb-5
-            text-left
-            h-10
-          "
-          @click="showAllSchool"
-        >
-          {{ stProfile.school.name || "នាយកដ្ឋាន" }}
-        </button>
-
-        <img
-          src="/ajax-loader.gif"
-          class="absolute left-80 top-0 mt-3"
-          v-if="loadingSchool"
-        />
+      <div class="flex items-center border-b h-12 mb-3">
+        <BranchIcon />
+        <input type="text" v-bind:value="user.province ? user.province.name : ''"
+          class="ml-3 h-full w-full border-none outline-none" placeholder="សាខា" />
       </div>
 
+      <div class="flex items-center border-b h-12 mb-3">
+        <MapIcon />
+        <input type="text" v-bind:value="user.school ? user.school.name : ''" class="ml-3 h-full w-full border-none outline-none"
+          placeholder="នាយកដ្ឋាន" />
+      </div>
 
+      <div class="flex items-center border-b h-12 mb-3">
+        <PositionIcon />
+        <input type="text" class="ml-3 h-full w-full border-none outline-none"
+          placeholder="មុខតំណែង" />
+      </div>
     </div>
   </div>
 </template>
 
 <script>
 import EditUserIcon from "./../../components/EditUserIcon";
-import CalendarIcon from "./../../components/CalendarIcon";
-import GenderIcon from "./../../components/GenderIcon";
 import MapIcon from "./../../components/MapIcon";
 import { mapActions, mapState } from "vuex";
-import UniversityIcon from "./../../components/UniversityIcon";
 import CameraIcon from "./../../components/CameraIcon";
 import Loader from "./../../components/Loader";
+import BranchIcon from "./components/BranchIcon";
+import PositionIcon from "./components/PositionIcon";
 
 export default {
   name: "Profile",
   components: {
     CameraIcon,
     EditUserIcon,
-    CalendarIcon,
-    GenderIcon,
     MapIcon,
-    UniversityIcon,
+    PositionIcon,
     Loader,
+    BranchIcon,
   },
   data() {
     return {
@@ -216,6 +132,7 @@ export default {
       loading: false,
       showProvince: false,
       showSchool: false,
+      user: {},
     };
   },
   computed: {
@@ -351,6 +268,7 @@ export default {
 
   created() {
     this.getProvinces();
+    this.user = this.stProfile
   },
 };
 </script>

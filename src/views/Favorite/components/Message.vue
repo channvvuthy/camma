@@ -5,7 +5,7 @@
                 <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
             </div>
             <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-            <div class="inline-block align-bottom bg-white rounded text-left overflow-hidden shadow-xl transform transition-all  sm:align-middle"
+            <div class="inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-xl transform transition-all  sm:align-middle"
                  :class="`w-${size}`" role="dialog" aria-modal="true" aria-labelledby="modal-headline">
                 <div class="bg-white relative">
                     <div class="absolute right-0 top-0 mt-2 mr-2 cursor-pointer" @click="close">

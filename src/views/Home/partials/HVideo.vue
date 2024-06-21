@@ -14,11 +14,32 @@
                 </section>
             </vue-horizontal>
             <vue-horizontal responsive v-else>
-                <section v-for="(course, index) in courses.lesson" :key="index" style="width:auto !important;">
+                <section v-for="(course, index) in courses.lesson" :key="index" style="width:auto !important;"
+                    class="flex p-3 bg-white rounded-2xl shadow-lg border overflow-hidden">
                     <div @click="viewCourseDetail(course.video)"
-                        class="group-hover rounded-lg bg-center bg-cover shadow cursor-pointer relative"
+                        class="group-hover rounded-lg bg-center bg-cover cursor-pointer relative"
                         style="width:300px !important; height:170px;"
                         :style="{ backgroundImage: `url(${course.video.thumbnail})` }">
+                    </div>
+                    <div class="flex flex-col justify-between pl-4" style="height:170px;">
+                        <div class="text-wrap text-sm" style="max-width:300px;">
+                            {{ cutString(course.video.title, 150) }}
+                        </div>
+                        <div class="text-gray-400 text-sm flex justify-between">
+                            <div>
+                                <div>{{ course.video.teacher.name }}</div>
+                                <div class="h-1"></div>
+                                <div>{{ course.video.view }} Views</div>
+                            </div>
+                            <div class="mt-3 pr-5 cursor-pointer">
+                                <div v-if="!course.video.is_favorite" @click="addFavorite(course)">
+                                    <FavoriteIcon fill="transparent" stroke="#d1d5db" />
+                                </div>
+                                <div v-else @click="removeActiveFavorite(course)">
+                                    <FavoriteIcon fill="#ef4444" stroke="#ef4444" />
+                                </div>
+                            </div>
+                        </div>
 
                     </div>
                 </section>
@@ -36,10 +57,11 @@ import Loading from '../../../components/Loading.vue';
 import { mapState, mapActions } from "vuex";
 import helper from "./../../../helper/helper";
 import LoadingOverlay from "./../../Modal/LoadingOverlay.vue";
+import FavoriteIcon from '../../MyCourse/components/FavoriteIcon.vue';
 
 
 export default {
-    components: { VueHorizontal, Loading, LoadingOverlay },
+    components: { VueHorizontal, Loading, LoadingOverlay, FavoriteIcon },
     data() {
         return {
             windowWidth: window.innerWidth,
@@ -58,8 +80,22 @@ export default {
         ...mapActions("course", [
             "videoList",
             "videoPagination",
-            "removeActiveFavorite",
         ]),
+        async removeActiveFavorite({ _id }) {
+            await this.$store.dispatch("favorite/removeFavorite", _id);
+            this.$store.commit("course/removeActiveFavorite", _id);
+
+        },
+        async addFavorite({ _id }) {
+            await this.$store.dispatch("favorite/add", _id);
+            this.$store.commit("course/addFavorite", _id);
+        },
+        cutString(text, limit) {
+            if (!text) {
+                return;
+            }
+            return helper.cutString(text, limit);
+        },
 
         viewCourseDetail(video) {
             this.isDetail = true;
