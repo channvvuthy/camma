@@ -22,11 +22,12 @@
                         :style="{ backgroundImage: `url(${course.video.thumbnail})` }">
                     </div>
                     <div class="flex flex-col justify-between pl-4" style="height:170px;">
-                        <div class="text-wrap text-sm" style="max-width:300px;">
+                        <div class="text-wrap text-sm cursor-pointer" style="max-width:300px;"
+                            @click="viewCourseDetail(course.video)">
                             {{ cutString(course.video.title, 150) }}
                         </div>
                         <div class="text-gray-400 text-sm flex justify-between">
-                            <div>
+                            <div class="cursor-pointer" @click="viewCourseDetail(course.video)">
                                 <div>{{ course.video.teacher.name }}</div>
                                 <div class="h-1"></div>
                                 <div>{{ course.video.view }} Views</div>
