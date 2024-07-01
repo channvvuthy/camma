@@ -17,11 +17,13 @@ export default {
 
     },
     mutations: {
-        _(){
-
-        },
-        deleteMessage(state, messageId){
-            state.chats = state.chats.filter(item => item._id != messageId)
+        deleteMessage(state, messageId) {
+            state.chats = state.chats.map(item => {
+                if (item._id === messageId) {
+                    item.is_delete = 1;
+                }
+                return item;
+            });
         },
         loadingMention(state, status){
             state.loadingMention = status
@@ -204,7 +206,6 @@ export default {
                     resolve(response.data.data)
                     commit("deleteMessage", message_id)
                 }).catch(err => {
-                    commit("_")
                     reject(err)
                 })
             })

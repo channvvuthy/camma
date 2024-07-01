@@ -1,27 +1,22 @@
 <template>
   <div class="flex-cols">
     <div class="flex items-center">
-      <div class="w-14 h-14 rounded-full clear flex-1">
-        <div class="w-14 h-14 rounded-full bg-center bg-gray-200 bg-cover" :style="{
-          backgroundImage: `url(${chat.sender.photo})`,
-        }"></div>
-      </div>
+      <div class="w-14 h-14 rounded-full bg-center bg-gray-200 bg-cover" :style="{
+        backgroundImage: `url(${chat.sender.photo})`,
+      }"></div>
       <div>
         <h3 class="font-khmer_os text-sm text-gray-900 ml-2">
           {{ chat.sender.name }}
         </h3>
-        <p class="text-lg opacity-40 mb-2 text-gray-700 ml-2" style="font-size: 11px">
+        <p class="text-xs opacity-40 mb-2 text-gray-700 ml-2">
           {{ getDay(chat.date) }}
         </p>
       </div>
     </div>
-    <div class="flex items-center justify-start p-2">
-      <div class="w-10">&nbsp;</div>
+    <div class="flex items-center justify-start my-5">
       <div class="chat text-left w-1/2">
-        <div class="float-left bg-gray-200 break-all px-2 py-1" :class="stringLength(chat.content.value) > 50
-          ? 'rounded-2xl'
-          : 'rounded-full '
-          " v-html="mention(chat.content.value)" v-if="chat.content.type === 1"></div>
+        <div class="float-left bg-gray-200 break-all px-3 py-2 rounded-2xl" v-html="mention(chat.content.value)"
+          v-if="chat.content.type === 1"></div>
         <ImageView :chat="chat" v-if="chat.content.type === 2"></ImageView>
         <img v-if="chat.content.type === 2" />
         <Audio :chat="chat" v-if="chat.content.type === 3"></Audio>
@@ -47,9 +42,8 @@ export default {
     getDay(oldDate) {
       if (helper.numDay(oldDate, moment().format()) === 0) {
         return moment(oldDate).format("h:mm:ss");
-      } else {
-        return moment(oldDate).format("DD-MM-YYYY");
       }
+      return moment(oldDate).format("DD-MM-YYYY");
     },
     stringLength(string) {
       return string.length;

@@ -5,23 +5,22 @@
         <p class="opacity-80 text-right mt-2 mb-0" style="font-size: 12px">
           You
         </p>
-        <p class="text-lg text-right opacity-40 mb-1 text-gray-700 ml-2" style="font-size: 11px">
+        <p class="text-xs text-right opacity-40 mb-1 text-gray-700 ml-2">
           {{ getDay(chat.date) }}
         </p>
       </div>
     </div>
     <div class="flex items-center justify-end">
       <div class="chat text-right w-1/2">
-        <div class="float-right bg-gray-200 break-all px-2 py-1" :class="stringLength(chat.content.value) > 50
-          ? 'rounded-2xl'
-          : 'rounded-full '
-          " v-html="mention(chat.content.value)" v-if="chat.content.type === 1"></div>
+        <div class="float-right bg-gray-200 break-all px-2 py-1 rounded-xl" v-html="mention(chat.content.value)" v-if="chat.content.type === 1"></div>
         <div class="float-right">
           <ImageView :chat="chat" v-if="chat.content.type === 2" justify="end"></ImageView>
         </div>
         <Audio :chat="chat" v-if="chat.content.type === 3" class="float-right"></Audio>
       </div>
     </div>
+
+    <!-- Delete item -->
     <div class="fixed items-center justify-center w-full h-full bg-black bg-opacity-10 flex left-0 top-0 z-50"
       v-if="isDelete">
       <div class="rounded-2xl bg-white w-72">

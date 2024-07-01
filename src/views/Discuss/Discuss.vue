@@ -27,8 +27,10 @@
               border border-gray-100 border-t-0 border-l-0 border-r-0
               py-3
             ">
-            <div class="w-14 h-14 rounded-full mr-3 bg-center bg-custom bg-no-repeat bg-cover" :style="{
+            <div class="w-14 h-14 rounded-full mr-3 shadow bg-center" :style="{
               backgroundImage: `url(${group.thumbnail})`,
+              backgroundSize: 'cover',
+              backgroundRepeat: 'no-repeat',
             }"></div>
             <div class="flex-cols">
               <div>
@@ -48,11 +50,25 @@
               <img src="/ajax-loader.gif" :class="readingChat || readingChatPagination ? 'visible' : 'invisible'
                 " />
             </div>
-            <div class="chat text-13px" v-if="!readingChat">
+            <div class="chat text-13px">
               <div v-if="chats && chats.length > 0">
                 <div v-for="(chat, key) in chats" :key="key">
-                  <MediaLeft :chat="chat" v-if="chat.sender._id !== stProfile._id"/>
-                  <div v-if="!chat.is_delete"><MediaRight :chat="chat" v-if="chat.sender._id === stProfile._id" /></div>
+                  <!-- Their -->
+                  <div v-if="chat.sender._id != stProfile._id && chat.is_delete == 0">
+                    <MediaLeft :chat="chat" />
+                  </div>
+
+                  <!-- Deleted message -->
+                  <div v-if="chat.is_delete">
+                    <MyRemoveMessage :chat="chat" v-if="chat.sender._id == stProfile._id" />
+                    <TheirRemoveMessage :chat="chat" v-else />
+
+                  </div>
+
+                  <!-- Mine -->
+                  <div v-if="chat.sender._id == stProfile._id && chat.is_delete == 0">
+                    <MediaRight :chat="chat" />
+                  </div>
                 </div>
               </div>
             </div>
@@ -105,7 +121,7 @@
                 rounded-md
                 text-13px
                 pl-5
-                pt-2.5
+                pt-3
                 h-10
                 focus:outline-none
                 w-full
@@ -131,9 +147,10 @@ import Vue from "vue";
 import VueSocketIO from "vue-socket.io";
 import MediaLeft from "./components/MediaLeft";
 import MediaRight from "./components/MediaRight";
+import MyRemoveMessage from "./components/MyRemoveMessage";
+import TheirRemoveMessage from "./components/TheirRemoveMessage";
 import Loading from "./../../components/Loading";
 import VueRecord from "@codekraft-studio/vue-record";
-//    import axios from "axios"
 
 Vue.use(VueRecord);
 Vue.use(
@@ -155,7 +172,8 @@ export default {
     MediaLeft,
     MediaRight,
     Loading,
-    //            RecordIcon
+    MyRemoveMessage,
+    TheirRemoveMessage
   },
   data() {
     return {
@@ -335,17 +353,19 @@ export default {
     },
     insertChat(e) {
       e.preventDefault();
+
       if (this.message.text.trim() === "") {
         return false;
       }
 
-      let mentionList = [...new Set(this.mentionList)];
-      for (let i = 0; i < mentionList.length; i++) {
+      let uniqueMentions = Array.from(new Set(this.mentionList));
+
+      uniqueMentions.forEach(mention => {
         this.message.text = this.message.text.replace(
-          mentionList[i],
-          "@[" + mentionList[i].substring(1) + "]"
+          mention,
+          `@[${mention.substring(1)}]`
         );
-      }
+      });
 
       this.addChat(this.message);
       this.onMessage(1, this.message.text);
