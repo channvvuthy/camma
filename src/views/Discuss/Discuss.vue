@@ -1,9 +1,6 @@
 <template>
   <div class="bg-white h-screen">
-    <div
-      v-if="loadingGroup"
-      class="flex justify-center items-center h-screen relative -top-5"
-    >
+    <div v-if="loadingGroup" class="flex justify-center items-center h-screen relative -top-5">
       <h1 class="text-sm font-semibold font-khmer_os relative -top-10">
         <loading></loading>
       </h1>
@@ -13,20 +10,14 @@
         <img src="/icon/Empty/Empty.svg" class="w-64 mb-5 relative -top-20" />
       </div>
       <div v-if="groups && groups.length" class="flex font-khmer_os">
-        <ul
-          class="
+        <ul class="
             w-1/3
             border border-gray-200 border-b-0 border-l-0 border-t-0
             h-screen
             overflow-y-scroll
-          "
-        >
-          <li
-            v-for="(group, key) in groups"
-            :key="key"
-            @click="readChat(key, group._id)"
-            :class="active === key || active === group._id ? 'bg-gray-50' : ''"
-            class="
+          ">
+          <li v-for="(group, key) in groups" :key="key" @click="readChat(key, group._id)"
+            :class="active === key || active === group._id ? 'bg-gray-50' : ''" class="
               text-14px
               cursor-pointer
               flex
@@ -35,16 +26,10 @@
               px-5
               border border-gray-100 border-t-0 border-l-0 border-r-0
               py-3
-            "
-          >
-            <div
-              class="w-14 h-14 rounded-full mr-3 shadow bg-cente"
-              :style="{
-                backgroundImage: `url(${group.thumbnail})`,
-                backgroundSize: 'cover',
-                backgroundRepeat: 'no-repeat',
-              }"
-            ></div>
+            ">
+            <div class="w-14 h-14 rounded-full mr-3 bg-center bg-custom bg-no-repeat bg-cover" :style="{
+              backgroundImage: `url(${group.thumbnail})`,
+            }"></div>
             <div class="flex-cols">
               <div>
                 {{ group.name }}
@@ -57,39 +42,23 @@
         </ul>
 
         <div class="h-screen relative w-2/3">
-          <div
-            class="boxChat overflow-y-scroll pt-3 px-5 h-full"
-            ref="feed"
-            id="feed"
-            @scroll="onScroll"
-            @mouseover="enableScroll"
-          >
+          <div class="boxChat overflow-y-scroll pt-3 px-5 h-full" ref="feed" id="feed" @scroll="onScroll"
+            @mouseover="enableScroll">
             <div class="flex justify-center">
-              <img
-                src="/ajax-loader.gif"
-                :class="
-                  readingChat || readingChatPagination ? 'visible' : 'invisible'
-                "
-              />
+              <img src="/ajax-loader.gif" :class="readingChat || readingChatPagination ? 'visible' : 'invisible'
+                " />
             </div>
             <div class="chat text-13px" v-if="!readingChat">
               <div v-if="chats && chats.length > 0">
                 <div v-for="(chat, key) in chats" :key="key">
-                  <MediaLeft
-                    :chat="chat"
-                    v-if="chat.sender._id !== stProfile._id"
-                  ></MediaLeft>
-                  <MediaRight
-                    :chat="chat"
-                    v-if="chat.sender._id === stProfile._id"
-                  ></MediaRight>
+                  <MediaLeft :chat="chat" v-if="chat.sender._id !== stProfile._id"/>
+                  <div v-if="!chat.is_delete"><MediaRight :chat="chat" v-if="chat.sender._id === stProfile._id" /></div>
                 </div>
               </div>
             </div>
             <div class="h-40">&nbsp;</div>
           </div>
-          <div
-            class="
+          <div class="
               border border-gray-200
               h-48
               overflow-y-scroll
@@ -100,22 +69,15 @@
               left-4
               bg-white
               mb-2
-            "
-            v-if="showMention"
-          >
+            " v-if="showMention">
             <ul>
-              <li
-                v-for="(mention, key) in mentions"
-                :key="key"
-                class="py-1 cursor-pointer hover:bg-gray-50 px-3"
-                @click="replaceMention(mention.name)"
-              >
+              <li v-for="(mention, key) in mentions" :key="key" class="py-1 cursor-pointer hover:bg-gray-50 px-3"
+                @click="replaceMention(mention.name)">
                 {{ mention.name }}
               </li>
             </ul>
           </div>
-          <div
-            class="
+          <div class="
               flex
               items-center
               justify-start
@@ -126,59 +88,35 @@
               left-0
               px-4
               bg-white
-            "
-          >
+            ">
             <form>
-              <input
-                type="file"
-                class="hidden"
-                ref="photo"
-                @change="onFileChange"
-                accept="image/x-png,image/gif,image/jpeg"
-              />
+              <input type="file" class="hidden" ref="photo" @change="onFileChange"
+                accept="image/x-png,image/gif,image/jpeg" />
             </form>
             <div class="cursor-pointer mr-3" @click="choosePhoto">
-              <ImageIcon :size="50" fill="#40b366"/>
+              <ImageIcon :size="50" fill="#40b366" />
             </div>
-            <div
-              class="cursor-pointer rounded-full mr-3 mt-2"
-              :class="busy ? 'opacity-30' : ''"
-            >
+            <div class="cursor-pointer rounded-full mr-3 mt-2" :class="busy ? 'opacity-30' : ''">
               <vue-record-audio @result="onResult" @stream="onStream" />
             </div>
-            <img
-              src="/ajax-loader.gif"
-              class="absolute right-10 top-5"
-              v-if="uploadingPhoto"
-            />
-            <textarea
-              class="
+            <img src="/ajax-loader.gif" class="absolute right-10 top-5" v-if="uploadingPhoto" />
+            <textarea class="
                 border border-gray-300
                 rounded-md
                 text-13px
                 pl-5
-                pt-3
+                pt-2.5
                 h-10
                 focus:outline-none
                 w-full
                 resize-none
-              "
-              v-model="message.text"
-              placeholder="ពិភាក្សាទីនេះ..."
-              ref="message"
-              name="message"
-              @keydown="enableWatch"
-              @keyup.enter.exact="insertChat"
-            ></textarea>
+              " v-model="message.text" placeholder="ពិភាក្សាទីនេះ..." ref="message" name="message"
+              @keydown="enableWatch" @keyup.enter.exact="insertChat"></textarea>
           </div>
         </div>
       </div>
     </div>
-    <ImgFull
-      v-if="showImgFull"
-      :Url="img"
-      @hideFullImage="hideFullImage"
-    ></ImgFull>
+    <ImgFull v-if="showImgFull" :Url="img" @hideFullImage="hideFullImage"></ImgFull>
   </div>
 </template>
 <script>

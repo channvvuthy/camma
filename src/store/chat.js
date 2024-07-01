@@ -17,6 +17,12 @@ export default {
 
     },
     mutations: {
+        _(){
+
+        },
+        deleteMessage(state, messageId){
+            state.chats = state.chats.filter(item => item._id != messageId)
+        },
         loadingMention(state, status){
             state.loadingMention = status
         },
@@ -187,6 +193,18 @@ export default {
 
                 }).catch(err => {
                     commit("loadingMention", false)
+                    reject(err)
+                })
+            })
+        },
+
+        deleteMessage({commit}, message_id){
+            return new Promise((resolve, reject) => {
+                axios.post(config.apiUrl + 'chat/delete',{message_id}).then(response => {
+                    resolve(response.data.data)
+                    commit("deleteMessage", message_id)
+                }).catch(err => {
+                    commit("_")
                     reject(err)
                 })
             })
