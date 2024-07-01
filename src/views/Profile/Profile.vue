@@ -53,14 +53,14 @@
       </form>
       <div class="flex items-center border-b h-12 mb-3">
         <EditUserIcon />
-        <input type="text" v-bind:value="user.first_name" class="ml-3 h-full w-full border-none outline-none"
-          placeholder="នាមត្រកូល" />
+        <input disabled type="text" v-bind:value="user.first_name" class="ml-3 h-full w-full border-none outline-none"
+          placeholder="នាមត្រកូល" title="នាមត្រកូល"/>
       </div>
 
       <div class="flex items-center border-b h-12 mb-3">
         <EditUserIcon />
-        <input type="text" v-bind:value="user.last_name" class="ml-3 h-full w-full border-none outline-none"
-          placeholder="នាមខ្លួន" />
+        <input disabled type="text" v-bind:value="user.last_name" class="ml-3 h-full w-full border-none outline-none"
+          placeholder="នាមខ្លួន" title="នាមខ្លួន"/>
       </div>
 
       <div class="flex items-center border-b h-12 mb-3">
@@ -73,7 +73,7 @@
           </div>
         </div>
 
-        <div class="ml-5 flex items-center cursor-pointer">
+        <div class="ml-5 flex items-center cursor-pointer" title="ភេទ">
           <div class="flex items-center">
             <div class="h-4 w-4 rounded-full border border-custom mr-4">
               <div v-if="user.gender == 'F'" class="h-3 w-3 rounded-full border bg-custom"></div>
@@ -86,20 +86,20 @@
 
       <div class="flex items-center border-b h-12 mb-3">
         <BranchIcon />
-        <input type="text" v-bind:value="user.province ? user.province.name : ''"
-          class="ml-3 h-full w-full border-none outline-none" placeholder="សាខា" />
+        <input disabled type="text" v-bind:value="user.branch ? user.branch.name : ''"
+          class="ml-3 h-full w-full border-none outline-none" placeholder="សាខា" title="សាខា"/>
       </div>
 
       <div class="flex items-center border-b h-12 mb-3">
-        <MapIcon />
-        <input type="text" v-bind:value="user.school ? user.school.name : ''" class="ml-3 h-full w-full border-none outline-none"
-          placeholder="នាយកដ្ឋាន" />
+        <Departmenticon />
+        <input disabled type="text" v-bind:value="user.department ? user.department : ''" class="ml-3 h-full w-full border-none outline-none"
+          placeholder="នាយកដ្ឋាន" title="នាយកដ្ឋាន"/>
       </div>
 
       <div class="flex items-center border-b h-12 mb-3">
         <PositionIcon />
-        <input type="text" class="ml-3 h-full w-full border-none outline-none"
-          placeholder="មុខតំណែង" />
+        <input disabled type="text" v-bind:value="user.position ? user.position : ''" class="ml-3 h-full w-full border-none outline-none"
+          placeholder="មុខតំណែង" title="មុខតំណែង"/>
       </div>
     </div>
   </div>
@@ -107,7 +107,7 @@
 
 <script>
 import EditUserIcon from "./../../components/EditUserIcon";
-import MapIcon from "./../../components/MapIcon";
+import Departmenticon from "./components/Departmenticon";
 import { mapActions, mapState } from "vuex";
 import CameraIcon from "./../../components/CameraIcon";
 import Loader from "./../../components/Loader";
@@ -119,7 +119,7 @@ export default {
   components: {
     CameraIcon,
     EditUserIcon,
-    MapIcon,
+    Departmenticon,
     PositionIcon,
     Loader,
     BranchIcon,

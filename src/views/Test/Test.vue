@@ -12,32 +12,31 @@
 </template>
 
 <script>
-    import {mapState, mapActions} from "vuex"
-    import Loading from "./../../components/Loading"
-    export default{
-        name: "Test",
-        components: {
-            Loading
-        },
-        computed: {
-            ...mapState('test', ['grades', 'loadingGrade', 'quizzes', 'loadingQuiz'])
-        },
-        data(){
-            return {
-                active: {
-                    _id: {
-                        grade: "",
-                        subject: "",
-                    }
+import { mapState, mapActions } from "vuex"
+import Loading from "./../../components/Loading"
+export default {
+    components: {
+        Loading
+    },
+    computed: {
+        ...mapState('test', ['grades', 'loadingGrade', 'quizzes', 'loadingQuiz'])
+    },
+    data() {
+        return {
+            active: {
+                _id: {
+                    grade: "",
+                    subject: "",
                 }
             }
-        },
-        methods: {
-            ...mapActions('test', ['getGrade', 'getQuiz']),
-        },
-        created(){
-            this.getGrade()
-        },
-    }
+        }
+    },
+    methods: {
+        ...mapActions('test', ['getGrade', 'getQuiz']),
+    },
+    created() {
+        this.getGrade()
+    },
+}
 
 </script>

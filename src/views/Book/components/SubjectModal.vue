@@ -14,7 +14,7 @@
           <div class="border-b">
             <div class="flex px-5 py-3">
               <div class="w-4 h-4 rounded-full border border-custom flex items-center justify-center">
-                <div class="bg-custom h-3 w-3 rounded-full" v-if="subjectId == 'all'"></div>
+                <div class="bg-custom h-3 w-3 rounded-full" v-if="selectedSubjectId == 'all'"></div>
               </div>
               <div class="w-2"></div>
               <div>ទាំងអស់</div>

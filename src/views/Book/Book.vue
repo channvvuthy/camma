@@ -91,7 +91,7 @@ export default {
       cartId: "",
       noResult: false,
       department: "នាយកដ្ឋាន",
-      subject: "រើសប្រភេទ",
+      subject: "ជ្រើសរើសកម្មវិធីសិក្សារ",
       payload: {
         subject_id: "",
         grade_id: "",
@@ -153,7 +153,7 @@ export default {
     subjectSelected(subject) {
       this.payload.p = 1;
       this.subjectFilter();
-      this.subject = subject.name || "រើសប្រភេទ";
+      this.subject = subject.name || "ជ្រើសរើសកម្មវិធីសិក្សារ";
       this.payload.subject_id = subject._id || "";
 
       this.getEbookFilter();
