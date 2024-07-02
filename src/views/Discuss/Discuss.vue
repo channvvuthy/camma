@@ -291,7 +291,6 @@ export default {
         let reader = new FileReader();
         reader.readAsDataURL(data);
         reader.onloadend = () => {
-          let base64String = reader.result;
           const formData = new FormData();
 
           formData.append("group_id", group_id);
@@ -299,7 +298,6 @@ export default {
           formData.append("duration", duration);
 
           this.addChat(formData);
-          this.onMessage(3, base64String);
           this.scrollToBottom();
         };
       });
