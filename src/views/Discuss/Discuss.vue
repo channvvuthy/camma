@@ -51,8 +51,8 @@
                 " />
             </div>
             <div class="chat text-13px">
-              <div v-if="chats && chats.length > 0">
-                <div v-for="(chat, key) in chats" :key="key">
+              <div v-if="uniqueChats && uniqueChats.length > 0">
+                <div v-for="(chat, key) in uniqueChats" :key="key">
                   <!-- Their -->
                   <div v-if="chat.sender._id != stProfile._id && chat.is_delete == 0">
                     <MediaLeft :chat="chat" />
@@ -66,10 +66,12 @@
                   </div>
 
                   <!-- Mine -->
-                  <div v-if="chat.sender._id == stProfile._id && chat.is_delete == 0">
+                  <div v-if="chat.sender._id == stProfile._id && (chat.is_delete == undefined || chat.is_delete == 0)">
                     <MediaRight :chat="chat" />
                   </div>
+
                 </div>
+
               </div>
             </div>
             <div class="h-40">&nbsp;</div>
@@ -118,16 +120,16 @@
             <img src="/ajax-loader.gif" class="absolute right-10 top-5" v-if="uploadingPhoto" />
             <textarea class="
                 border border-gray-300
-                rounded-md
+                rounded-full
                 text-13px
                 pl-5
-                pt-3
+                pt-2
                 h-10
                 focus:outline-none
                 w-full
                 resize-none
               " v-model="message.text" placeholder="ពិភាក្សាទីនេះ..." ref="message" name="message"
-              @keydown="enableWatch" @keyup.enter.exact="insertChat"></textarea>
+              @keydown="enableWatch" @keyup.enter.exact="makeConversation"></textarea>
           </div>
         </div>
       </div>
@@ -224,6 +226,18 @@ export default {
         return numPage;
       },
     },
+    uniqueChats() {
+      // Function to filter unique chat objects based on _id or another unique identifier
+      function getUniqueChats(array) {
+        return Array.from(array.reduce((map, obj) => {
+          if (!map.has(obj._id)) map.set(obj._id, obj);
+          return map;
+        }, new Map()).values());
+      }
+
+      // Return unique chats array
+      return getUniqueChats(this.chats);
+    }
   },
 
   methods: {
@@ -255,7 +269,7 @@ export default {
     },
     onMessage(type = 1, text) {
       let message = {
-        id: "",
+        id: Math.floor(Date.now() / 1000),
         date: moment().format(),
         content: {
           type: type,
@@ -341,22 +355,32 @@ export default {
     },
 
     onFileChange(e) {
-      let formData = new FormData();
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const formData = new FormData();
       formData.append("group_id", this.message.group_id);
-      formData.append("photo", e.target.files[0]);
+      formData.append("photo", file);
+
       this.uploadingPhoto = true;
-      this.addChat(formData).then(() => {
-        this.uploadingPhoto = false;
-        this.scrollToBottom();
-        this.$refs.photo.value = null;
-      });
+
+      this.addChat(formData)
+        .then(() => {
+          this.uploadingPhoto = false;
+          this.scrollToBottom();
+        })
+        .finally(() => {
+          this.$refs.photo.value = null;
+        });
     },
-    insertChat(e) {
+    makeConversation(e) {
       e.preventDefault();
 
       if (this.message.text.trim() === "") {
         return false;
       }
+
+      this.message.text = this.message.text.replace(/\n+$/, "");
 
       let uniqueMentions = Array.from(new Set(this.mentionList));
 
@@ -368,7 +392,7 @@ export default {
       });
 
       this.addChat(this.message);
-      this.onMessage(1, this.message.text);
+      // this.onMessage(1, this.message.text);
 
       this.message.text = "";
       this.message.photo = "";

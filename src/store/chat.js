@@ -37,13 +37,10 @@ export default {
         addingLocalCat(state, chart){
             state.chats.push(chart)
         },
-        receivingChat(state, chart){
-            if (chart.content.type === 2) {
-                state.chats.push(chart)
-            }
-
+        receivingChat(state, chat) {
+            state.chats.push(chat);
         },
-
+        
         receivingGroupChatPagination(state, chats){
             if (chats && chats.length > 0) {
                 for (let index = 0; index < chats.length; index++) {
@@ -157,25 +154,26 @@ export default {
                 })
             })
         },
-        addChat({commit}, params){
-            commit("addingChat", true)
-            return new Promise((resolve, reject) => {
-                axios.post(config.apiUrl + 'chat/add', params).then(response => {
+        async addChat({ commit }, params) {
+            commit("addingChat", true);
+        
+            try {
+                const response = await axios.post(`${config.apiUrl}chat/add`, params);
+                const { status, msg, data } = response.data;
 
-                    if (response.data.status && response.data.status === 2) {
-                        err.err(response.data.msg)
-                    }
+                if (status === 2) {
+                    err.err(msg);
+                }
 
-
-                    commit("addingChat", false)
-                    commit("receivingChat", response.data.data)
-                    resolve(response.data.data)
-                }).catch(err => {
-                    commit("addingChat", false)
-                    reject(err)
-                })
-            })
+                commit("addingChat", false);
+                commit("receivingChat", data);
+                return data;
+            } catch (error) {
+                commit("addingChat", false);
+                return await Promise.reject(error);
+            }
         },
+        
         addingLocalChat({commit}, params){
             commit("addingLocalCat", params)
         },
