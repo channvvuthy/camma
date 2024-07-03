@@ -112,24 +112,29 @@ export default {
                 })
             })
         },
-        showComment({commit}, params){
-            commit("showingComment", true)
-            return new Promise((resolve, reject) => {
-                axios.get(config.apiUrl + "forum/comment?forum_id=" + params.forum_id + "&p=" + params.p).then(response => {
-
-                    if (response.data.status && response.data.status === 2) {
-                        err.err(response.data.msg)
+        async  showComment({ commit }, params) {
+            commit("showingComment", true);
+            try {
+                const response = await axios.get(`${config.apiUrl}forum/comment`, {
+                    params: {
+                        forum_id: params.forum_id,
+                        p: params.p
                     }
-
-                    commit("showingComment", false)
-                    commit("gettingComment", response.data.data.comment)
-                    resolve(response.data.data)
-                }).catch(err => {
-                    commit("showingComment", false)
-                    reject(err)
-                })
-            })
+                });
+        
+                if (response.data.status === 2) {
+                    err.err(response.data.msg);
+                }
+        
+                commit("showingComment", false);
+                commit("gettingComment", response.data.data.comment);
+                return response.data.data;
+            } catch (error) {
+                commit("showingComment", false);
+                throw error;
+            }
         },
+        
         showCommentPagination({commit}, params){
             commit("showCommentPagination", true)
             return new Promise((resolve, reject) => {

@@ -132,32 +132,39 @@ export default {
     cutString(text, limit) {
       return helper.cutString(text, limit);
     },
-    goToPlayList(video) {
-      var order = video.last_watch ? video.last_watch.order : 1;
+    async goToPlayList(video) {
+      const order = video.last_watch ? video.last_watch.order : 1;
       this.loadingDetail = true;
-      this.$store
-        .dispatch("course/getvideoPlay", video._id)
-        .then((res) => {
-          this.loadingDetail = false;
-          this.$store.commit("course/gettingCourseDetail", res.data);
-          var vd = res.data.list.filter((item) => item.order == order);
 
-          this.$store.commit("course/getVideo", vd[0]);
+      try {
+        const res = await this.$store.dispatch("course/getvideoPlay", video._id);
+        this.loadingDetail = false;
 
+        this.$store.commit("course/gettingCourseDetail", res.data);
+        let vd = res.data.list.find((item) => item.order === order);
+        
+        if (vd === undefined) {
+          vd = res.data.list[0];
+        }
+
+        if (vd) {
+          this.$store.commit("course/getVideo", vd);
           this.$router.push({
             name: "course-detail",
             params: {
-              videoId: vd[0]._id,
+              videoId: vd._id,
               order: order,
               courseId: res.data.course._id,
             },
           });
-        })
-        .catch((err) => {
-          helper.error(err.response.data);
-          this.loadingDetail = false;
-        });
-    },
+        } else {
+          console.error('Video not found in the list.');
+        }
+      } catch (err) {
+        console.error(err);
+        this.loadingDetail = false;
+      }
+    }
   },
   created() {
     window.addEventListener("resize", this.handleResize);

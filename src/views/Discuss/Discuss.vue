@@ -167,7 +167,6 @@ export default {
       console.log("socket connected");
     },
   },
-  name: "Discuss",
   components: {
     ImageIcon,
     ImgFull,
@@ -227,7 +226,6 @@ export default {
       },
     },
     uniqueChats() {
-      // Function to filter unique chat objects based on _id or another unique identifier
       function getUniqueChats(array) {
         return Array.from(array.reduce((map, obj) => {
           if (!map.has(obj._id)) map.set(obj._id, obj);
@@ -235,7 +233,6 @@ export default {
         }, new Map()).values());
       }
 
-      // Return unique chats array
       return getUniqueChats(this.chats);
     }
   },
@@ -312,17 +309,12 @@ export default {
     },
 
     makeID(length) {
-      let result = "";
-      let characters =
-        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-      let charactersLength = characters.length;
-      for (let i = 0; i < length; i++) {
-        result += characters.charAt(
-          Math.floor(Math.random() * charactersLength)
-        );
-      }
+      const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+      const charactersLength = characters.length;
+      let result = Array.from({ length }, () => characters.charAt(Math.floor(Math.random() * charactersLength))).join('');
       return result;
     },
+
 
     readChat(index, id) {
       this.message.text = "";
