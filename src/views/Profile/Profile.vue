@@ -98,7 +98,7 @@
 
       <div class="flex items-center border-b h-12 mb-3">
         <PositionIcon />
-        <input disabled type="text" v-bind:value="user.position ? user.position : ''" class="ml-3 h-full w-full border-none outline-none"
+        <input disabled type="text" v-bind:value="user.position ? user.position.name : ''" class="ml-3 h-full w-full border-none outline-none"
           placeholder="មុខតំណែង" title="មុខតំណែង"/>
       </div>
     </div>
