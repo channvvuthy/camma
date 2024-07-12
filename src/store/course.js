@@ -35,16 +35,27 @@ export default {
     downloadDetails: [],
     videoActive: {},
     subject: {},
+    numberOfView: 0
   },
 
   mutations: {
+    /**
+     * Set the number of views for the video.
+     *
+     * @param {Object} state - The Vuex state object
+     * @param {number} value - The new number of views
+     */
+    setNumberOfView(state, value) {
+      state.numberOfView = value;
+    },
+    
     toggleMyFavorite(state, { _id, is_favorite }) {
       state.courseDetail.list.forEach(item => {
-          if (item._id === _id) {
-              item.is_favorite = is_favorite === undefined || is_favorite === 0 ? 1 : 0;
-          }
+        if (item._id === _id) {
+          item.is_favorite = is_favorite === undefined || is_favorite === 0 ? 1 : 0;
+        }
       });
-    },  
+    },
     getFilter(state, payload) {
       state.subject = payload.subject;
       state.courses.grade = payload.department;
@@ -132,7 +143,7 @@ export default {
         }
       });
     },
-    
+
     getMyCourse(state, courses) {
       state.myCourses = courses;
     },
@@ -195,10 +206,10 @@ export default {
         axios
           .get(
             config.apiUrl +
-              "home?grade_id=" +
-              this.state.course.gradeID +
-              "&s=" +
-              this.state.course.s
+            "home?grade_id=" +
+            this.state.course.gradeID +
+            "&s=" +
+            this.state.course.s
           )
           .then((res) => {
             commit("loadingVideo", false);
@@ -220,12 +231,12 @@ export default {
         axios
           .get(
             config.apiUrl +
-              "home?p=" +
-              page +
-              "&grade_id=" +
-              this.state.course.gradeID +
-              "&s=" +
-              this.state.course.s
+            "home?p=" +
+            page +
+            "&grade_id=" +
+            this.state.course.gradeID +
+            "&s=" +
+            this.state.course.s
           )
           .then((res) => {
             commit("pagesLoading", false);
@@ -253,12 +264,12 @@ export default {
       axios
         .get(
           config.apiUrl +
-            "user/my-course?type=" +
-            type +
-            "&s=" +
-            this.state.course.s +
-            "&grade_id=" +
-            this.state.course.gradeID
+          "user/my-course?type=" +
+          type +
+          "&s=" +
+          this.state.course.s +
+          "&grade_id=" +
+          this.state.course.gradeID
         )
         .then((res) => {
           commit("loadingMyCourse", false);
@@ -284,12 +295,12 @@ export default {
         axios
           .get(
             config.apiUrl +
-              "lesson/video/?course_id=" +
-              params.courseId +
-              "&type=" +
-              params.type +
-              "&order=" +
-              params.order
+            "lesson/video/?course_id=" +
+            params.courseId +
+            "&type=" +
+            params.type +
+            "&order=" +
+            params.order
           )
           .then((res) => {
             commit("getLoadingCourseDetail", false);
@@ -313,10 +324,10 @@ export default {
         axios
           .get(
             config.apiUrl +
-              "lesson/video/?course_id=" +
-              params.courseId +
-              "&order=" +
-              params.order
+            "lesson/video/?course_id=" +
+            params.courseId +
+            "&order=" +
+            params.order
           )
           .then((res) => {
             commit("getLoadingCourseByScroll", false);
@@ -372,10 +383,10 @@ export default {
         axios
           .get(
             config.apiUrl +
-              "course/video?s=" +
-              this.state.course.s +
-              "&grade_id=" +
-              this.state.course.gradeID
+            "course/video?s=" +
+            this.state.course.s +
+            "&grade_id=" +
+            this.state.course.gradeID
           )
           .then((res) => {
             if (res.data.status && res.data.status === 2) {
@@ -399,12 +410,12 @@ export default {
         axios
           .get(
             config.apiUrl +
-              "course/video?s=" +
-              this.state.course.s +
-              "&grade_id=" +
-              this.state.course.gradeID +
-              "&p=" +
-              page
+            "course/video?s=" +
+            this.state.course.s +
+            "&grade_id=" +
+            this.state.course.gradeID +
+            "&p=" +
+            page
           )
           .then((res) => {
             if (res.data.status && res.data.status === 2) {
@@ -433,14 +444,14 @@ export default {
           axios
             .get(
               config.apiUrl +
-                "course/e-book?s=" +
-                this.state.course.s +
-                "&grade_id=" +
-                payload.grade_id +
-                "&p=" +
-                payload.p +
-                "&subject_id=" +
-                payload.subject_id
+              "course/e-book?s=" +
+              this.state.course.s +
+              "&grade_id=" +
+              payload.grade_id +
+              "&p=" +
+              payload.p +
+              "&subject_id=" +
+              payload.subject_id
             )
             .then((res) => {
               if (res.data.status && res.data.status === 2) {
@@ -448,7 +459,7 @@ export default {
               }
 
               commit("gettingEbook", false);
-            
+
               commit("getBook", res.data.data);
               localStorage.setItem("books", JSON.stringify(res.data.data));
               resolve(res.data.data);
@@ -469,14 +480,14 @@ export default {
         axios
           .get(
             config.apiUrl +
-              "course/e-book?s=" +
-              payload.s +
-              "&grade_id=" +
-              payload.grade_id +
-              "&p=" +
-              payload.p +
-              "&subject_id=" +
-              payload.subject_id
+            "course/e-book?s=" +
+            payload.s +
+            "&grade_id=" +
+            payload.grade_id +
+            "&p=" +
+            payload.p +
+            "&subject_id=" +
+            payload.subject_id
           )
           .then((res) => {
             if (res.data.status && res.data.status === 2) {
@@ -500,14 +511,14 @@ export default {
         axios
           .get(
             config.apiUrl +
-              "course/e-book?s=" +
-              payload.s +
-              "&grade_id=" +
-              payload.grade_id +
-              "&p=" +
-              payload.p +
-              "&subject_id=" +
-              payload.subject_id
+            "course/e-book?s=" +
+            payload.s +
+            "&grade_id=" +
+            payload.grade_id +
+            "&p=" +
+            payload.p +
+            "&subject_id=" +
+            payload.subject_id
           )
           .then((res) => {
             if (res.data.status && res.data.status === 2) {
@@ -530,10 +541,10 @@ export default {
         axios
           .get(
             config.apiUrl +
-              "lesson/e-book?course_id=" +
-              params.course_id +
-              "&order=" +
-              params.order
+            "lesson/e-book?course_id=" +
+            params.course_id +
+            "&order=" +
+            params.order
           )
           .then((res) => {
             if (res.data.status && res.data.status === 2) {

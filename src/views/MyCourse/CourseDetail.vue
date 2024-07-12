@@ -22,7 +22,7 @@
               @updateLastWatch="updateLastWatch($event)" @gettingResource="gettingResource($event)"></MediaPlayer>
           </div>
           <div class="flex justify-between">
-            <div class="mt-4 font-khmer_os">
+            <div class="mt-4 font-khmer_os flex-1">
               <p class="text-14px font-semibold" v-if="!loadingPlay">
                 <span :title="videoTitle ? videoTitle : videoPlay.title">
                   {{ videoTitle ? videoTitle : videoPlay.title }}
@@ -32,14 +32,16 @@
                 {{ courseDetail.course.teacher.name }}
               </h2>
             </div>
-            <div class="mt-4 flex" v-if="courseDetail.is_buy">
-              <div
-                class="flex bg-custom font-khmer_os text-13px focus:outline-none text-white leading-8 h-8 px-3 rounded-full mr-3 hover:bg-opacity-80 cursor-pointer"
-                @click="showMyDocument" v-if="documents && documents.length">
-                ឯកសារ
-              </div>
-
+            <div class="mt-4 flex text-gray-400 text-sm">
+              <ViewIcon />
+              <div class="ml-2">{{ numberOfView }} Views</div>
             </div>
+          </div>
+          <!-- Tool -->
+          <div class="flex mb-5 justify-between items-center">
+            <div class="text-xl">មតិយោបល់</div>
+            <VideoOption :lesson_id="lesson_id" />
+
           </div>
           <Comment :lesson_id="lesson_id" v-if="lesson_id" />
         </div>
@@ -132,10 +134,12 @@ import QuestionAnswer from "./components/QuestionAnswer";
 import Document from "./components/Document";
 import DownloadQuality from "./components/DownloadQuality";
 import FavoriteIcon from './components/FavoriteIcon.vue';
+import VideoOption from "./components/VideoOption.vue";
 const { ipcRenderer } = require("electron");
 
 export default {
   components: {
+    VideoOption,
     FavoriteIcon,
     MediaPlayer,
     Loading,
@@ -183,9 +187,10 @@ export default {
   },
 
   computed: {
-    ...mapState("course", ["courseDetail", "loadingCourseDetail", "teacher"]),
+    ...mapState("course", ["courseDetail", "loadingCourseDetail", "teacher", "numberOfView"]),
     ...mapState("playVideo", ["video"]),
     ...mapState("cart", ["cart", "loadingCart"]),
+
   },
   destroyed() {
     window.removeEventListener("resize", this.handleResize);
@@ -385,6 +390,7 @@ export default {
       )[0];
 
       this.$store.commit("course/getVideo", this.videoPlay);
+      this.lesson_id = this.videoPlay._id
 
       this.addLastWatch(this.videoPlay);
 

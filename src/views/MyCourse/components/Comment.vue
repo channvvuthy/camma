@@ -1,6 +1,5 @@
 <template>
     <div>
-        <div class="text-xl mb-5">មតិយោបល់</div>
         <PostComment :lesson_id="lesson_id" />
         <div v-for="(forum, index) in forums" :key="index">
             <div class="flex mb-5">

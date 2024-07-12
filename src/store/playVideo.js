@@ -7,9 +7,31 @@ export default {
         loadingVideo: false,
         stop_watch: 0,
         loadingNextVideo: false,
+        defaultSpeedRate: "1x",
+        defaultQuality: "720p",
     },
 
     mutations: {
+
+        /**
+         * Set the default speed rate for the video player.
+         *
+         * @param {Object} state - The Vuex state object
+         * @param {number} value - The new default speed rate value
+         */
+        setDefaultSpeedRate(state, value){
+            state.defaultSpeedRate = value;
+        },
+
+        /**
+         * Sets the default quality value in the state.
+         *
+         * @param {Object} state - The Vuex state object.
+         * @param {number} value - The new default quality value.
+         */
+        setDefaultQuality(state, value){
+            state.defaultQuality = value;
+        },
         loadingPlay(state, status){
             state.loadingVideo = status
         },

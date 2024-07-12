@@ -1,352 +1,49 @@
 <template>
-  <div
-    id="video_player_box"
-    class="flex-cols start items-center w-full relative"
-  >
+  <div id="video_player_box" class="flex-cols start items-center w-full relative">
     <div>
-      <video
-        id="my_video"
-        class="m-auto w-full rounded-lg shadow overflow-hidden"
-        ref="my_video"
-        :style="{ height: video.height + 'px', width: '100%' }"
-        poster="/poster.png"
-        autoplay="autoplay"
-        controlsList="nodownload"
-        @timeupdate="timeUpdate()"
-        @ended="onEnded()"
-        @pause="pause()"
-        @click="playPause()"
-      >
+      <video id="my_video" class="m-auto w-full rounded-lg shadow overflow-hidden" ref="my_video"
+        :style="{ height: video.height + 'px', width: '100%' }" poster="/poster.png" autoplay="autoplay"
+        controlsList="nodownload" @timeupdate="timeUpdate()" @ended="onEnded()" @pause="pause()" @click="playPause()">
         <source :src="url" />
       </video>
     </div>
-    <div
-      class="
-        absolute
-        w-full
-        left-0
-        bottom-0
-        py-5
-        control
-        bg-gradient-to-t
-        from-gray-900
-        z-50
-      "
-      :class="loadingVideo ? 'opacity-0' : ''"
-    >
+    <div class="absolute w-full left-0 bottom-0 py-5 control bg-gradient-to-t from-gray-900 z-50"
+      :class="loadingVideo ? 'opacity-0' : ''">
       <div class="px-5">
-        <input
-          type="range"
-          min="0"
-          max="100"
-          id="seekSlider"
-          value="0"
-          step="1"
-          ref="seekSlider"
-          class="w-full seekSlider"
-        />
+        <input type="range" min="0" max="100" id="seekSlider" value="0" step="1" ref="seekSlider"
+          class="w-full seekSlider" />
       </div>
       <div class="flex justify-between items-center">
         <div class="flex justify-start px-5 pt-2">
-          <button
-            class="bg-transparent focus:outline-none mr-5 transform rotate-180"
-            @click="previousVideo()"
-          >
+          <button class="bg-transparent focus:outline-none mr-5 transform rotate-180" @click="previousVideo()">
             <NextIcon></NextIcon>
           </button>
-          <button
-            id="playPauseBtn"
-            class="bg-transparent focus:outline-none mr-5"
-            @click="playPause()"
-          >
+          <button id="playPauseBtn" class="bg-transparent focus:outline-none mr-5" @click="playPause()">
             <PlayIcon v-if="showPlay"></PlayIcon>
             <PauseIcon v-else></PauseIcon>
           </button>
-          <button
-            class="bg-transparent focus:outline-none mr-5"
-            @click="nextVideo()"
-          >
+          <button class="bg-transparent focus:outline-none mr-5" @click="nextVideo()">
             <NextIcon></NextIcon>
           </button>
 
-          <button
-            id="muteBtn"
-            class="mr-3 bg-transparent focus:outline-none"
-            @click="vidMute()"
-          >
+          <button id="muteBtn" class="mr-3 bg-transparent focus:outline-none" @click="vidMute()">
             <SoundIcon v-if="!muted"></SoundIcon>
             <MutedIcon v-else></MutedIcon>
           </button>
           <div class="text-white mr-3 flex">
             <span id="currentTime" v-if="currentTime">{{ currentTime }}</span>
             <span v-if="currentDuration && currentTime">&nbsp;/&nbsp;</span>
-            <span id="currentDuration" v-if="currentDuration">{{
-              currentDuration
-            }}</span>
+            <span id="currentDuration" v-if="currentDuration">
+              {{ currentDuration }}
+            </span>
           </div>
           <div class="w-20">
-            <input
-              id="volumeSlider"
-              type="range"
-              min="0"
-              max="100"
-              value="100"
-              step="1"
-              @change="setVolume($event)"
-            />
+            <input id="volumeSlider" type="range" min="0" max="100" value="100" step="1" @change="setVolume($event)" />
           </div>
         </div>
         <div class="flex justify-start items-center px-5 relative">
-          <div class="mr-5">
-            <div class="cursor-pointer mt-2" @click="showOptionTool()">
-              <SettingIcon></SettingIcon>
-            </div>
-            <!--Show option-->
-            <div
-              class="
-                absolute
-                bg-white
-                text-black text-14px
-                font-khmer_os
-                w-44
-                text-center
-                right-5
-                -top-46
-                rounded
-                shadow
-              "
-            >
-              <ul v-if="showOption">
-                <li
-                  class="
-                    border border-l-0
-                    -l-0
-                    border-r-0 border-t-0 border-gray-200
-                    h-10
-                    leading-10
-                    font-13px
-                    text-gray-500
-                  "
-                >
-                  ការកំណត់
-                </li>
-                <li
-                  class="
-                    cursor-pointer
-                    border border-l-0
-                    -l-0
-                    border-r-0 border-t-0 border-gray-200
-                    h-9
-                    leading-9
-                    text-custom
-                  "
-                  @click="chooseOption(2)"
-                >
-                  ល្បឿនវីដេអូ
-                </li>
-                <li
-                  class="
-                    cursor-pointer
-                    border border-l-0
-                    -l-0
-                    border-r-0 border-t-0 border-gray-200
-                    h-9
-                    leading-9
-                    text-custom
-                  "
-                  @click="chooseOption(1)"
-                >
-                  កំរិតវីដេអូ
-                </li>
-                <li
-                  class="
-                    cursor-pointer
-                    h-10
-                    leading-10
-                    text-red-500
-                    font-semibold
-                  "
-                  @click="cancel()"
-                >
-                  បោះបង់
-                </li>
-              </ul>
-            </div>
-            <!--Show speed-->
-            <div
-              class="
-                absolute
-                bg-white
-                text-custom text-sm
-                font-khmer_os
-                w-44
-                text-center
-                right-5
-                -top-64
-                rounded
-                shadow
-              "
-            >
-              <ul v-if="showSpeed">
-                <li
-                  class="
-                    border border-l-0
-                    -l-0
-                    border-r-0 border-t-0 border-gray-200
-                    h-10
-                    leading-10
-                    font-13px
-                    text-gray-500
-                  "
-                >
-                  ល្បឿន
-                </li>
-                <li
-                  class="
-                    cursor-pointer
-                    border border-l-0
-                    -l-0
-                    border-r-0 border-t-0 border-gray-200
-                    h-9
-                    leading-9
-                  "
-                  :class="defaultSpeed < 1 ? 'text-red-500' : 'text-custom'"
-                  @click="playbackRate(0.5)"
-                >
-                  0.5x
-                </li>
-                <li
-                  class="
-                    cursor-pointer
-                    border border-l-0
-                    -l-0
-                    border-r-0 border-t-0 border-gray-200
-                    h-9
-                    leading-9
-                  "
-                  :class="defaultSpeed === 1 ? 'text-red-500' : 'text-custom'"
-                  @click="playbackRate(1)"
-                >
-                  1.0x
-                </li>
-                <li
-                  class="
-                    cursor-pointer
-                    border border-l-0
-                    -l-0
-                    border-r-0 border-t-0 border-gray-200
-                    h-9
-                    leading-9
-                  "
-                  :class="
-                    defaultSpeed > 1 && defaultSpeed < 2
-                      ? 'text-red-500'
-                      : 'text-custom'
-                  "
-                  @click="playbackRate(1.5)"
-                >
-                  1.5x
-                </li>
-                <li
-                  class="
-                    cursor-pointer
-                    border border-l-0
-                    -l-0
-                    border-r-0 border-t-0 border-gray-200
-                    h-9
-                    leading-9
-                  "
-                  :class="defaultSpeed === 2 ? 'text-red-500' : 'text-custom'"
-                  @click="playbackRate(2)"
-                >
-                  2.0x
-                </li>
-                <li
-                  class="
-                    cursor-pointer
-                    h-10
-                    leading-10
-                    text-red-500
-                    font-semibold
-                  "
-                  @click="cancelOption()"
-                >
-                  បោះបង់
-                </li>
-              </ul>
-            </div>
-            <!--Show quality-->
-            <div
-              class="
-                absolute
-                bg-white
-                text-black text-14px
-                font-khmer_os
-                w-44
-                text-center
-                right-5
-                -top-46
-                rounded
-                shadow
-              "
-            >
-              <ul v-if="showQuality">
-                <li
-                  class="
-                    border border-l-0
-                    -l-0
-                    border-r-0 border-t-0 border-gray-200
-                    h-10
-                    leading-10
-                    font-13px
-                    text-gray-500
-                  "
-                >
-                  កំរិត
-                </li>
-                <template>
-                  <li
-                    class="
-                      cursor-pointer
-                      border border-l-0
-                      -l-0
-                      border-r-0 border-t-0 border-gray-200
-                      h-9
-                      leading-9
-                    "
-                    v-for="(quality, index) in videoActive.links"
-                    :key="index"
-                    :class="
-                      defaultQuality == quality.rendition
-                        ? 'text-red-500'
-                        : 'text-custom'
-                    "
-                    @click="changeQuality(quality.rendition)"
-                  >
-                    {{ quality.rendition }}
-                  </li>
-                </template>
-                <li
-                  class="
-                    cursor-pointer
-                    h-10
-                    leading-10
-                    text-red-500
-                    font-semibold
-                  "
-                  @click="cancelOption()"
-                >
-                  បោះបង់
-                </li>
-              </ul>
-            </div>
-          </div>
-          <div
-            class="cursor-pointer mt-2"
-            id="fullScreenBtn"
-            @click="toggleFullScreen()"
-          >
-            <FullScreenIcon></FullScreenIcon>
+          <div class="cursor-pointer mt-2" id="fullScreenBtn" @click="toggleFullScreen()">
+            <FullScreenIcon/>
           </div>
         </div>
       </div>
@@ -359,14 +56,12 @@ import PauseIcon from "./PauseIcon";
 import NextIcon from "./NextIcon";
 import MutedIcon from "./MutedIcon";
 import SoundIcon from "./SoundIcon";
-import SettingIcon from "./SettingIcon";
 import FullScreenIcon from "./FullScreenIcon";
 import { mapActions, mapState } from "vuex";
 export default {
   name: "MediaPlayer",
   components: {
     PlayIcon,
-    SettingIcon,
     SoundIcon,
     PauseIcon,
     NextIcon,
@@ -405,7 +100,7 @@ export default {
       showSpeed: false,
       showQuality: false,
       defaultSpeed: 1,
-      defaultQuality: "",
+      defaultSelectedQuality: "",
       resources: [],
       LoadingWhiteSuccess: false,
       loadingVideo: false,
@@ -415,7 +110,7 @@ export default {
     };
   },
   computed: {
-    ...mapState("playVideo", ["loadingNextVideo", "stop_watch"]),
+    ...mapState("playVideo", ["loadingNextVideo", "stop_watch", "defaultSpeedRate", "defaultQuality"]),
     ...mapState("course", ["videoActive"]),
     style() {
       return "background-color: " + this.hovering ? this.color : "red";
@@ -427,7 +122,7 @@ export default {
   methods: {
     ...mapActions("playVideo", ["setLastWatch", "gettingNextVideo"]),
 
-    clearVideo() {},
+    clearVideo() { },
 
     handleResize() {
       this.window.width = window.innerWidth;
@@ -440,12 +135,12 @@ export default {
       }
 
       this.LoadingWhiteSuccess = false;
-      if (quality === this.defaultQuality) {
+      if (quality === this.defaultSelectedQuality) {
         this.showQuality = false;
         this.LoadingWhiteSuccess = true;
         return;
       }
-      this.defaultQuality = quality;
+      this.defaultSelectedQuality = quality;
 
       this.url = this.videoActive.links
         .filter((item) => item.rendition === quality)
@@ -665,11 +360,11 @@ export default {
           (item) =>
             item.rendition ==
             this.videoActive.links[this.videoActive.links.length - 1][
-              "rendition"
+            "rendition"
             ]
         )
         .map((item) => item.link)[0];
-      this.defaultQuality =
+      this.defaultSelectedQuality =
         this.videoActive.links[this.videoActive.links.length - 1]["rendition"];
     },
   },
@@ -715,6 +410,14 @@ export default {
       this.vid.setAttribute("src", this.url);
       this.showPlay = false;
     },
+    defaultQuality: function (currentValue) {
+      this.changeQuality(currentValue);
+    },
+
+    defaultSpeedRate: function (currentValue) {
+      this.playbackRate(currentValue.replace("x", ""))
+
+    }
   },
 };
 </script>
