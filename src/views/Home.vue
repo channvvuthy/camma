@@ -192,6 +192,7 @@ export default {
         window.addEventListener("resize", this.handleResize);
         this.handleResize();
         this.videoList();
+        this.$store.commit("course/setSubjectFilterTitle", "ជ្រើសរើសកម្មវិធីសិក្សា");
     },
 
     watch: {

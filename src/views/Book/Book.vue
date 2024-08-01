@@ -1,5 +1,5 @@
 <template>
-  <div class="px-5 pt-5 font-khmer_os text-sm">
+  <div class="px-5 pt-5 font-khmer_os">
     <div class="flex w-full">
       <div class="flex py-2 w-full mb-5 px-5 items-center bg-gray-100 rounded-lg">
         <div class="font-black text-xl w-5/12">

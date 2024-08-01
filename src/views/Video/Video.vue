@@ -142,7 +142,7 @@ export default {
 
         this.$store.commit("course/gettingCourseDetail", res.data);
         let vd = res.data.list.find((item) => item.order === order);
-        
+
         if (vd === undefined) {
           vd = res.data.list[0];
         }
@@ -174,6 +174,8 @@ export default {
     ipcRenderer.on("resetGrade", () => {
       this.page = 1;
     });
+
+    this.$store.commit("course/setSubjectFilterTitle", "ជ្រើសរើសកម្មវិធីសិក្សា");
   },
   watch: {
     query: function () {

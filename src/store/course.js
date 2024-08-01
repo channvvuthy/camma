@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import Vue from "vue";
 import Vuex from "vuex";
 import axios from "axios";
@@ -35,10 +36,15 @@ export default {
     downloadDetails: [],
     videoActive: {},
     subject: {},
-    numberOfView: 0
+    numberOfView: 0,
+    subjectFilterTitle: "ជ្រើសរើសកម្មវិធីសិក្សា"
   },
 
   mutations: {
+
+    setSubjectFilterTitle(state, value){
+      state.subjectFilterTitle = value;
+    },
     /**
      * Set the number of views for the video.
      *
@@ -583,7 +589,7 @@ export default {
     getFilter({ commit }) {
       return new Promise((resolve, reject) => {
         axios
-          .get(config.apiUrl + "book/filter")
+          .get(config.apiUrl + "/filter")
           .then((res) => {
             commit("getFilter", res.data.data);
             resolve(res.data);
