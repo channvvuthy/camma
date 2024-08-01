@@ -44,7 +44,7 @@ export default {
   },
   data() {
     return {
-      moalTitle: "ថ្នាក់សិក្សា",
+      moalTitle: "នាយកដ្ឋាន",
       isModal: false,
       showUpdate: false,
       showDownloading: false,
@@ -63,9 +63,16 @@ export default {
     ...mapActions("course", ["videoList", "getFilter"]),
 
     subjectSelected(subject) {
-      this.subjectTitle = subject.name || "ជ្រើសរើសកម្មវិធីសិក្សា";
+      const subjectTitle = subject.name || "ជ្រើសរើសកម្មវិធីសិក្សា";
+      const subjectId = subject._id || "";
+
+      this.subjectTitle = subjectTitle;
       this.isSubjectFilter = false;
-      this.$store.commit("course/setSubjectFilterTitle", this.subjectTitle);
+
+      this.$store.commit("course/setSubjectFilterTitle", subjectTitle);
+      this.$store.commit("course/setSubjectId", subjectId);
+
+      this.videoList();
     },
 
     isSearch() {
@@ -77,19 +84,16 @@ export default {
     },
     gradeSelected(grade) {
       this.isModal = false;
-      var filterElement = document.getElementById("filter");
+      const filterElement = document.getElementById("filter");
+      const gradeName = grade === "all" ? "ទាំងអស់" : grade.name;
+      const gradeId = grade === "all" ? "" : grade._id;
 
-      if (grade == "all") {
-        this.$store.commit("course/getFilterByGradeID", "");
-        filterElement.innerHTML = "ទាំងអស់";
-        this.videoList();
-        return;
-      }
+      this.$store.commit("course/getFilterByGradeID", gradeId);
+      filterElement.innerHTML = gradeName;
 
-      this.$store.commit("course/getFilterByGradeID", grade._id);
-      filterElement.innerHTML = grade.name;
       this.videoList();
     },
+
     closeModal() {
       this.isModal = false;
     },

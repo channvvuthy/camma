@@ -206,60 +206,49 @@ export default {
   },
 
   actions: {
-    videoList({ commit, dispatch }) {
+    async videoList({ commit, dispatch }) {
       commit("loadingVideo", true);
-      return new Promise((resolve, reject) => {
-        axios
-          .get(
-            config.apiUrl +
-            "home?grade_id=" +
-            this.state.course.gradeID +
-            "&s=" +
-            this.state.course.s
-          )
-          .then((res) => {
-            commit("loadingVideo", false);
-            dispatch("getVideo", res.data.data);
-            if (res.data.status && res.data.status === 2) {
-              err.err(res.data.msg);
-            }
-          })
-          .catch((err) => {
-            commit("loadingVideo", false);
-            reject(err);
-          });
-      });
-    },
+    
+      const { gradeID, selectedSubjectId, s } = this.state.course;
+      const url = `${config.apiUrl}home?grade_id=${gradeID}&subject_id=${selectedSubjectId}&s=${s}`;
+    
+      try {
+        const res = await axios
+          .get(url);
+        commit("loadingVideo", false);
+        dispatch("getVideo", res.data.data);
 
-    videoPagination({ commit, dispatch }, page = 1) {
+        if (res.data.status === 2) {
+          err.err(res.data.msg);
+        }
+      } catch (err) {
+        commit("loadingVideo", false);
+        return await Promise.reject(err);
+      }
+    },    
+
+    async videoPagination({ commit, dispatch }, page = 1) {
       commit("pagesLoading", true);
-      return new Promise((resolve, reject) => {
-        axios
-          .get(
-            config.apiUrl +
-            "home?p=" +
-            page +
-            "&grade_id=" +
-            this.state.course.gradeID +
-            "&s=" +
-            this.state.course.s
-          )
-          .then((res) => {
-            commit("pagesLoading", false);
+    
+      const { gradeID, selectedSubjectId, s } = this.state.course;
+      const url = `${config.apiUrl}home?p=${page}&grade_id=${gradeID}&subject_id=${selectedSubjectId}&s=${s}`;
+    
+      try {
+        const res = await axios
+          .get(url);
+        commit("pagesLoading", false);
 
-            if (res.data.status && res.data.status === 2) {
-              err.err(res.data.msg);
-            }
+        if (res.data.status === 2) {
+          err.err(res.data.msg);
+        }
 
-            resolve(res.data.data.lesson);
-
-            dispatch("loadMoreVideo", res.data.data.lesson);
-          })
-          .catch((err) => {
-            commit("pagesLoading", false);
-            reject(err);
-          });
-      });
+        const { lesson } = res.data.data;
+        dispatch("loadMoreVideo", lesson);
+        return lesson;
+      } catch (err) {
+        commit("pagesLoading", false);
+        return await Promise.reject(err);
+      }
     },
     loadMoreVideo({ commit }, lesson) {
       commit("loadMoreVideoLesson", lesson);

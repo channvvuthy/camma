@@ -136,7 +136,6 @@
                         return;
                     }
                     if (response.status === 1) {
-                        alert(1)
                         this.errMessage = response.msg
                         this.err = true
                         this.hide = true
