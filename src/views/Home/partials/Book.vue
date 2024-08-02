@@ -3,7 +3,8 @@
         <div class="flex items-center justify-between mb-5">
             <div class="font-black text-lg">សៀវភៅ</div>
             <div @click="$router.push({ name: 'book' })" class="text-sm text-custom cursor-pointer"
-                v-if="ebookCourses && ebookCourses.length">មើលទាំងអស់</div>
+                v-if="courses.book && courses.book.length">មើលទាំងអស់</div>
+                
         </div>
         <div :style="{ maxWidth: `${windowWidth - 300}px` }">
             <vue-horizontal responsive v-if="loadingEbookCourse">
@@ -13,7 +14,7 @@
                 </section>
             </vue-horizontal>
             <vue-horizontal responsive v-else>
-                <section v-for="(course, index) in ebookCourses" :key="index">
+                <section v-for="(course, index) in courses.book" :key="index">
                     <div class="cursor-pointer" @click="openBook(course)">
                         <img :src="course.thumbnail" alt="">
                         <div class="text-sm mt-2"> {{ cutString(course.title, 50) }} </div>
@@ -23,7 +24,7 @@
             </vue-horizontal>
         </div>
 
-        <div v-if="ebookCourses && ebookCourses.length <= 0">
+        <div v-if="courses.book && courses.book.length <= 0">
             <p class="text-sm text-gray-500">មិនមានសៀវភៅត្រូវបង្ហាញទៅតាមអ្វីដែលអ្នកកំពុងស្វែងរកនោះទេ!</p>
         </div>
 
@@ -64,6 +65,7 @@ export default {
         ...mapState("course", [
             "loadingEbookCourse",
             "ebookCourses",
+            "courses"
         ]),
         query: {
             get() {

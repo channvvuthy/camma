@@ -374,59 +374,48 @@ export default {
 
     getVideoCourse({ commit }) {
       commit("gettingVideoCourse", true);
-      return new Promise((resolve, reject) => {
-        axios
-          .get(
-            config.apiUrl +
-            "course/video?s=" +
-            this.state.course.s +
-            "&grade_id=" +
-            this.state.course.gradeID
-          )
-          .then((res) => {
-            if (res.data.status && res.data.status === 2) {
-              err.err(res.data.msg);
-            }
-
-            commit("gettingVideoCourse", false);
-            commit("videoCourseList", res.data.data);
-            resolve(res.data.data);
-          })
-          .catch((err) => {
-            commit("gettingVideoCourse", false);
-            reject(err);
-          });
-      });
+    
+      const { s, gradeID, selectedSubjectId } = this.state.course;
+      const url = `${config.apiUrl}course/video?s=${s}&grade_id=${gradeID}&subject_id=${selectedSubjectId}`;
+    
+      return axios
+        .get(url)
+        .then((res) => {
+          if (res.data.status === 2) {
+            err.err(res.data.msg);
+          }
+    
+          commit("gettingVideoCourse", false);
+          commit("videoCourseList", res.data.data);
+          return res.data.data;
+        })
+        .catch((err) => {
+          commit("gettingVideoCourse", false);
+          throw err;
+        });
     },
 
-    videoCoursePagination({ commit }, page = 1) {
+    async videoCoursePagination({ commit }, page = 1) {
       commit("gettingVideoCoursePagination", true);
-      return new Promise((resolve, reject) => {
-        axios
-          .get(
-            config.apiUrl +
-            "course/video?s=" +
-            this.state.course.s +
-            "&grade_id=" +
-            this.state.course.gradeID +
-            "&p=" +
-            page
-          )
-          .then((res) => {
-            if (res.data.status && res.data.status === 2) {
-              err.err(res.data.msg);
-            }
+    
+      const { s, gradeID, selectedSubjectId } = this.state.course;
+      const url = `${config.apiUrl}course/video?s=${s}&grade_id=${gradeID}&subject_id=${selectedSubjectId}&p=${page}`;
+    
+      try {
+        const res = await axios
+          .get(url);
+        if (res.data.status === 2) {
+          err.err(res.data.msg);
+        }
 
-            commit("gettingVideoCoursePagination", false);
-            commit("videoCourseListPagination", res.data.data);
-            resolve(res.data.data);
-          })
-          .catch((err) => {
-            commit("gettingVideoCoursePagination", false);
-            reject(err);
-          });
-      });
-    },
+        commit("gettingVideoCoursePagination", false);
+        commit("videoCourseListPagination", res.data.data);
+        return res.data.data;
+      } catch (err) {
+        commit("gettingVideoCoursePagination", false);
+        throw err;
+      }
+    },    
 
     getEbook({ commit }, payload) {
       commit("gettingEbook", true);

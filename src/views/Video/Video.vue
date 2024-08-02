@@ -87,6 +87,9 @@ export default {
     gradeID() {
       return this.$store.state.course.gradeID;
     },
+    selectedSubjectId() {
+      return this.$store.state.course.selectedSubjectId;
+    },
   },
 
   destroyed() {
@@ -182,6 +185,9 @@ export default {
       this.getVideoCourse();
     },
     gradeID: function () {
+      this.getVideoCourse();
+    },
+    selectedSubjectId: function () {
       this.getVideoCourse();
     },
     removedCart: function (course_id) {

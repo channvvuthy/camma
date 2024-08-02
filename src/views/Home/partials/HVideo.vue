@@ -47,7 +47,7 @@
             </vue-horizontal>
         </div>
         <div v-if="courses && courses.lesson && courses.lesson.length <= 0">
-            <p class="text-sm text-gray-500">មិនវីដេអូត្រូវបង្ហាញទៅតាមអ្វីដែលអ្នកកំពុងស្វែងរកនោះទេ!</p>
+            <p class="text-sm text-gray-500">មិនមានវីដេអូត្រូវបង្ហាញទៅតាមអ្វីដែលអ្នកកំពុងស្វែងរកនោះទេ!</p>
         </div>
         <LoadingOverlay v-if="isDetail" @dismiss="dismiss()" />
     </div>

@@ -178,21 +178,28 @@ export default {
                     this.loadingDetail = false;
                 });
         },
+        handleYoutubeVideo(event, arg) {
+            this.videoUrl = this.extractVideoUrl(arg);
+        },
+
+        extractVideoUrl(arg) {
+            if (arg.length > 1) {
+                return arg.find((item) => item.itag == 22)?.url;
+            } else {
+                return arg[0]?.url;
+            }
+        },
+
+        setSubjectFilterTitle() {
+            this.$store.commit("course/setSubjectFilterTitle", "ជ្រើសរើសកម្មវិធីសិក្សា");
+        }
     },
     created() {
-        ipcRenderer.on("youtubeVideo", (event, arg) => {
-            if (arg.length > 1) {
-                this.videoUrl = arg
-                    .filter((items) => items.itag == 22)
-                    .map((item) => item.url)[0];
-            } else {
-                this.videoUrl = arg.map((item) => item.url)[0];
-            }
-        });
+        ipcRenderer.on("youtubeVideo", this.handleYoutubeVideo);
         window.addEventListener("resize", this.handleResize);
         this.handleResize();
         this.videoList();
-        this.$store.commit("course/setSubjectFilterTitle", "ជ្រើសរើសកម្មវិធីសិក្សា");
+        this.setSubjectFilterTitle();
     },
 
     watch: {
