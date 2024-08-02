@@ -2,7 +2,7 @@
     <div class="home p-5">
         <div v-if="loadingVideo" class="flex justify-center items-center h-screen relative -top-5">
             <h1 class="text-sm font-semibold font-khmer_os relative -top-20">
-                <loading></loading>
+                <loading/>
             </h1>
         </div>
         <div class="h-screen overflow-y-scroll pb-40">
@@ -115,16 +115,17 @@ export default {
         },
         removeFav(lesson_id) {
             try {
-                for (var i = 0; i < this.activeId.length; i++) {
-                    if (this.activeId[i] == lesson_id) {
-                        this.activeId.splice(i, 1);
-                    }
-                }
-                this.removeFavorite(lesson_id).then(() => {
-                    this.removeActiveFavorite(lesson_id);
-                });
+                this.activeId = this.activeId.filter(id => id !== lesson_id);
+
+                this.removeFavorite(lesson_id)
+                    .then(() => {
+                        this.removeActiveFavorite(lesson_id);
+                    })
+                    .catch((err) => {
+                        console.log(err);
+                    });
             } catch (err) {
-                return err;
+                console.log(err);
             }
         },
 
@@ -137,46 +138,43 @@ export default {
         },
         isActiveFav(lesson_id) {
             try {
-                for (let i = 0; i < this.activeId.length; i++) {
-                    if (this.activeId[i] == lesson_id) {
-                        return true;
-                    }
-                }
+                return this.activeId.includes(lesson_id);
             } catch (err) {
                 console.log(err);
+                return false;
             }
-            return false;
         },
 
         kFormatter(num) {
             return helper.kFormatter(num);
         },
 
-        courseDetail(video) {
-            this.loadingDetail = true;
-            this.$store
-                .dispatch("course/getvideoPlay", video.course._id)
-                .then((res) => {
-                    this.$store.commit("course/gettingCourseDetail", res.data);
-                    var vd = res.data.list.filter((item) => item.order == video.order);
+        async courseDetail(video) {
+            try {
+                this.loadingDetail = true;
 
-                    this.$store.commit("course/getVideo", vd[0]);
+                const res = await this.$store.dispatch("course/getvideoPlay", video.course._id);
 
-                    this.loadingDetail = false;
-                    this.$router.push({
-                        name: "course-detail",
-                        params: {
-                            videoId: video._id,
-                            order: video.order,
-                            courseId: video.course._id,
-                        },
-                    });
+                this.$store.commit("course/gettingCourseDetail", res.data);
 
-                })
-                .catch((err) => {
-                    helper.error(err.response.data);
-                    this.loadingDetail = false;
+                const vd = res.data.list.find((item) => item.order === video.order);
+                if (vd) {
+                    this.$store.commit("course/getVideo", vd);
+                }
+
+                this.$router.push({
+                    name: "course-detail",
+                    params: {
+                        videoId: video._id,
+                        order: video.order,
+                        courseId: video.course._id,
+                    },
                 });
+            } catch (err) {
+                helper.error(err.response.data);
+            } finally {
+                this.loadingDetail = false;
+            }
         },
         handleYoutubeVideo(event, arg) {
             this.videoUrl = this.extractVideoUrl(arg);
@@ -195,6 +193,7 @@ export default {
         }
     },
     created() {
+        this.$store.commit("course/setSubjectId", '');
         ipcRenderer.on("youtubeVideo", this.handleYoutubeVideo);
         window.addEventListener("resize", this.handleResize);
         this.handleResize();
