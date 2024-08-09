@@ -21,7 +21,7 @@
     <GradeModal v-if="isModal" @closeModal="closeModal()" :moalTitle="moalTitle"
       @gradeSelected="gradeSelected($event)" />
 
-    <SubjectModal @closeModal="isSubjectFilter = false" v-if="isSubjectFilter" :moalTitle="subjectTitle"
+    <SubjectModal @closeModal="isSubjectFilter = false" v-if="isSubjectFilter" :moalTitle="subjectFilterTitle"
       @subjectSelected="subjectSelected($event)" />
 
   </div>
@@ -49,7 +49,6 @@ export default {
       showUpdate: false,
       showDownloading: false,
       isSubjectFilter: false,
-      subjectTitle: "ជ្រើសរើសកម្មវិធីសិក្សា",
     };
   },
 
@@ -65,8 +64,6 @@ export default {
     subjectSelected(subject) {
       const subjectTitle = subject.name || "ជ្រើសរើសកម្មវិធីសិក្សា";
       const subjectId = subject._id || "";
-
-      this.subjectTitle = subjectTitle;
       this.isSubjectFilter = false;
 
       this.$store.commit("course/setSubjectFilterTitle", subjectTitle);
@@ -85,8 +82,8 @@ export default {
     gradeSelected(grade) {
       this.isModal = false;
       const filterElement = document.getElementById("filter");
-      const gradeName = grade === "all" ? "ទាំងអស់" : grade.name;
-      const gradeId = grade === "all" ? "" : grade._id;
+      const gradeName = grade == "all" ? "ទាំងអស់" : grade.name;
+      const gradeId = grade == "all" ? "" : grade._id;
 
       this.$store.commit("course/getFilterByGradeID", gradeId);
       filterElement.innerHTML = gradeName;

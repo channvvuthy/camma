@@ -3,13 +3,13 @@
         <PostComment :lesson_id="lesson_id" />
         <div v-for="(forum, index) in forums" :key="index">
             <div class="flex mb-5">
-                <div class="flex items-start">
+                <div class="flex items-start w-full">
                     <div class="w-14 h-14">
                         <div class="w-14 h-14 rounded-full bg-center bg-cover bg-custom flex-1"
                             :style="{ backgroundImage: `url(${forum.user.photo})` }">
                         </div>
                     </div>
-                    <div>
+                    <div class="w-full">
                         <div class="ml-4 flex items-center">
                             <div class="text-sm font-semibold">{{ forum.user.name }}</div>
                             <div class="text-xs text-gray-400 ml-2 pt-1">{{ formatDate(forum.date) }}

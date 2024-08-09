@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="w-full">
         <div class="flex items-center mb-5">
             <div class="w-12 h-12 ">
                 <div class="w-12 h-12 flex-1 rounded-full bg-custom bg-center bg-cover"

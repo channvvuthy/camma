@@ -42,7 +42,7 @@ export default {
 
   mutations: {
 
-    setSubjectFilterTitle(state, value){
+    setSubjectFilterTitle(state, value) {
       state.subjectFilterTitle = value;
     },
     /**
@@ -54,11 +54,13 @@ export default {
     setNumberOfView(state, value) {
       state.numberOfView = value;
     },
-    
+
     toggleMyFavorite(state, { _id, is_favorite }) {
+      const newFavoriteState = (is_favorite == undefined || is_favorite == 0) ? 1 : 0;
+
       state.courseDetail.list.forEach(item => {
-        if (item._id === _id) {
-          item.is_favorite = is_favorite === undefined || is_favorite === 0 ? 1 : 0;
+        if (item._id == _id) {
+          item.is_favorite = newFavoriteState;
         }
       });
     },
@@ -84,10 +86,8 @@ export default {
       state.gettingCourseScroll = status;
     },
     gettingCourseByScroll(state, courseDetail) {
-      if (courseDetail && courseDetail.list.length) {
-        for (let i = 0; i < courseDetail.list.length; i++) {
-          state.courseDetail.list.push(courseDetail.list[i]);
-        }
+      if (courseDetail?.list?.length) {
+        state.courseDetail.list.push(...courseDetail.list);
       }
     },
 
@@ -109,11 +109,10 @@ export default {
       }
     },
     afterAddToCart(state, course_id) {
-      state.videoCourses = state.videoCourses.filter((item) => {
-        if (item._id === course_id) {
+      state.videoCourses.forEach(item => {
+        if (item._id == course_id) {
           item.is_in_cart = !item.is_in_cart;
         }
-        return item;
       });
     },
 
@@ -208,10 +207,10 @@ export default {
   actions: {
     async videoList({ commit, dispatch }) {
       commit("loadingVideo", true);
-    
+
       const { gradeID, selectedSubjectId, s } = this.state.course;
       const url = `${config.apiUrl}home?grade_id=${gradeID}&subject_id=${selectedSubjectId}&s=${s}`;
-    
+
       try {
         const res = await axios
           .get(url);
@@ -225,14 +224,14 @@ export default {
         commit("loadingVideo", false);
         return await Promise.reject(err);
       }
-    },    
+    },
 
     async videoPagination({ commit, dispatch }, page = 1) {
       commit("pagesLoading", true);
-    
+
       const { gradeID, selectedSubjectId, s } = this.state.course;
       const url = `${config.apiUrl}home?p=${page}&grade_id=${gradeID}&subject_id=${selectedSubjectId}&s=${s}`;
-    
+
       try {
         const res = await axios
           .get(url);
@@ -374,17 +373,17 @@ export default {
 
     getVideoCourse({ commit }) {
       commit("gettingVideoCourse", true);
-    
+
       const { s, gradeID, selectedSubjectId } = this.state.course;
       const url = `${config.apiUrl}course/video?s=${s}&grade_id=${gradeID}&subject_id=${selectedSubjectId}`;
-    
+
       return axios
         .get(url)
         .then((res) => {
           if (res.data.status === 2) {
             err.err(res.data.msg);
           }
-    
+
           commit("gettingVideoCourse", false);
           commit("videoCourseList", res.data.data);
           return res.data.data;
@@ -397,10 +396,10 @@ export default {
 
     async videoCoursePagination({ commit }, page = 1) {
       commit("gettingVideoCoursePagination", true);
-    
+
       const { s, gradeID, selectedSubjectId } = this.state.course;
       const url = `${config.apiUrl}course/video?s=${s}&grade_id=${gradeID}&subject_id=${selectedSubjectId}&p=${page}`;
-    
+
       try {
         const res = await axios
           .get(url);
@@ -415,7 +414,7 @@ export default {
         commit("gettingVideoCoursePagination", false);
         throw err;
       }
-    },    
+    },
 
     getEbook({ commit }, payload) {
       commit("gettingEbook", true);

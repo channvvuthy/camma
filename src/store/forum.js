@@ -11,9 +11,13 @@ export default {
         comments: [],
         loadingComment: false,
         addingComment: false,
+        isDeleting: false,
 
     },
     mutations: {
+        setIsDeleting(state, value){
+            state.isDeleting = value;
+        },
         showCommentPagination(){
 
         },
@@ -26,13 +30,11 @@ export default {
         gettingComment(state, comments){
             state.comments = comments
         },
-        gettingCommentPagination(state, comment){
-            if (comment && comment.length) {
-                for (let index = 0; index < comment.length; index++) {
-                    state.comments.push(comment[index])
-                }
+        gettingCommentPagination(state, comments) {
+            if (Array.isArray(comments) && comments.length) {
+                state.comments.push(...comments);
             }
-        },
+        },        
         showingComment(state, status){
             state.loadingComment = status
         },
@@ -58,118 +60,142 @@ export default {
         }
     },
     actions: {
-        getForum({commit}, params){
-            commit("loadingForum", true)
-            return new Promise((resolve, reject) => {
-                axios.get(config.apiUrl + 'forum?s=' + params.s + "&p=" + params.p + "&lesson_id=" + params.lesson_id).then(response => {
-
-                    if (response.data.status && response.data.status === 2) {
-                        err.err(response.data.msg)
-                    }
-
-                    commit("loadingForum", false)
-                    commit("gettingForum", response.data.data)
-                    resolve(response)
-                }).catch(err => {
-                    commit("loadingForum", false)
-                    reject(err)
-                })
-            })
-        },
-        addForum({commit}, data){
-            commit("addingForum", true)
-            return new Promise((resolve, reject) => {
-                axios.post(config.apiUrl + 'forum/add', data).then(response => {
-
-                    if (response.data.status && response.data.status === 2) {
-                        err.err(response.data.msg)
-                    }
-
-                    commit("addingForum", false)
-                    commit("addForm", response.data.data)
-                    resolve(response.data.data)
-                }).catch(err => {
-                    commit("addingForum", false)
-                    reject(err)
-                })
-            })
-        },
-        getForumPagination({commit}, params){
-            commit("loadingForumPagination", true)
-            return new Promise((resolve, reject) => {
-                axios.get(config.apiUrl + 'forum?s=' + params.s + "&p=" + params.p + "&lesson_id=" + params.lesson_id).then(response => {
-
-                    if (response.data.status && response.data.status === 2) {
-                        err.err(response.data.msg)
-                    }
-
-                    commit("loadingForumPagination", false)
-                    commit("gettingForumPagination", response.data.data)
-                    resolve(response)
-                }).catch(err => {
-                    commit("loadingForumPagination", false)
-                    reject(err)
-                })
-            })
-        },
-        async  showComment({ commit }, params) {
-            commit("showingComment", true);
+        async getForum({ commit }, { s, p, lesson_id }) {
+            commit("loadingForum", true);
+        
             try {
-                const response = await axios.get(`${config.apiUrl}forum/comment`, {
-                    params: {
-                        forum_id: params.forum_id,
-                        p: params.p
-                    }
+                const { data } = await axios.get(`${config.apiUrl}forum`, {
+                    params: { s, p, lesson_id }
                 });
         
-                if (response.data.status === 2) {
-                    err.err(response.data.msg);
+                if (data.status === 2) {
+                    err.err(data.msg);
+                }
+        
+                commit("loadingForum", false);
+                commit("gettingForum", data.data);
+        
+                return data;
+            } catch (error) {
+                commit("loadingForum", false);
+                throw error;
+            }
+        },        
+        async addForum({ commit }, data) {
+            commit("addingForum", true);
+        
+            try {
+                const { data: responseData } = await axios.post(`${config.apiUrl}forum/add`, data);
+        
+                if (responseData.status === 2) {
+                    err.err(responseData.msg);
+                }
+        
+                commit("addingForum", false);
+                commit("addForm", responseData.data);
+        
+                return responseData.data;
+            } catch (error) {
+                commit("addingForum", false);
+                throw error;
+            }
+        },        
+        async getForumPagination({ commit }, { s, p, lesson_id }) {
+            commit("loadingForumPagination", true);
+        
+            try {
+                const { data } = await axios.get(`${config.apiUrl}forum`, {
+                    params: { s, p, lesson_id }
+                });
+        
+                if (data.status === 2) {
+                    err.err(data.msg);
+                }
+        
+                commit("loadingForumPagination", false);
+                commit("gettingForumPagination", data.data);
+        
+                return data;
+            } catch (error) {
+                commit("loadingForumPagination", false);
+                throw error;
+            }
+        },
+
+        async showComment({ commit }, { forum_id, p }) {
+            commit("showingComment", true);
+        
+            try {
+                const { data } = await axios.get(`${config.apiUrl}forum/comment`, {
+                    params: { forum_id, p }
+                });
+        
+                if (data.status === 2) {
+                    err.err(data.msg);
                 }
         
                 commit("showingComment", false);
-                commit("gettingComment", response.data.data.comment);
-                return response.data.data;
+                commit("gettingComment", data.data.comment);
+        
+                return data.data;
             } catch (error) {
                 commit("showingComment", false);
                 throw error;
             }
         },
-        
-        showCommentPagination({commit}, params){
-            commit("showCommentPagination", true)
-            return new Promise((resolve, reject) => {
-                axios.get(config.apiUrl + "forum/comment?forum_id=" + params.forum_id + "&p=" + params.p).then(response => {
-
-                    if (response.data.status && response.data.status === 2) {
-                        err.err(response.data.msg)
-                    }
-
-                    commit("showCommentPagination", false)
-                    commit("gettingCommentPagination", response.data.data.comment)
-                    resolve(response.data.data)
-                }).catch(err => {
-                    commit("showCommentPagination", false)
-                    reject(err)
-                })
-            })
+        async deleteComment({ commit }, comment_id) {
+            commit("setIsDeleting", true);
+            try {
+                const { data } = await axios.post(`${config.apiUrl}forum/comment/remove`, { comment_id });
+                commit("setIsDeleting", false);
+                return data.data;
+            } catch (error) {
+                commit("setIsDeleting", false);
+                throw error;
+            }
         },
-        addComment({commit}, params){
-            commit("addingComment", true)
-            return new Promise((resolve, reject) => {
-                axios.post(config.apiUrl + 'forum/comment/add', params).then(response => {
+        async showCommentPagination({ commit }, params) {
+            commit("showCommentPagination", true);
+        
+            const { forum_id, p } = params;
+            const url = `${config.apiUrl}forum/comment?forum_id=${forum_id}&p=${p}`;
+        
+            try {
+                const response = await axios.get(url)
+                const { status, msg, data } = response.data
 
-                    if (response.data.status && response.data.status === 2) {
-                        err.err(response.data.msg)
-                    }
+                if (status === 2) {
+                    err.err(msg)
+                }
 
-                    commit("addingComment", false)
-                    commit("gettingCommentReply", response.data.data)
-                    resolve(response.data.data)
-                }).catch(err => {
-                    commit("addingComment", false)
-                    reject(err)
-                })
-            })
+                commit("showCommentPagination", false)
+                commit("gettingCommentPagination", data.comment)
+                return data
+            } catch (error) {
+                commit("showCommentPagination", false)
+                return await Promise.reject(error)
+            }
+        },
+
+        async addComment({ commit }, params) {
+            commit("addingComment", true);
+        
+            try {
+                const response = await axios.post(`${config.apiUrl}forum/comment/add`, params)
+                const { status, msg, data } = response.data
+
+                if (status === 2) {
+                    err.err(msg)
+                }
+
+                commit("addingComment", false)
+                commit("gettingCommentReply", data)
+                return data
+            } catch (error) {
+                commit("addingComment", false)
+                return await Promise.reject(error)
+            }
         }
+        
     }
 }
