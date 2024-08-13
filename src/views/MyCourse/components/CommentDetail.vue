@@ -70,7 +70,7 @@
                 </div>
                 <div v-else class="pl-3 overflow-y-scroll" :style="{ maxHeight: `${windowHeight / 2}px` }">
                     <div v-for="(forum, index) in comments" :key="index">
-                        <div class="flex mb-5">
+                        <div class="flex mb-5" v-if="!isForumDeleted(forum._id)">
                             <div class="flex items-start">
                                 <div class="w-12 h-12">
                                     <div class="w-12 h-12 rounded-full bg-center bg-cover bg-custom flex-1"
@@ -87,11 +87,17 @@
                                         <div> {{ forum.content.text }}</div>
                                         <div v-if="forum.user._id === stProfile._id && forum.content.text"
                                             class="flex items-center text-primary font-bold text-xs mt-2">
-                                            <div class="cursor-pointer">Edit</div>
+                                            <div class="cursor-pointer" @click="showEdit(forum._id)">Edit</div>
                                             <div class="w-5"></div>
-                                            <div class="cursor-pointer text-red-600" @click="confirmDeleteForum(forum)">Delete</div>
+                                            <div class="cursor-pointer text-red-600" @click="confirmDeleteForum(forum)">
+                                                Delete</div>
                                         </div>
                                     </div>
+
+                                    <div class="mt-5">
+                                        <EditComment v-if="forum._id == forumId"/>
+                                    </div>
+
                                     <div class="ml-4  text-sm my-2" v-if="forum.content && forum.content.photo">
                                         <div class="cursor-pointer" @click="previewImage(forum.content.photo)">
                                             <img :src="forum.content.photo" class="w-20 h-20 rounded-md object-cover" />
@@ -111,9 +117,10 @@
 import CloseIcon from '../../../components/CloseIcon.vue'
 import { mapActions, mapState } from "vuex";
 import moment from "moment";
+import EditComment from './EditComment.vue';
 
 export default {
-    components: { CloseIcon },
+    components: { CloseIcon, EditComment },
     props: {
         forumProps: {
             type: Object,
@@ -141,6 +148,9 @@ export default {
             this.$emit("onClose")
         },
 
+        showEdit(forumId){
+            this.forumId = forumId;
+        },
         formatDate(date) {
             moment.locale("en");
             return moment(date).format("DD-MM-YYYY");
