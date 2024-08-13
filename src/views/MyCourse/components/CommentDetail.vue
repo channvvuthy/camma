@@ -57,7 +57,7 @@
                             </div>
                             <div class="ml-4  text-sm my-2" v-if="forumProps.content && forumProps.content.photo">
                                 <div class="cursor-pointer" @click="previewImage(forumProps.content.photo)">
-                                    <img :src="forumProps.content.photo" class="w-20 h-20 rounded-md" />
+                                    <img :src="forumProps.content.photo" class="w-20 h-20 rounded-md object-cover" />
                                 </div>
 
                             </div>
@@ -94,7 +94,7 @@
                                     </div>
                                     <div class="ml-4  text-sm my-2" v-if="forum.content && forum.content.photo">
                                         <div class="cursor-pointer" @click="previewImage(forum.content.photo)">
-                                            <img :src="forum.content.photo" class="w-20 h-20 rounded-md" />
+                                            <img :src="forum.content.photo" class="w-20 h-20 rounded-md object-cover" />
                                         </div>
                                     </div>
                                 </div>

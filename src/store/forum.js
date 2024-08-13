@@ -57,6 +57,11 @@ export default {
             for (let i = 0; i < forums.length; i++) {
                 state.forums.push(forums[i])
             }
+        },
+        updateForum(state, value) {
+            state.forums = state.forums.map(element => 
+                element._id === value._id ? value : element
+            );
         }
     },
     actions: {
@@ -209,6 +214,23 @@ export default {
                 return data
             } catch (error) {
                 commit("addingComment", false)
+                return await Promise.reject(error)
+            }
+        },
+
+        async updateForum({ commit }, params) {
+            try {
+                const response = await axios.post(`${config.apiUrl}forum/update`, params)
+                const { status, msg, data } = response.data
+
+                if (status === 2) {
+                    err.err(msg)
+                }
+
+                commit("updateForum", data);
+
+                return data
+            } catch (error) {
                 return await Promise.reject(error)
             }
         }

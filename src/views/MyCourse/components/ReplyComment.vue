@@ -10,7 +10,7 @@
                 <input :placeholder="loadingAdd ? 'Processing...' : 'បញ្ចេញមតិយោបល់...'"
                     class="rounded-full py-2.5 text-sm outline-none border-none w-full" ref="text" v-model="text"
                     @keypress.enter="onComment" />
-                <div class="opacity-70 cursor-pointer" @click="onExploreFile">
+                <div class="opacity-70 cursor-pointer" @click="onExploreFile" v-if="!isEdit">
                     <CameraIcon />
                 </div>
                 <input type="file" name="photo" ref="photo" class="hidden" @change="onSelectedFile"
@@ -34,6 +34,7 @@ import CameraIcon from '../../../components/CameraIcon.vue'
 import CloseIcon from './CloseIcon.vue';
 import SendIcon from './SendIcon.vue'
 import { mapActions, mapState } from 'vuex';
+
 export default {
     components: {
         CameraIcon,
@@ -72,17 +73,24 @@ export default {
         }
     },
     methods: {
-        ...mapActions("forum", ["getForum", "addForum", "getForumPagination", "addComment"]),
+        ...mapActions("forum", ["getForum", "addForum", "getForumPagination", "addComment", "updateForum"]),
         onComment() {
             if (!this.text.trim() && !this.photo) return;
             if (this.loadingAdd) return;
 
             let formData = new FormData();
-            formData.append("forum_id", this.forum_id);
+            
             formData.append("text", this.text);
             formData.append("photo", this.photo);
 
-            this.addComment(formData);
+            if (this.isEdit) {
+                formData.append("forum_id", this.forum_id);
+                this.updateForum(formData);
+            } else {
+                formData.append("forum_id", this.forum_id);
+                this.addComment(formData);
+            }
+
             this.clearData();
             this.$emit("onReplySuccess")
 

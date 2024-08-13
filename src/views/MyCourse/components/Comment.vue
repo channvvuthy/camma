@@ -20,14 +20,14 @@
                         </div>
                         <div class="ml-4  text-sm my-2" v-if="forum.content && forum.content.photo">
                             <div class="cursor-pointer" @click="previewImage(forum.content.photo)">
-                                <img :src="forum.content.photo" class="w-20 h-20 rounded-md" />
+                                <img :src="forum.content.photo" class="w-20 h-20 rounded-md object-cover" />
                             </div>
                         </div>
                         <div class="ml-4">
                             <ViewComment v-if="forum.comment" :forum="forum" />
                             <div class="flex mb-3 text-xs text-custom font-semibold">
 
-                                <div class=" mt-1 cursor-pointer" @click="forumId = forum._id">
+                                <div class=" mt-1 cursor-pointer" @click="showReply(forum)">
                                     Reply
                                 </div>
 
@@ -42,7 +42,7 @@
                                 </div>
                             </div>
                             <ReplyComment :forum_id="forum._id" v-if="forumId == forum._id"
-                                @onReplySuccess="onReplySuccess" :caption="text" />
+                                @onReplySuccess="onReplySuccess" :caption="text" :isEdit="isEdit" />
                         </div>
                     </div>
                 </div>
@@ -74,7 +74,8 @@ export default {
             isConfirm: false,
             isLoading: false,
             forumDeleted: [],
-            text: ""
+            text: "",
+            isEdit: false,
 
         }
     },
@@ -123,6 +124,11 @@ export default {
             this.isModal = true;
 
         },
+        showReply(forum) {
+            this.forumId = forum._id;
+            this.isEdit = false;
+            this.text = ""
+        },
 
         async ConfirmDeleteCart() {
             this.isLoading = true;
@@ -133,6 +139,7 @@ export default {
         },
 
         editComment(forum) {
+            this.isEdit = true;
             this.forumId = forum._id;
             this.text = forum.content.text;
         }
