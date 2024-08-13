@@ -16,7 +16,6 @@
 
 <script>
 export default {
-    name: "CloseIcon",
     props: {
         fill: {
             type: String,

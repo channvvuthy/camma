@@ -2,7 +2,7 @@
     <div>
         <PostComment :lesson_id="lesson_id" />
         <div v-for="(forum, index) in forums" :key="index">
-            <div class="flex mb-5">
+            <div class="flex mb-5" v-if="!isDeleted(forum._id)">
                 <div class="flex items-start w-full">
                     <div class="w-14 h-14">
                         <div class="w-14 h-14 rounded-full bg-center bg-cover bg-custom flex-1"
@@ -25,8 +25,14 @@
                         </div>
                         <div class="ml-4">
                             <ViewComment v-if="forum.comment" :forum="forum" />
-                            <div class="text-xs text-custom font-semibold mt-1 cursor-pointer mb-5"
-                                @click="forumId = forum._id">Reply</div>
+                            <div class="flex mb-3">
+                                <div class="text-xs text-custom font-semibold mt-1 cursor-pointer"
+                                    @click="forumId = forum._id">Reply</div>
+                                <div></div>
+                                <div class="text-xs text-red-600 font-semibold mt-1 cursor-pointer pl-5"
+                                    v-if="stProfile._id == forum.user._id" @click="confirmDelete(forum)">
+                                    Delete</div>
+                            </div>
                             <ReplyComment :forum_id="forum._id" v-if="forumId == forum._id"
                                 @onReplySuccess="onReplySuccess" />
                         </div>
@@ -35,6 +41,9 @@
             </div>
         </div>
         <Modal v-if="isModal" :imgUrl="imgUrl" @closeModal="isModal = false" />
+        <ConfirmDelete v-if="isConfirm" @closeMessage="isConfirm = false" @ConfirmDeleteCart="ConfirmDeleteCart"
+            :isDeleting="isLoading" />
+
     </div>
 </template>
 <script>
@@ -44,15 +53,20 @@ import PostComment from './PostComment.vue';
 import ReplyComment from './ReplyComment.vue';
 import ViewComment from './ViewComment.vue';
 import Modal from './Modal.vue';
+import ConfirmDelete from './ConfirmDelete.vue';
 
 
 export default {
-    components: { PostComment, Modal, ViewComment, ReplyComment },
+    components: { PostComment, Modal, ViewComment, ReplyComment, ConfirmDelete },
     data() {
         return {
             isModal: false,
             imgUrl: "",
-            forumId: null
+            forumId: null,
+            isConfirm: false,
+            isLoading: false,
+            forumDeleted: []
+
         }
     },
     props: {
@@ -64,10 +78,20 @@ export default {
 
     computed: {
         ...mapState("forum", ["forums", "loadingForum", "loadingForumPagination"]),
+        ...mapState("auth", ["stProfile"]),
+
     },
 
     methods: {
-        ...mapActions("forum", ["getForum", "addForum", "getForumPagination"]),
+        ...mapActions("forum", ["getForum", "addForum", "getForumPagination", "deleteForum"]),
+        isDeleted(forumId) {
+            return this.forumDeleted.includes(forumId);
+        },
+
+        confirmDelete(forum) {
+            this.forumId = forum._id;
+            this.isConfirm = true;
+        },
         fetchingForums() {
             let params = {
                 lesson_id: this.lesson_id,
@@ -89,6 +113,14 @@ export default {
             this.imgUrl = imgUrl;
             this.isModal = true;
 
+        },
+
+        async ConfirmDeleteCart() {
+            this.isLoading = true;
+            await this.deleteForum(this.forumId)
+            this.isLoading = false;
+            this.isConfirm = false;
+            this.forumDeleted.push(this.forumId);
         }
     },
 

@@ -147,7 +147,23 @@ export default {
             commit("setIsDeleting", true);
             try {
                 const { data } = await axios.post(`${config.apiUrl}forum/comment/remove`, { comment_id });
+
                 commit("setIsDeleting", false);
+
+                return data.data;
+            } catch (error) {
+                commit("setIsDeleting", false);
+                throw error;
+            }
+        },
+
+        async deleteForum({ commit }, forum_id) {
+            commit("setIsDeleting", true);
+            try {
+                const { data } = await axios.post(`${config.apiUrl}forum/remove`, { forum_id });
+
+                commit("setIsDeleting", false);
+                
                 return data.data;
             } catch (error) {
                 commit("setIsDeleting", false);

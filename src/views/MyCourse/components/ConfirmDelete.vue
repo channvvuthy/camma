@@ -1,34 +1,22 @@
 <template>
-    <div class="fixed inset-0 overflow-y-auto" style="z-index: 52;">
-        <div class="flex items-end justify-center min-h-screen text-center sm:block sm:p-0">
-            <div class="fixed inset-0 transition-opacity" aria-hidden="true">
-                <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
+    <div class="fixed w-full h-full left-0 top-0 bg-black bg-opacity-80 flex items-center justify-center z-50">
+        <div class="relative bg-white rounded-xl max-w-sm w-96">
+            <div class="h-8 w-8 bg-red-500 rounded-full cursor-pointer flex items-center justify-center absolute -right-4 -top-4"
+                @click="closeMessage">
+                <CloseIcon fill="#fff" />
             </div>
-            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-            <div class="inline-block align-bottom bg-white rounded-xl text-left overflow-hidden shadow-xl transform transition-all  sm:align-middle"
-                 :class="`w-${size}`" role="dialog" aria-modal="true" aria-labelledby="modal-headline">
-                <div class="bg-white">
-                    <div class="flex justify-center items-center">
-                        <div class="text-center">
-                            <div class="mt-2 py-4">
-                                <p class="text-base text-black font-khmer_os">
-                                    {{ message }}
-                                </p>
-                            </div>
-                        </div>
-                    </div>
+            <div>
+                <div class="w-full h-10 flex items-center justify-center border-b font-bold text-sm">Confirm Delete
                 </div>
-                <hr>
-                <div class="sm:flex sm:flex-row text-base font-khmer_os h-10 justify-center items-center">
-                    <button type="button" @click="closeMessage"
-                            class="w-full inline-flex justify-center  px-4   text-base font-medium text-primary focus:outline-none sm:ml-3 sm:w-auto sm:text-base">
-                        បោះបង់
-                    </button>
-                    <div class="h-10 border border-gray-300 border-l-0 border-t-0 border-b-0" style="width:0px;"></div>
-                    <button type="button" @click="ConfirmDelete"
-                            class="w-full inline-flex justify-center  px-4   text-base font-medium text-primary focus:outline-none sm:ml-3 sm:w-auto sm:text-base">
-                        បាទ/ចាស់
-                    </button>
+                <div class="p-5">
+                    <p>Are you sure you want to delete this item? This action cannot be undone.</p>
+                    <div class="flex justify-end border-t mt-5">
+                        <button @click="ConfirmDelete"
+                            class="bg-red-500 text-white rounded-full text-sm outline-none focus:outline-none px-3 py-1 mt-5">
+                            <span v-if="isDeleting">Processing...</span>
+                            <span v-else>Delete</span>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -36,30 +24,37 @@
 </template>
 
 <script>
-    export default{
-        name: "ConfirmDelete",
-        props: {
-            message: {
-                type: String,
-                default: () => {
-                    return 'តើអ្នកចង់លុបវាមែនទេ?'
-                }
-            },
-            size: {
-                type: Number,
-                default: () => {
-                    return 60;
-                }
+import CloseIcon from '../../../components/CloseIcon.vue'
+export default {
+    components: { CloseIcon },
+    props: {
+        message: {
+            type: String,
+            default: () => {
+                return 'តើអ្នកចង់លុបវាមែនទេ?'
             }
         },
-        methods: {
-            closeMessage($event){
-                this.$emit("closeMessage", $event);
-            },
-
-            ConfirmDelete($event){
-                this.$emit("ConfirmDeleteCart", $event);
+        size: {
+            type: Number,
+            default: () => {
+                return 60;
+            }
+        },
+        isDeleting: {
+            type: Boolean,
+            default: () => {
+                return false;
             }
         }
+    },
+    methods: {
+        closeMessage($event) {
+            this.$emit("closeMessage", $event);
+        },
+
+        ConfirmDelete($event) {
+            this.$emit("ConfirmDeleteCart", $event);
+        }
     }
+}
 </script>

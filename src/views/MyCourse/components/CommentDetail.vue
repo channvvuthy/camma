@@ -89,7 +89,7 @@
                                             class="flex items-center text-primary font-bold text-xs mt-2">
                                             <div class="cursor-pointer">Edit</div>
                                             <div class="w-5"></div>
-                                            <div class="cursor-pointer" @click="confirmDeleteForum(forum)">Delete</div>
+                                            <div class="cursor-pointer text-red-600" @click="confirmDeleteForum(forum)">Delete</div>
                                         </div>
                                     </div>
                                     <div class="ml-4  text-sm my-2" v-if="forum.content && forum.content.photo">
@@ -127,6 +127,7 @@ export default {
             windowHeight: window.innerHeight,
             isCofirm: false,
             forumId: null,
+            deletedForums: [],
         }
     },
     computed: {
@@ -148,9 +149,13 @@ export default {
             this.isCofirm = true;
             this.forumId = _id
         },
+        isForumDeleted(forumId) {
+            return this.deletedForums.includes(forumId);
+        },
         deleteForm() {
             this.$store.dispatch("forum/deleteComment", this.forumId).then(() => {
                 this.isCofirm = false;
+                this.deletedForums.push(this.forumId);
             });
         }
     },
