@@ -25,16 +25,24 @@
                         </div>
                         <div class="ml-4">
                             <ViewComment v-if="forum.comment" :forum="forum" />
-                            <div class="flex mb-3">
-                                <div class="text-xs text-custom font-semibold mt-1 cursor-pointer"
-                                    @click="forumId = forum._id">Reply</div>
-                                <div></div>
-                                <div class="text-xs text-red-600 font-semibold mt-1 cursor-pointer pl-5"
+                            <div class="flex mb-3 text-xs text-custom font-semibold">
+
+                                <div class=" mt-1 cursor-pointer" @click="forumId = forum._id">
+                                    Reply
+                                </div>
+
+                                <div class=" mt-1 cursor-pointer pl-5" @click="editComment(forum)"
+                                    v-if="stProfile._id == forum.user._id && !forum.content.photo">
+                                    Edit
+                                </div>
+
+                                <div class="text-red-600 mt-1 cursor-pointer pl-5"
                                     v-if="stProfile._id == forum.user._id" @click="confirmDelete(forum)">
-                                    Delete</div>
+                                    Delete
+                                </div>
                             </div>
                             <ReplyComment :forum_id="forum._id" v-if="forumId == forum._id"
-                                @onReplySuccess="onReplySuccess" />
+                                @onReplySuccess="onReplySuccess" :caption="text" />
                         </div>
                     </div>
                 </div>
@@ -65,7 +73,8 @@ export default {
             forumId: null,
             isConfirm: false,
             isLoading: false,
-            forumDeleted: []
+            forumDeleted: [],
+            text: ""
 
         }
     },
@@ -121,6 +130,11 @@ export default {
             this.isLoading = false;
             this.isConfirm = false;
             this.forumDeleted.push(this.forumId);
+        },
+
+        editComment(forum) {
+            this.forumId = forum._id;
+            this.text = forum.content.text;
         }
     },
 

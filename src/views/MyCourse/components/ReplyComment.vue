@@ -46,6 +46,18 @@ export default {
             default: function () {
                 return ""
             }
+        },
+        isEdit: {
+            type: Boolean,
+            default: function () {
+                return false;
+            }
+        },
+        caption: {
+            type: String,
+            default: function () {
+
+            }
         }
     },
     computed: {
@@ -104,6 +116,7 @@ export default {
     created() {
         const profile = localStorage.getItem("stProfile");
         this.profile = JSON.parse(profile);
+        this.text = this.caption;
     }
 }
 </script>
