@@ -68,16 +68,16 @@
                 <div v-if="loadingComment">
                     <span>Loading...</span>
                 </div>
-                <div v-else class="pl-3 overflow-y-scroll" :style="{ maxHeight: `${windowHeight / 2}px` }">
+                <div v-else class="pl-3 overflow-y-scroll w-full" :style="{ maxHeight: `${windowHeight / 2}px` }">
                     <div v-for="(forum, index) in comments" :key="index">
-                        <div class="flex mb-5" v-if="!isForumDeleted(forum._id)">
-                            <div class="flex items-start">
+                        <div class="flex mb-5 w-full" v-if="!isForumDeleted(forum._id)">
+                            <div class="flex items-start w-full">
                                 <div class="w-12 h-12">
                                     <div class="w-12 h-12 rounded-full bg-center bg-cover bg-custom flex-1"
                                         :style="{ backgroundImage: `url(${forum.user.photo})` }">
                                     </div>
                                 </div>
-                                <div>
+                                <div class="w-full">
                                     <div class="ml-4 flex items-center">
                                         <div class="text-sm font-semibold">{{ forum.user.name }}</div>
                                         <div class="text-xs text-gray-400 ml-2 pt-1">{{ formatDate(forum.date) }}
@@ -95,7 +95,7 @@
                                     </div>
 
                                     <div class="mt-5">
-                                        <EditComment v-if="forum._id == forumId"/>
+                                        <EditComment v-if="forum._id == forumId" :caption="forum.content.text" :forum_id="forumId"/>
                                     </div>
 
                                     <div class="ml-4  text-sm my-2" v-if="forum.content && forum.content.photo">

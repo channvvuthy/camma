@@ -35,6 +35,7 @@ import CloseIcon from './CloseIcon.vue';
 import SendIcon from './SendIcon.vue'
 import { mapActions, mapState } from 'vuex';
 
+
 export default {
     components: {
         CameraIcon,

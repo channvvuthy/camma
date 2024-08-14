@@ -62,6 +62,12 @@ export default {
             state.forums = state.forums.map(element => 
                 element._id === value._id ? value : element
             );
+        },
+
+        updateComment(state, value){
+            state.comments = state.comments.map(element => 
+                element._id == value._id ? value : element
+            );
         }
     },
     actions: {
@@ -228,6 +234,23 @@ export default {
                 }
 
                 commit("updateForum", data);
+
+                return data
+            } catch (error) {
+                return await Promise.reject(error)
+            }
+        },
+
+        async updateComment({ commit }, params) {
+            try {
+                const response = await axios.post(`${config.apiUrl}forum/comment/update `, params)
+                const { status, msg, data } = response.data
+
+                if (status === 2) {
+                    err.err(msg)
+                }
+
+                commit("updateComment", data);
 
                 return data
             } catch (error) {

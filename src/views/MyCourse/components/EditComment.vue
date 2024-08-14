@@ -27,14 +27,12 @@
     </div>
 </template>
 <script>
-import CameraIcon from '../../../components/CameraIcon.vue'
 import CloseIcon from './CloseIcon.vue';
 import SendIcon from './SendIcon.vue'
 import { mapActions, mapState } from 'vuex';
 
 export default {
     components: {
-        CameraIcon,
         SendIcon,
         CloseIcon
     },
@@ -70,7 +68,7 @@ export default {
         }
     },
     methods: {
-        ...mapActions("forum", ["getForum", "addForum", "getForumPagination", "addComment", "updateForum"]),
+        ...mapActions("forum", ["updateComment"]),
         onComment() {
             if (!this.text.trim() && !this.photo) return;
             if (this.loadingAdd) return;
@@ -79,14 +77,8 @@ export default {
             
             formData.append("text", this.text);
             formData.append("photo", this.photo);
-
-            if (this.isEdit) {
-                formData.append("forum_id", this.forum_id);
-                this.updateForum(formData);
-            } else {
-                formData.append("forum_id", this.forum_id);
-                this.addComment(formData);
-            }
+            formData.append("comment_id", this.forum_id);
+            this.updateComment(formData);
 
             this.clearData();
             this.$emit("onReplySuccess")
