@@ -59,12 +59,24 @@ export default {
             }
         },
         updateForum(state, value) {
+            let user = localStorage.getItem("stProfile");
+
+            if(user){
+                value.user.photo = JSON.parse(user).photo;
+            }
+
             state.forums = state.forums.map(element => 
                 element._id === value._id ? value : element
             );
         },
 
         updateComment(state, value){
+            let user = localStorage.getItem("stProfile");
+
+            if(user){
+                value.user.photo = JSON.parse(user).photo;
+            }
+            
             state.comments = state.comments.map(element => 
                 element._id == value._id ? value : element
             );
