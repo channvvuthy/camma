@@ -128,28 +128,24 @@ const router = new VueRouter({
   base: process.env.BASE_URL,
   routes,
 });
-// eslint-disable-next-line no-unused-vars
+
 router.beforeEach((to, from, next) => {
+  store.commit("setting/setRouteName", to.name)
+  const isAuthenticated = auth();
+
   if (to.name === "login") {
-    if (auth()) {
-      next({
-        name: "home",
-      });
-    } else {
-      next();
+    if (isAuthenticated) {
+      return next({ name: "home" });
     }
   } else {
-    if (auth()) {
+    if (isAuthenticated) {
       store.commit("course/getFilterByGradeID", "");
       store.commit("course/getQueryString", "");
-
-      next();
     } else {
-      next({
-        name: "login",
-      });
+      return next({ name: "login" });
     }
   }
+  
   next();
 });
 

@@ -6,9 +6,13 @@ export  default {
         provinces: [],
         loadingProvince: false,
         loadingSchool: false,
-        schools: []
+        schools: [],
+        routeName: ""
     },
     mutations: {
+        setRouteName(state, value){
+            state.routeName = value;
+        },
         gettingProvince(state, status){
             state.loadingProvince = status
         },

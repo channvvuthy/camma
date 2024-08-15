@@ -178,7 +178,7 @@ export default {
       this.page = 1;
     });
 
-    this.$store.commit("course/setSubjectFilterTitle", "ជ្រើសរើសកម្មវិធីសិក្សា");
+    this.$store.commit("course/setSubjectFilterTitle", "វីដេអូមេរៀន");
   },
   watch: {
     query: function () {

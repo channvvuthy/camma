@@ -375,7 +375,7 @@ export default {
       commit("gettingVideoCourse", true);
 
       const { s, gradeID, selectedSubjectId } = this.state.course;
-      const url = `${config.apiUrl}course/video?s=${s}&grade_id=${gradeID}&subject_id=${selectedSubjectId}`;
+      const url = `${config.apiUrl}course/video?s=${s}&grade_id=${gradeID}&subject_id=${selectedSubjectId}&type=1`;
 
       return axios
         .get(url)
@@ -398,7 +398,7 @@ export default {
       commit("gettingVideoCoursePagination", true);
 
       const { s, gradeID, selectedSubjectId } = this.state.course;
-      const url = `${config.apiUrl}course/video?s=${s}&grade_id=${gradeID}&subject_id=${selectedSubjectId}&p=${page}`;
+      const url = `${config.apiUrl}course/video?s=${s}&grade_id=${gradeID}&subject_id=${selectedSubjectId}&p=${page}&type=1`;
 
       try {
         const res = await axios
@@ -418,34 +418,31 @@ export default {
 
     getEbook({ commit }, payload) {
       commit("gettingEbook", true);
+      const { grade_id="", subject_id="",p=1 } = payload;
+    
       return new Promise((resolve, reject) => {
-        if (localStorage.getItem("book")) {
+        const storedBook = localStorage.getItem("book");
+    
+        if (storedBook) {
+          const parsedBook = JSON.parse(storedBook);
           commit("gettingEbook", false);
-          commit("getBook", JSON.parse(localStorage.getItem("book")));
-          resolve(JSON.parse(localStorage.getItem("book")));
+          commit("getBook", parsedBook);
+          resolve(parsedBook);
         } else {
           axios
             .get(
-              config.apiUrl +
-              "course/e-book?s=" +
-              this.state.course.s +
-              "&grade_id=" +
-              payload.grade_id +
-              "&p=" +
-              payload.p +
-              "&subject_id=" +
-              payload.subject_id
+              `${config.apiUrl}course/e-book?s=${this.state.course.s}&grade_id=${grade_id}&p=${p}&subject_id=${subject_id}&type=2`
             )
             .then((res) => {
-              if (res.data.status && res.data.status === 2) {
+              if (res.data.status === 2) {
                 err.err(res.data.msg);
               }
-
+    
+              const bookData = res.data.data;
               commit("gettingEbook", false);
-
-              commit("getBook", res.data.data);
-              localStorage.setItem("books", JSON.stringify(res.data.data));
-              resolve(res.data.data);
+              commit("getBook", bookData);
+              localStorage.setItem("books", JSON.stringify(bookData));
+              resolve(bookData);
             })
             .catch((err) => {
               commit("gettingEbook", false);
@@ -453,71 +450,59 @@ export default {
             });
         }
       });
-    },
+    },    
     afterAddToCart({ commit }, course_id) {
       commit("afterAddToCart", course_id);
     },
     getCourseEbook({ commit }, payload) {
       commit("gettingCourseEbook", true);
+      const { grade_id="", subject_id="",p=1, s="" } = payload;
+    
+      const url = `${config.apiUrl}course/e-book?s=${s}&grade_id=${grade_id}&p=${p}&subject_id=${subject_id}&type=2`;
+    
       return new Promise((resolve, reject) => {
         axios
-          .get(
-            config.apiUrl +
-            "course/e-book?s=" +
-            payload.s +
-            "&grade_id=" +
-            payload.grade_id +
-            "&p=" +
-            payload.p +
-            "&subject_id=" +
-            payload.subject_id
-          )
+          .get(url)
           .then((res) => {
-            if (res.data.status && res.data.status === 2) {
+            if (res.data.status === 2) {
               err.err(res.data.msg);
             }
-
+    
             commit("gettingCourseEbook", false);
             commit("courseEbook", res.data.data);
             resolve(res.data.data);
           })
-          .catch((err) => {
+          .catch((error) => {
             commit("gettingCourseEbook", false);
-            reject(err);
+            reject(error);
           });
       });
-    },
+    },    
 
     getCourseEbookPagination({ commit }, payload) {
       commit("gettingCourseEbookPagination", true);
+      const { grade_id="", subject_id="",p=1, s="" } = payload;
+
+      const url = `${config.apiUrl}course/e-book?s=${s}&grade_id=${grade_id}&p=${p}&subject_id=${subject_id}&type=2`;
+    
       return new Promise((resolve, reject) => {
         axios
-          .get(
-            config.apiUrl +
-            "course/e-book?s=" +
-            payload.s +
-            "&grade_id=" +
-            payload.grade_id +
-            "&p=" +
-            payload.p +
-            "&subject_id=" +
-            payload.subject_id
-          )
+          .get(url)
           .then((res) => {
-            if (res.data.status && res.data.status === 2) {
+            if (res.data.status === 2) {
               err.err(res.data.msg);
             }
-
+    
             commit("gettingCourseEbookPagination", false);
             commit("courseEbookPagination", res.data.data);
             resolve(res.data.data);
           })
-          .catch((err) => {
+          .catch((error) => {
             commit("gettingCourseEbookPagination", false);
-            reject(err);
+            reject(error);
           });
       });
-    },
+    },    
     readBook({ commit }, params) {
       commit("getReadingBook", true);
       return new Promise((resolve, reject) => {

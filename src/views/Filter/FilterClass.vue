@@ -22,10 +22,11 @@
           <div class="pr-2" id="filter">{{ filter }}</div>
           <FilterIcon />
         </div>
-        <div class="w-10">
-        </div>
-        <div @click="showFilterBySubject" class="cursor-pointer">
-          <FilterInput :title="subjectFilterTitle" />
+        <div class="flex items-center" v-if="routeName !== 'home'">
+          <div class="w-10"></div>
+          <div @click="showFilterBySubject" class="cursor-pointer">
+            <FilterInput :title="subjectFilterTitle" />
+          </div>
         </div>
 
       </div>
@@ -54,7 +55,8 @@ export default {
     };
   },
   computed: {
-    ...mapState("course", ["subjectFilterTitle"])
+    ...mapState("course", ["subjectFilterTitle"]),
+    ...mapState("setting", ["routeName"])
   },
   methods: {
     search() {
